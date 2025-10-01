@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STP Solar - Pricing Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .admin-section h2 {
+            color: #f39c12;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f39c12;
+            padding-bottom: 0.5rem;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .pricing-group {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .pricing-group h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        
+        .price-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .price-input {
+            width: 120px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+            text-align: right;
+            font-weight: 600;
+            color: #f39c12;
+        }
+        
+        .price-input:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .status-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        
+        .instructions ul {
+            margin-left: 1.5rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-add {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .btn-remove {
+            background: #dc3545 !important;
+            color: white !important;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .btn-remove:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        /* Dynamic Definition Styles */
+        .inverter-definition {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+        
+        .definition-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .definition-header h4 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .definition-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .field-row {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .field-row label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        .definition-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .field-row small {
+            color: #666;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        
+        .section-description {
+            background: #e3f2fd;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #1976d2;
+            font-style: italic;
+        }
+        
+        /* Installation Definition Styles */
+        .installation-definition {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f0f8ff;
+        }
+        
+        .price-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 120px 40px;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-name, .item-key {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .item-name:focus, .item-key:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
+        }
+        
+        .price-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+            text-align: right;
+            font-weight: 600;
+            color: #f39c12;
+        }
+        
+        .price-input:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cogs"></i> STP Solar Pricing Admin</h1>
+            <p>Update system pricing to keep website current with supplier costs</p>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+            <ul>
+                <li>Update prices in South African Rands (R)</li>
+                <li>Prices should include your cost from suppliers</li>
+                <li>Markup percentages will be applied automatically</li>
+                <li>Click "Update All Prices" to save changes</li>
+                <li>Changes will be reflected on the website immediately</li>
+            </ul>
+        </div>
+        
+        <div id="status-message" class="status-message"></div>
+        
+        <div class="admin-section">
+            <h2><i class="fas fa-microchip"></i> Dynamic Inverter & System Definitions</h2>
+            <p class="section-description">Define custom inverters, batteries, and their relationships. Create any system type including future products like Tesla Powerwall 4.</p>
+            
+            <div class="pricing-group">
+                <div class="group-header">
+                    <h3>Inverter Definitions</h3>
+                    <button class="btn-add" onclick="addInverterDefinition()">
+                        <i class="fas fa-plus"></i> Add Inverter
+                    </button>
+                </div>
+                <div id="inverter-definitions">
+                    <div class="inverter-definition">
+                        <div class="definition-header">
+                            <h4>Inverter Definition</h4>
+                            <button class="btn-remove" onclick="removeInverterDefinition(this)" title="Remove Inverter">
+                                <i class="fas fa-trash"></i> ×
+                            </button>
+                        </div>
+                        <div class="definition-fields">
+                            <div class="field-row">
+                                <label>Name:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk 5kW" value="Sunsynk 5kW">
+                            </div>
+                            <div class="field-row">
+                                <label>Brand:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk" value="Sunsynk">
+                            </div>
+                            <div class="field-row">
+                                <label>Key:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk-5K" value="Sunsynk-5K">
+                            </div>
+                            <div class="field-row">
+                                <label>Price (R):</label>
+                                <input type="number" class="definition-input" placeholder="25000" value="25000">
+                            </div>
+                            <div class="field-row">
+                                <label>Type:</label>
+                                <select class="definition-input">
+                                    <option value="single">Single Phase</option>
+                                    <option value="three">Three Phase</option>
+                                    <option value="all-in-one">All-in-One (Tesla style)</option>
+                                </select>
+                            </div>
+                            <div class="field-row">
+                                <label>Capacity (kW):</label>
+                                <input type="number" class="definition-input" placeholder="5" value="5" step="0.1">
+                            </div>
+                            <div class="field-row">
+                                <label>Compatible Batteries:</label>
+                                <input type="text" class="definition-input" placeholder="Sunsynk-5.12kWh,Sunsynk-10kWh" value="Sunsynk-5.12kWh,Sunsynk-10kWh">
+                                <small>Comma-separated battery keys</small>
+                            </div>
+                            <div class="field-row">
+                                <label>Compatible Panels:</label>
+                                <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W" value="JA-Solar-565W,Canadian-Solar-565W">
+                                <small>Comma-separated panel keys</small>
+                            </div>
+                            <div class="field-row">
+                                <label>Base Installation Cost (R):</label>
+                                <input type="number" class="definition-input" placeholder="8500" value="8500">
+                                <small>Base installation cost for this inverter type</small>
+                            </div>
+                            <div class="field-row">
+                                <label>Accessories Cost (R):</label>
+                                <input type="number" class="definition-input" placeholder="15000" value="15000">
+                                <small>Additional accessories and components cost</small>
+                            </div>
+                            <div class="field-row">
+                                <label>Linked Installation:</label>
+                                <select class="definition-input" id="installation-select">
+                                    <option value="">Use inline installation costs above</option>
+                                    <option value="standard-single">Standard Single Phase</option>
+                                    <option value="standard-three">Standard Three Phase</option>
+                                    <option value="tesla-standard">Tesla Standard</option>
+                                </select>
+                                <small>Link to a predefined installation package (optional)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2><i class="fas fa-battery-full"></i> Battery Prices</h2>
+            <div class="pricing-grid">
+                <div class="pricing-group">
+                    <div class="group-header">
+                        <h3>Battery Storage</h3>
+                        <button class="btn-add" onclick="addBatteryItem()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                    <div id="battery-items">
+                    <div class="price-item">
+                            <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 5.12kWh">
+                            <input type="text" class="item-key" placeholder="Key (e.g., Brand-5.12kWh)" value="Sunsynk-5.12kWh">
+                            <input type="number" class="price-input" placeholder="Price" value="45000">
+                            <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
+                                <i class="fas fa-trash"></i> × ×
+                            </button>
+                    </div>
+                    <div class="price-item">
+                            <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 10kWh">
+                            <input type="text" class="item-key" placeholder="Key (e.g., Brand-10kWh)" value="Sunsynk-10kWh">
+                            <input type="number" class="price-input" placeholder="Price" value="90000">
+                            <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
+                                <i class="fas fa-trash"></i> × ×
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+                
+        <div class="admin-section">
+            <h2><i class="fas fa-solar-panel"></i> Solar Panel Prices</h2>
+            <div class="pricing-grid">
+                <div class="pricing-group">
+                    <div class="group-header">
+                    <h3>Panel Prices (Per Panel)</h3>
+                        <button class="btn-add" onclick="addPanelItem()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                    <div id="panel-items">
+                    <div class="price-item">
+                            <input type="text" class="item-name" placeholder="Item Name" value="JA Solar 565W">
+                            <input type="text" class="item-key" placeholder="Key (e.g., JA-Solar-565W)" value="JA-Solar-565W">
+                            <input type="number" class="price-input" placeholder="Price" value="2500">
+                            <button class="btn-remove" onclick="removePanelItem(this)" title="Remove Item">
+                                <i class="fas fa-trash"></i> × ×
+                            </button>
+                    </div>
+                    <div class="price-item">
+                            <input type="text" class="item-name" placeholder="Item Name" value="Canadian Solar 565W">
+                            <input type="text" class="item-key" placeholder="Key (e.g., Canadian-Solar-565W)" value="Canadian-Solar-565W">
+                            <input type="number" class="price-input" placeholder="Price" value="2600">
+                            <button class="btn-remove" onclick="removePanelItem(this)" title="Remove Item">
+                                <i class="fas fa-trash"></i> × ×
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2><i class="fas fa-tools"></i> Dynamic Installation Definitions</h2>
+            <p class="section-description">Define custom installation packages that can be linked to specific inverters. Each installation definition can be reused across multiple inverters.</p>
+            
+                <div class="pricing-group">
+                <div class="group-header">
+                    <h3>Installation Definitions</h3>
+                    <button class="btn-add" onclick="addInstallationDefinition()">
+                        <i class="fas fa-plus"></i> Add Installation
+                    </button>
+                </div>
+                <div id="installation-definitions">
+                    <div class="installation-definition">
+                        <div class="definition-header">
+                            <h4>Installation Definition</h4>
+                            <button class="btn-remove" onclick="removeInstallationDefinition(this)" title="Remove Installation">
+                                <i class="fas fa-trash"></i> ×
+                            </button>
+                        </div>
+                        <div class="definition-fields">
+                            <div class="field-row">
+                                <label>Name:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., Standard Single Phase" value="Standard Single Phase">
+                            </div>
+                            <div class="field-row">
+                                <label>Key:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., standard-single" value="standard-single">
+                            </div>
+                            <div class="field-row">
+                                <label>Base Installation Cost (R):</label>
+                                <input type="number" class="definition-input" placeholder="8500" value="8500">
+                            </div>
+                            <div class="field-row">
+                                <label>Accessories Cost (R):</label>
+                                <input type="number" class="definition-input" placeholder="15000" value="15000">
+                            </div>
+                            <div class="field-row">
+                                <label>Description:</label>
+                                <input type="text" class="definition-input" placeholder="Standard residential single phase installation" value="Standard residential single phase installation">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2><i class="fas fa-solar-panel"></i> Panel Installation Costs</h2>
+            <p class="section-description">Set the installation cost per solar panel. This cost scales with the number of panels - more panels = more work for your technical team.</p>
+            
+            <div class="pricing-group">
+                <div class="group-header">
+                    <h3>Panel Installation Pricing</h3>
+                </div>
+                <div class="price-items">
+                    <div class="price-item">
+                        <span class="price-label">Installation Cost Per Panel (R)</span>
+                        <input type="number" class="price-input" id="panel-installation-per-panel" value="850" step="50">
+                        <small>Cost per panel for installation (e.g., 6 panels = R850 × 6 = R5,100)</small>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-label">Concrete Roof Multiplier</span>
+                        <input type="number" class="price-input" id="concrete-roof-multiplier" value="1.5" step="0.1" min="1.0" max="3.0">
+                        <small>Multiplier for concrete roof installation (1.5 = 50% more expensive)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2><i class="fas fa-cog"></i> System Quantity Limits</h2>
+            
+                <div class="pricing-group">
+                <h3>Single Phase Systems</h3>
+                    <div class="price-item">
+                    <span class="price-label">Minimum Batteries</span>
+                    <input type="number" class="price-input" id="min-batteries-single" value="1" min="0">
+                    </div>
+                    <div class="price-item">
+                    <span class="price-label">Maximum Batteries</span>
+                    <input type="number" class="price-input" id="max-batteries-single" value="10" min="1">
+                    </div>
+                <div class="price-item">
+                    <span class="price-label">Minimum Solar Panels</span>
+                    <input type="number" class="price-input" id="min-panels-single" value="6" min="0">
+                </div>
+                <div class="price-item">
+                    <span class="price-label">Maximum Solar Panels</span>
+                    <input type="number" class="price-input" id="max-panels-single" value="50" min="1">
+            </div>
+        </div>
+        
+                <div class="pricing-group">
+                <h3>Three Phase Systems</h3>
+                    <div class="price-item">
+                    <span class="price-label">Minimum Batteries</span>
+                    <input type="number" class="price-input" id="min-batteries-three" value="2" min="0">
+                    </div>
+                    <div class="price-item">
+                    <span class="price-label">Maximum Batteries</span>
+                    <input type="number" class="price-input" id="max-batteries-three" value="20" min="1">
+                    </div>
+                <div class="price-item">
+                    <span class="price-label">Minimum Solar Panels</span>
+                    <input type="number" class="price-input" id="min-panels-three" value="8" min="0">
+                </div>
+                <div class="price-item">
+                    <span class="price-label">Maximum Solar Panels</span>
+                    <input type="number" class="price-input" id="max-panels-three" value="100" min="1">
+            </div>
+        </div>
+        
+                <div class="pricing-group">
+                <h3>Tesla Powerwall 3 Systems</h3>
+                    <div class="price-item">
+                    <span class="price-label">Minimum Solar Panels</span>
+                    <input type="number" class="price-input" id="min-panels-tesla" value="0" min="0">
+                    </div>
+                    <div class="price-item">
+                    <span class="price-label">Maximum Solar Panels</span>
+                    <input type="number" class="price-input" id="max-panels-tesla" value="40" min="0">
+                    </div>
+                    <div class="price-item">
+                    <span class="price-label">Maximum Tesla Units</span>
+                    <input type="number" class="price-input" id="max-tesla-units" value="4" min="1">
+                </div>
+                    </div>
+                </div>
+                
+        <div class="admin-section">
+            <h2><i class="fas fa-percentage"></i> Markup Percentages</h2>
+            <div class="pricing-grid">
+                <div class="pricing-group">
+                    <h3>Component Markup</h3>
+                    <div class="price-item">
+                        <span class="price-label">Inverter Markup (%)</span>
+                        <input type="number" class="price-input" id="markup-inverter" value="20" step="0.1">
+                    </div>
+                    <div class="price-item">
+                        <span class="price-label">Battery Markup (%)</span>
+                        <input type="number" class="price-input" id="markup-battery" value="15" step="0.1">
+                    </div>
+                    <div class="price-item">
+                        <span class="price-label">Panel Markup (%)</span>
+                        <input type="number" class="price-input" id="markup-panels" value="10" step="0.1">
+                    </div>
+                    <div class="price-item">
+                        <span class="price-label">Installation Markup (%)</span>
+                        <input type="number" class="price-input" id="markup-installation" value="25" step="0.1">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="updatePricing()">
+                <i class="fas fa-save"></i> Update All Prices
+            </button>
+            <button class="btn btn-secondary" onclick="resetPricing()">
+                <i class="fas fa-undo"></i> Reset to Defaults
+            </button>
+            <a href="index.html" class="btn btn-secondary">
+                <i class="fas fa-eye"></i> View Website
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Load current pricing
+        function loadPricing() {
+            const savedPricing = localStorage.getItem('stp-solar-pricing');
+            if (savedPricing) {
+                const pricingData = JSON.parse(savedPricing);
+                console.log('Loading saved pricing:', pricingData);
+                
+                // Load dynamic inverter definitions
+                loadInverterDefinitions(pricingData.inverters);
+                
+                // Load dynamic installation definitions
+                loadInstallationDefinitions(pricingData.installationDefinitions);
+                
+                // Load inverters (traditional Sunsynk systems) - fallback
+                loadInverters(pricingData.inverters);
+                
+                // Load Tesla units
+                loadTeslaUnits(pricingData.inverters);
+                
+                // Load batteries
+                loadBatteries(pricingData.batteries);
+                
+                // Load panels
+                loadPanels(pricingData.panels);
+                
+                // Load installation
+                loadInstallation(pricingData.installation);
+                
+                // Load panel installation cost per panel
+                if (pricingData.installation && pricingData.installation['panel-installation-per-panel']) {
+                    document.getElementById('panel-installation-per-panel').value = pricingData.installation['panel-installation-per-panel'] || 850;
+                }
+                if (pricingData.installation && pricingData.installation['concrete-roof-multiplier']) {
+                    document.getElementById('concrete-roof-multiplier').value = pricingData.installation['concrete-roof-multiplier'] || 1.5;
+                }
+                
+                // Load markup
+                if (pricingData.markup) {
+                    document.getElementById('markup-inverter').value = Math.round((pricingData.markup.inverter - 1) * 100);
+                    document.getElementById('markup-battery').value = Math.round((pricingData.markup.battery - 1) * 100);
+                    document.getElementById('markup-panels').value = Math.round((pricingData.markup.panels - 1) * 100);
+                    document.getElementById('markup-installation').value = Math.round((pricingData.markup.installation - 1) * 100);
+                }
+                
+                // Load quantity limits
+                if (pricingData.limits) {
+                    document.getElementById('min-batteries-single').value = pricingData.limits['single-batteries-min'] || 1;
+                    document.getElementById('max-batteries-single').value = pricingData.limits['single-batteries-max'] || 10;
+                    document.getElementById('min-panels-single').value = pricingData.limits['single-panels-min'] || 6;
+                    document.getElementById('max-panels-single').value = pricingData.limits['single-panels-max'] || 50;
+                    document.getElementById('min-batteries-three').value = pricingData.limits['three-batteries-min'] || 2;
+                    document.getElementById('max-batteries-three').value = pricingData.limits['three-batteries-max'] || 20;
+                    document.getElementById('min-panels-three').value = pricingData.limits['three-panels-min'] || 8;
+                    document.getElementById('max-panels-three').value = pricingData.limits['three-panels-max'] || 100;
+                    document.getElementById('min-panels-tesla').value = pricingData.limits['tesla-panels-min'] || 0;
+                    document.getElementById('max-panels-tesla').value = pricingData.limits['tesla-panels-max'] || 40;
+                    document.getElementById('max-tesla-units').value = pricingData.limits['tesla-units-max'] || 4;
+                }
+            } else {
+                console.log('No saved pricing found, using defaults');
+            }
+        }
+        
+        function loadInverterDefinitions(inverters) {
+            const container = document.getElementById('inverter-definitions');
+            
+            // Clear existing definitions
+            container.innerHTML = '';
+            
+            Object.entries(inverters).forEach(([key, inverterData]) => {
+                // Skip if it's just a price number (old format)
+                if (typeof inverterData === 'number') {
+                    return;
+                }
+                
+                // Create new inverter definition
+                const newDefinition = document.createElement('div');
+                newDefinition.className = 'inverter-definition';
+                newDefinition.innerHTML = `
+                    <div class="definition-header">
+                        <h4>Inverter Definition</h4>
+                        <button class="btn-remove" onclick="removeInverterDefinition(this)" title="Remove Inverter">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="definition-fields">
+                        <div class="field-row">
+                            <label>Name:</label>
+                            <input type="text" class="definition-input" placeholder="e.g., Sunsynk 5kW" value="${inverterData.name || ''}">
+                        </div>
+                        <div class="field-row">
+                            <label>Brand:</label>
+                            <input type="text" class="definition-input" placeholder="e.g., Sunsynk" value="${inverterData.brand || ''}">
+                        </div>
+                        <div class="field-row">
+                            <label>Key:</label>
+                            <input type="text" class="definition-input" placeholder="e.g., Sunsynk-5K" value="${key}">
+                        </div>
+                        <div class="field-row">
+                            <label>Price (R):</label>
+                            <input type="number" class="definition-input" placeholder="25000" value="${inverterData.price || ''}">
+                        </div>
+                        <div class="field-row">
+                            <label>Type:</label>
+                            <select class="definition-input">
+                                <option value="single" ${inverterData.type === 'single' ? 'selected' : ''}>Single Phase</option>
+                                <option value="three" ${inverterData.type === 'three' ? 'selected' : ''}>Three Phase</option>
+                                <option value="all-in-one" ${inverterData.type === 'all-in-one' ? 'selected' : ''}>All-in-One (Tesla style)</option>
+                            </select>
+                        </div>
+                        <div class="field-row">
+                            <label>Capacity (kW):</label>
+                            <input type="number" class="definition-input" placeholder="5" value="${inverterData.capacity || ''}" step="0.1">
+                        </div>
+                        <div class="field-row">
+                            <label>Compatible Batteries:</label>
+                            <input type="text" class="definition-input" placeholder="Sunsynk-5.12kWh,Sunsynk-10kWh" value="${(inverterData.compatibleBatteries || []).join(',')}">
+                            <small>Comma-separated battery keys</small>
+                        </div>
+                        <div class="field-row">
+                            <label>Compatible Panels:</label>
+                            <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W" value="${(inverterData.compatiblePanels || []).join(',')}">
+                            <small>Comma-separated panel keys</small>
+                        </div>
+                        <div class="field-row">
+                            <label>Base Installation Cost (R):</label>
+                            <input type="number" class="definition-input" placeholder="8500" value="${inverterData.installation?.base || ''}">
+                            <small>Base installation cost for this inverter type</small>
+                        </div>
+                        <div class="field-row">
+                            <label>Accessories Cost (R):</label>
+                            <input type="number" class="definition-input" placeholder="15000" value="${inverterData.installation?.accessories || ''}">
+                            <small>Additional accessories and components cost</small>
+                        </div>
+                        <div class="field-row">
+                            <label>Linked Installation:</label>
+                            <select class="definition-input">
+                                <option value="">Use inline installation costs above</option>
+                                <option value="standard-single" ${inverterData.linkedInstallation === 'standard-single' ? 'selected' : ''}>Standard Single Phase</option>
+                                <option value="standard-three" ${inverterData.linkedInstallation === 'standard-three' ? 'selected' : ''}>Standard Three Phase</option>
+                                <option value="tesla-standard" ${inverterData.linkedInstallation === 'tesla-standard' ? 'selected' : ''}>Tesla Standard</option>
+                            </select>
+                            <small>Link to a predefined installation package (optional)</small>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newDefinition);
+            });
+        }
+        
+        function loadInstallationDefinitions(installationDefinitions) {
+            const container = document.getElementById('installation-definitions');
+            
+            // Clear existing definitions
+            container.innerHTML = '';
+            
+            if (installationDefinitions) {
+                Object.entries(installationDefinitions).forEach(([key, installationData]) => {
+                    const newDefinition = document.createElement('div');
+                    newDefinition.className = 'installation-definition';
+                    newDefinition.innerHTML = `
+                        <div class="definition-header">
+                            <h4>Installation Definition</h4>
+                            <button class="btn-remove" onclick="removeInstallationDefinition(this)" title="Remove Installation">
+                                <i class="fas fa-trash"></i> ×
+                            </button>
+                        </div>
+                        <div class="definition-fields">
+                            <div class="field-row">
+                                <label>Name:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., Standard Single Phase" value="${installationData.name || ''}">
+                            </div>
+                            <div class="field-row">
+                                <label>Key:</label>
+                                <input type="text" class="definition-input" placeholder="e.g., standard-single" value="${key}">
+                            </div>
+                            <div class="field-row">
+                                <label>Base Installation Cost (R):</label>
+                                <input type="number" class="definition-input" placeholder="8500" value="${installationData.base || ''}">
+                            </div>
+                            <div class="field-row">
+                                <label>Accessories Cost (R):</label>
+                                <input type="number" class="definition-input" placeholder="15000" value="${installationData.accessories || ''}">
+                            </div>
+                            <div class="field-row">
+                                <label>Description:</label>
+                                <input type="text" class="definition-input" placeholder="Standard residential single phase installation" value="${installationData.description || ''}">
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(newDefinition);
+                });
+            }
+        }
+        
+        function loadInverters(inverters) {
+            const singleContainer = document.getElementById('single-phase-inverters');
+            const threeContainer = document.getElementById('three-phase-inverters');
+            
+            // Clear existing items
+            singleContainer.innerHTML = '';
+            threeContainer.innerHTML = '';
+            
+            Object.entries(inverters).forEach(([key, price]) => {
+                // Skip Tesla items - they will be handled by loadTeslaUnits
+                if (key.toLowerCase().includes('tesla')) {
+                    return;
+                }
+                
+                const isThreePhase = key.includes('3P');
+                const container = isThreePhase ? threeContainer : singleContainer;
+                
+                const item = document.createElement('div');
+                item.className = 'price-item';
+                item.innerHTML = `
+                    <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                    <input type="text" class="item-key" placeholder="Key" value="${key}">
+                    <input type="number" class="price-input" placeholder="Price" value="${price}">
+                    <button class="btn-remove" onclick="removeInverterItem(this)" title="Remove Item">
+                        <i class="fas fa-trash"></i> ×
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        function loadTeslaUnits(inverters) {
+            const container = document.getElementById('tesla-units');
+            container.innerHTML = '';
+            
+            Object.entries(inverters).forEach(([key, price]) => {
+                // Only load Tesla items
+                if (key.toLowerCase().includes('tesla')) {
+                    const item = document.createElement('div');
+                    item.className = 'price-item';
+                    item.innerHTML = `
+                        <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                        <input type="text" class="item-key" placeholder="Key" value="${key}">
+                        <input type="number" class="price-input" placeholder="Price" value="${price}">
+                        <button class="btn-remove" onclick="removeTeslaItem(this)" title="Remove Item">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    `;
+                    container.appendChild(item);
+                }
+            });
+        }
+        
+        function loadBatteries(batteries) {
+            const container = document.getElementById('battery-items');
+            container.innerHTML = '';
+            
+            Object.entries(batteries).forEach(([key, price]) => {
+                const item = document.createElement('div');
+                item.className = 'price-item';
+                item.innerHTML = `
+                    <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                    <input type="text" class="item-key" placeholder="Key" value="${key}">
+                    <input type="number" class="price-input" placeholder="Price" value="${price}">
+                    <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
+                        <i class="fas fa-trash"></i> × ×
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        function loadPanels(panels) {
+            const container = document.getElementById('panel-items');
+            container.innerHTML = '';
+            
+            Object.entries(panels).forEach(([key, price]) => {
+                const item = document.createElement('div');
+                item.className = 'price-item';
+                item.innerHTML = `
+                    <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                    <input type="text" class="item-key" placeholder="Key" value="${key}">
+                    <input type="number" class="price-input" placeholder="Price" value="${price}">
+                    <button class="btn-remove" onclick="removePanelItem(this)">
+                        <i class="fas fa-trash"></i> ×
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        function loadInstallation(installation) {
+            const singleContainer = document.getElementById('single-phase-installation');
+            const threeContainer = document.getElementById('three-phase-installation');
+            const teslaContainer = document.getElementById('tesla-installation');
+            
+            // Clear existing items
+            singleContainer.innerHTML = '';
+            threeContainer.innerHTML = '';
+            teslaContainer.innerHTML = '';
+            
+            Object.entries(installation).forEach(([key, price]) => {
+                let container;
+                if (key.startsWith('single-')) {
+                    container = singleContainer;
+                } else if (key.startsWith('three-')) {
+                    container = threeContainer;
+                } else if (key.startsWith('tesla-')) {
+                    container = teslaContainer;
+                } else {
+                    // Default to single phase for backward compatibility
+                    container = singleContainer;
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'price-item';
+                item.innerHTML = `
+                    <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                    <input type="text" class="item-key" placeholder="Key" value="${key}">
+                    <input type="number" class="price-input" placeholder="Price" value="${price}">
+                    <button class="btn-remove" onclick="removeInstallationItem(this)" title="Remove Item">
+                        <i class="fas fa-trash"></i> ×
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // Update pricing
+        function updatePricing() {
+            const pricingData = {
+                inverters: {},
+                batteries: {},
+                panels: {},
+                installation: {},
+                markup: {
+                    'inverter': 1 + (parseFloat(document.getElementById('markup-inverter').value) / 100),
+                    'battery': 1 + (parseFloat(document.getElementById('markup-battery').value) / 100),
+                    'panels': 1 + (parseFloat(document.getElementById('markup-panels').value) / 100),
+                    'installation': 1 + (parseFloat(document.getElementById('markup-installation').value) / 100)
+                }
+            };
+            
+            // Collect dynamic inverter definitions
+            document.querySelectorAll('#inverter-definitions .inverter-definition').forEach(definition => {
+                const fields = definition.querySelectorAll('.definition-input');
+                const name = fields[0].value;
+                const brand = fields[1].value;
+                const key = fields[2].value;
+                const price = parseInt(fields[3].value) || 0;
+                const type = fields[4].value;
+                const capacity = parseFloat(fields[5].value) || 0;
+                const compatibleBatteries = fields[6].value;
+                const compatiblePanels = fields[7].value;
+                const baseInstallation = parseInt(fields[8].value) || 0;
+                const accessoriesCost = parseInt(fields[9].value) || 0;
+                const linkedInstallation = fields[10].value;
+                
+                if (key && price > 0) {
+                    pricingData.inverters[key] = {
+                        name: name,
+                        brand: brand,
+                        price: price,
+                        type: type,
+                        capacity: capacity,
+                        compatibleBatteries: compatibleBatteries.split(',').map(b => b.trim()).filter(b => b),
+                        compatiblePanels: compatiblePanels.split(',').map(p => p.trim()).filter(p => p),
+                        installation: {
+                            base: baseInstallation,
+                            accessories: accessoriesCost
+                        },
+                        linkedInstallation: linkedInstallation
+                    };
+                }
+            });
+            
+            // Collect dynamic installation definitions
+            pricingData.installationDefinitions = {};
+            document.querySelectorAll('#installation-definitions .installation-definition').forEach(definition => {
+                const fields = definition.querySelectorAll('.definition-input');
+                const name = fields[0].value;
+                const key = fields[1].value;
+                const baseCost = parseInt(fields[2].value) || 0;
+                const accessoriesCost = parseInt(fields[3].value) || 0;
+                const description = fields[4].value;
+                
+                if (key && (baseCost > 0 || accessoriesCost > 0)) {
+                    pricingData.installationDefinitions[key] = {
+                        name: name,
+                        base: baseCost,
+                        accessories: accessoriesCost,
+                        description: description
+                    };
+                }
+            });
+            
+            // Collect battery data
+            document.querySelectorAll('#battery-items .price-item').forEach(item => {
+                const key = item.querySelector('.item-key').value;
+                const price = parseInt(item.querySelector('.price-input').value) || 0;
+                if (key && price > 0) {
+                    pricingData.batteries[key] = price;
+                }
+            });
+            
+            // Collect panel data
+            document.querySelectorAll('#panel-items .price-item').forEach(item => {
+                const key = item.querySelector('.item-key').value;
+                const price = parseInt(item.querySelector('.price-input').value) || 0;
+                if (key && price > 0) {
+                    pricingData.panels[key] = price;
+                }
+            });
+            
+            // Collect installation data from all three sections (alternative method)
+            document.querySelectorAll('#single-phase-installation .price-item, #three-phase-installation .price-item, #tesla-installation .price-item').forEach(item => {
+                const key = item.querySelector('.item-key').value;
+                const price = parseInt(item.querySelector('.price-input').value) || 0;
+                if (key && price > 0) {
+                    pricingData.installation[key] = price;
+                }
+            });
+            
+            // Collect panel installation cost per panel
+            const panelInstallationPerPanel = parseInt(document.getElementById('panel-installation-per-panel').value) || 850;
+            const concreteRoofMultiplier = parseFloat(document.getElementById('concrete-roof-multiplier').value) || 1.5;
+            
+            pricingData.installation['panel-installation-per-panel'] = panelInstallationPerPanel;
+            pricingData.installation['concrete-roof-multiplier'] = concreteRoofMultiplier;
+            
+            // Collect quantity limits
+            pricingData.limits = {
+                'single-batteries-min': parseInt(document.getElementById('min-batteries-single').value) || 1,
+                'single-batteries-max': parseInt(document.getElementById('max-batteries-single').value) || 10,
+                'single-panels-min': parseInt(document.getElementById('min-panels-single').value) || 6,
+                'single-panels-max': parseInt(document.getElementById('max-panels-single').value) || 50,
+                'three-batteries-min': parseInt(document.getElementById('min-batteries-three').value) || 2,
+                'three-batteries-max': parseInt(document.getElementById('max-batteries-three').value) || 20,
+                'three-panels-min': parseInt(document.getElementById('min-panels-three').value) || 8,
+                'three-panels-max': parseInt(document.getElementById('max-panels-three').value) || 100,
+                'tesla-panels-min': parseInt(document.getElementById('min-panels-tesla').value) || 0,
+                'tesla-panels-max': parseInt(document.getElementById('max-panels-tesla').value) || 40,
+                'tesla-units-max': parseInt(document.getElementById('max-tesla-units').value) || 4
+            };
+            
+            // Save to localStorage for immediate effect
+            localStorage.setItem('stp-solar-pricing', JSON.stringify(pricingData));
+            
+            // Trigger a custom event to notify other pages
+            window.dispatchEvent(new CustomEvent('pricingUpdated', { detail: pricingData }));
+            
+            // Also save to pricing-config.js file via a simple file update
+            updatePricingConfigFile(pricingData);
+            
+            showMessage('Pricing updated successfully! Changes will be reflected on the website immediately.', 'success');
+            
+            console.log('Updated pricing:', pricingData);
+        }
+        
+        // Function to update the pricing-config.js file
+        function updatePricingConfigFile(pricingData) {
+            // Generate dynamic pricing config content
+            const generateInvertersConfig = () => {
+                return Object.entries(pricingData.inverters)
+                    .map(([key, inverter]) => {
+                        if (typeof inverter === 'object' && inverter !== null) {
+                            return `        '${key}': {
+            name: '${inverter.name}',
+            brand: '${inverter.brand || ''}',
+            price: ${inverter.price},
+            type: '${inverter.type}',
+            capacity: ${inverter.capacity},
+            compatibleBatteries: [${inverter.compatibleBatteries ? inverter.compatibleBatteries.map(b => `'${b}'`).join(', ') : ''}],
+            compatiblePanels: [${inverter.compatiblePanels ? inverter.compatiblePanels.map(p => `'${p}'`).join(', ') : ''}],
+            installation: {
+                base: ${inverter.installation ? inverter.installation.base : 0},
+                accessories: ${inverter.installation ? inverter.installation.accessories : 0}
+            }
+        }`;
+                        } else {
+                            return `        '${key}': ${inverter}`;
+                        }
+                    })
+                    .join(',\n');
+            };
+            
+            const generateBatteriesConfig = () => {
+                return Object.entries(pricingData.batteries)
+                    .map(([key, price]) => `        '${key}': ${price}`)
+                    .join(',\n');
+            };
+            
+            const generatePanelsConfig = () => {
+                return Object.entries(pricingData.panels)
+                    .map(([key, price]) => `        '${key}': ${price}`)
+                    .join(',\n');
+            };
+            
+            const generateInstallationConfig = () => {
+                return Object.entries(pricingData.installation)
+                    .map(([key, value]) => `        '${key}': ${value}`)
+                    .join(',\n');
+            };
+            
+            const generateLimitsConfig = () => {
+                return Object.entries(pricingData.limits || {})
+                    .map(([key, value]) => `        '${key}': ${value}`)
+                    .join(',\n');
+            };
+            
+            const configContent = `// STP Solar Pricing Configuration
+// Update these prices to keep them current with supplier pricing
+
+const pricingConfig = {
+    // Inverter Prices (R)
+    inverters: {
+${generateInvertersConfig()}
+    },
+    
+    // Battery Prices (R)
+    batteries: {
+${generateBatteriesConfig()}
+    },
+    
+    // Solar Panel Prices (R)
+    panels: {
+${generatePanelsConfig()}
+    },
+    
+    // Installation & Accessories (R)
+    installation: {
+${generateInstallationConfig()}
+    },
+    
+    // System Quantity Limits
+    limits: {
+${generateLimitsConfig()}
+    },
+    
+    // System Markup (percentage)
+    markup: {
+        'inverter': ${pricingData.markup['inverter']}, // ${Math.round((pricingData.markup['inverter'] - 1) * 100)}% markup
+        'battery': ${pricingData.markup['battery']}, // ${Math.round((pricingData.markup['battery'] - 1) * 100)}% markup
+        'panels': ${pricingData.markup['panels']}, // ${Math.round((pricingData.markup['panels'] - 1) * 100)}% markup
+        'installation': ${pricingData.markup['installation']} // ${Math.round((pricingData.markup['installation'] - 1) * 100)}% markup
+    }
+};
+
+// Function to calculate system price
+function calculateSystemPrice(systemConfig) {
+    let totalPrice = 0;
+    
+    // Inverter price with markup
+    const inverterKey = \`\${systemConfig.inverter.brand}-\${systemConfig.inverter.capacity}\`;
+    const inverterBasePrice = pricingConfig.inverters[inverterKey] || 0;
+    const inverterPrice = inverterBasePrice * pricingConfig.markup.inverter;
+    totalPrice += inverterPrice;
+    
+    // Battery prices with markup
+    systemConfig.batteries.forEach(battery => {
+        const batteryKey = \`\${battery.brand}-\${battery.capacity}\`;
+        const batteryBasePrice = pricingConfig.batteries[batteryKey] || 0;
+        const batteryPrice = (batteryBasePrice * battery.quantity) * pricingConfig.markup.battery;
+        totalPrice += batteryPrice;
+    });
+    
+    // Panel prices with markup
+    const panelKey = \`\${systemConfig.panels.brand}-\${systemConfig.panels.wattage}W\`;
+    const panelBasePrice = pricingConfig.panels[panelKey] || 0;
+    const panelPrice = (panelBasePrice * systemConfig.panels.quantity) * pricingConfig.markup.panels;
+    totalPrice += panelPrice;
+    
+    // Installation cost - this function is deprecated, use the new system builder instead
+    // The new system builder handles installation costs per system type
+    const installationPrice = 0; // Installation is now calculated per system type
+    totalPrice += installationPrice;
+    
+    return Math.round(totalPrice);
+}
+
+// Function to update pricing in the main system configs
+function updateSystemPricing() {
+    // This function would be called to update all system prices
+    // when the pricing config is updated
+    console.log('Pricing updated - refresh the page to see new prices');
+}
+
+// Export for use in main script
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { pricingConfig, calculateSystemPrice, updateSystemPricing };
+}`;
+
+            // Create a download link for the updated file
+            const blob = new Blob([configContent], { type: 'application/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'pricing-config.js';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Show instruction to user
+            setTimeout(() => {
+                showMessage('Download the updated pricing-config.js file and replace the existing one in your project folder. Then refresh your website to see the changes.', 'success');
+            }, 1000);
+        }
+        
+        // Reset to default pricing
+        function resetPricing() {
+            if (confirm('Are you sure you want to reset all pricing to default values? This will remove all custom items you\'ve added.')) {
+                // Reset single phase inverters
+                const singleInverters = document.getElementById('single-phase-inverters');
+                singleInverters.innerHTML = `
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 5kW">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-5K)" value="Sunsynk-5K">
+                        <input type="number" class="price-input" placeholder="Price" value="25000">
+                        <button class="btn-remove" onclick="removeInverterItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 8kW">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-8K)" value="Sunsynk-8K">
+                        <input type="number" class="price-input" placeholder="Price" value="35000">
+                        <button class="btn-remove" onclick="removeInverterItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 16kW">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-16K)" value="Sunsynk-16K">
+                        <input type="number" class="price-input" placeholder="Price" value="65000">
+                        <button class="btn-remove" onclick="removeInverterItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                `;
+                
+                // Reset three phase inverters
+                const threeInverters = document.getElementById('three-phase-inverters');
+                threeInverters.innerHTML = `
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 10kW 3P">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-10K-3P)" value="Sunsynk-10K-3P">
+                        <input type="number" class="price-input" placeholder="Price" value="40000">
+                        <button class="btn-remove" onclick="removeInverterItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 20kW 3P">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-20K-3P)" value="Sunsynk-20K-3P">
+                        <input type="number" class="price-input" placeholder="Price" value="75000">
+                        <button class="btn-remove" onclick="removeInverterItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 30kW 3P">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-30K-3P)" value="Sunsynk-30K-3P">
+                        <input type="number" class="price-input" placeholder="Price" value="110000">
+                        <button class="btn-remove" onclick="removeInverterItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                `;
+                
+                // Reset batteries
+                const batteries = document.getElementById('battery-items');
+                batteries.innerHTML = `
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 5.12kWh">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-5.12kWh)" value="Sunsynk-5.12kWh">
+                        <input type="number" class="price-input" placeholder="Price" value="45000">
+                        <button class="btn-remove" onclick="removeBatteryItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 10kWh">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-10kWh)" value="Sunsynk-10kWh">
+                        <input type="number" class="price-input" placeholder="Price" value="90000">
+                        <button class="btn-remove" onclick="removeBatteryItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                `;
+                
+                // Reset panels
+                const panels = document.getElementById('panel-items');
+                panels.innerHTML = `
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="JA Solar 565W">
+                        <input type="text" class="item-key" placeholder="Key (e.g., JA-Solar-565W)" value="JA-Solar-565W">
+                        <input type="number" class="price-input" placeholder="Price" value="2500">
+                        <button class="btn-remove" onclick="removePanelItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Canadian Solar 565W">
+                        <input type="text" class="item-key" placeholder="Key (e.g., Canadian-Solar-565W)" value="Canadian-Solar-565W">
+                        <input type="number" class="price-input" placeholder="Price" value="2600">
+                        <button class="btn-remove" onclick="removePanelItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                `;
+                
+                // Reset installation
+                const installation = document.getElementById('installation-items');
+                installation.innerHTML = `
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Base Installation">
+                        <input type="text" class="item-key" placeholder="Key (e.g., base-installation)" value="base-installation">
+                        <input type="number" class="price-input" placeholder="Price" value="50000">
+                        <button class="btn-remove" onclick="removeInstallationItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Per kW Installation">
+                        <input type="text" class="item-key" placeholder="Key (e.g., per-kw-installation)" value="per-kw-installation">
+                        <input type="number" class="price-input" placeholder="Price" value="8000">
+                        <button class="btn-remove" onclick="removeInstallationItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                    <div class="price-item">
+                        <input type="text" class="item-name" placeholder="Item Name" value="Accessories">
+                        <input type="text" class="item-key" placeholder="Key (e.g., accessories)" value="accessories">
+                        <input type="number" class="price-input" placeholder="Price" value="15000">
+                        <button class="btn-remove" onclick="removeInstallationItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    </div>
+                `;
+                
+                // Reset markup values
+                document.getElementById('markup-inverter').value = 20;
+                document.getElementById('markup-battery').value = 15;
+                document.getElementById('markup-panels').value = 10;
+                document.getElementById('markup-installation').value = 25;
+                
+                showMessage('Pricing reset to default values.', 'success');
+            }
+        }
+        
+        // Show status message
+        function showMessage(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Add/Remove Item Functions
+        function addInverterItem(type) {
+            const container = document.getElementById(type === 'single' ? 'single-phase-inverters' : 'three-phase-inverters');
+            const newItem = document.createElement('div');
+            newItem.className = 'price-item';
+            newItem.innerHTML = `
+                <input type="text" class="item-name" placeholder="Item Name" value="">
+                <input type="text" class="item-key" placeholder="Key (e.g., Brand-Model)" value="">
+                <input type="number" class="price-input" placeholder="Price" value="0">
+                <button class="btn-remove" onclick="removeInverterItem(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeInverterItem(button) {
+            if (confirm('Are you sure you want to remove this inverter item?')) {
+                button.parentElement.remove();
+            }
+        }
+        
+        // Dynamic Inverter Definition Functions
+        function addInverterDefinition() {
+            const container = document.getElementById('inverter-definitions');
+            const newDefinition = document.createElement('div');
+            newDefinition.className = 'inverter-definition';
+            newDefinition.innerHTML = `
+                <div class="definition-header">
+                    <h4>Inverter Definition</h4>
+                    <button class="btn-remove" onclick="removeInverterDefinition(this)" title="Remove Inverter">
+                        <i class="fas fa-trash"></i> ×
+                    </button>
+                </div>
+                <div class="definition-fields">
+                    <div class="field-row">
+                        <label>Name:</label>
+                        <input type="text" class="definition-input" placeholder="e.g., Tesla Powerwall 4" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Brand:</label>
+                        <input type="text" class="definition-input" placeholder="e.g., Tesla" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Key:</label>
+                        <input type="text" class="definition-input" placeholder="e.g., Tesla-PW4" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Price (R):</label>
+                        <input type="number" class="definition-input" placeholder="200000" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Type:</label>
+                        <select class="definition-input">
+                            <option value="single">Single Phase</option>
+                            <option value="three">Three Phase</option>
+                            <option value="all-in-one">All-in-One (Tesla style)</option>
+                        </select>
+                    </div>
+                    <div class="field-row">
+                        <label>Capacity (kW):</label>
+                        <input type="number" class="definition-input" placeholder="15" value="" step="0.1">
+                    </div>
+                    <div class="field-row">
+                        <label>Compatible Batteries:</label>
+                        <input type="text" class="definition-input" placeholder="Tesla-PW4-Battery" value="">
+                        <small>Comma-separated battery keys (leave empty for all-in-one systems)</small>
+                    </div>
+                    <div class="field-row">
+                        <label>Compatible Panels:</label>
+                        <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W" value="">
+                        <small>Comma-separated panel keys</small>
+                    </div>
+                    <div class="field-row">
+                        <label>Base Installation Cost (R):</label>
+                        <input type="number" class="definition-input" placeholder="8500" value="">
+                        <small>Base installation cost for this inverter type</small>
+                    </div>
+                    <div class="field-row">
+                        <label>Accessories Cost (R):</label>
+                        <input type="number" class="definition-input" placeholder="15000" value="">
+                        <small>Additional accessories and components cost</small>
+                    </div>
+                    <div class="field-row">
+                        <label>Linked Installation:</label>
+                        <select class="definition-input">
+                            <option value="">Use inline installation costs above</option>
+                            <option value="standard-single">Standard Single Phase</option>
+                            <option value="standard-three">Standard Three Phase</option>
+                            <option value="tesla-standard">Tesla Standard</option>
+                        </select>
+                        <small>Link to a predefined installation package (optional)</small>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newDefinition);
+        }
+        
+        function removeInverterDefinition(button) {
+            if (confirm('Are you sure you want to remove this inverter definition?')) {
+                button.closest('.inverter-definition').remove();
+            }
+        }
+        
+        // Dynamic Installation Definition Functions
+        function addInstallationDefinition() {
+            const container = document.getElementById('installation-definitions');
+            const newDefinition = document.createElement('div');
+            newDefinition.className = 'installation-definition';
+            newDefinition.innerHTML = `
+                <div class="definition-header">
+                    <h4>Installation Definition</h4>
+                    <button class="btn-remove" onclick="removeInstallationDefinition(this)" title="Remove Installation">
+                        <i class="fas fa-trash"></i> ×
+                    </button>
+                </div>
+                <div class="definition-fields">
+                    <div class="field-row">
+                        <label>Name:</label>
+                        <input type="text" class="definition-input" placeholder="e.g., Premium Three Phase" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Key:</label>
+                        <input type="text" class="definition-input" placeholder="e.g., premium-three" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Base Installation Cost (R):</label>
+                        <input type="number" class="definition-input" placeholder="12000" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Accessories Cost (R):</label>
+                        <input type="number" class="definition-input" placeholder="20000" value="">
+                    </div>
+                    <div class="field-row">
+                        <label>Description:</label>
+                        <input type="text" class="definition-input" placeholder="Premium three phase installation with enhanced components" value="">
+                    </div>
+                </div>
+            `;
+            container.appendChild(newDefinition);
+        }
+        
+        function removeInstallationDefinition(button) {
+            if (confirm('Are you sure you want to remove this installation definition?')) {
+                button.closest('.installation-definition').remove();
+            }
+        }
+        
+        // Tesla Management Functions
+        function addTeslaItem() {
+            const container = document.getElementById('tesla-units');
+            const newItem = document.createElement('div');
+            newItem.className = 'price-item';
+            newItem.innerHTML = `
+                <input type="text" class="item-name" placeholder="Item Name" value="Tesla Powerwall 3">
+                <input type="text" class="item-key" placeholder="Key (e.g., Tesla-PW31)" value="Tesla-PW31">
+                <input type="number" class="price-input" placeholder="Price" value="180000">
+                <button class="btn-remove" onclick="removeTeslaItem(this)" title="Remove Item">
+                    <i class="fas fa-trash"></i> ×
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeTeslaItem(button) {
+            if (confirm('Are you sure you want to remove this Tesla unit?')) {
+                button.parentElement.remove();
+            }
+        }
+        
+        function addBatteryItem() {
+            const container = document.getElementById('battery-items');
+            const newItem = document.createElement('div');
+            newItem.className = 'price-item';
+            newItem.innerHTML = `
+                <input type="text" class="item-name" placeholder="Item Name" value="">
+                <input type="text" class="item-key" placeholder="Key (e.g., Brand-Capacity)" value="">
+                <input type="number" class="price-input" placeholder="Price" value="0">
+                <button class="btn-remove" onclick="removeBatteryItem(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeBatteryItem(button) {
+            if (confirm('Are you sure you want to remove this battery item?')) {
+                button.parentElement.remove();
+            }
+        }
+        
+        function addPanelItem() {
+            const container = document.getElementById('panel-items');
+            const newItem = document.createElement('div');
+            newItem.className = 'price-item';
+            newItem.innerHTML = `
+                <input type="text" class="item-name" placeholder="Item Name" value="">
+                <input type="text" class="item-key" placeholder="Key (e.g., Brand-Model)" value="">
+                <input type="number" class="price-input" placeholder="Price" value="0">
+                <button class="btn-remove" onclick="removePanelItem(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removePanelItem(button) {
+            if (confirm('Are you sure you want to remove this panel item?')) {
+                button.parentElement.remove();
+            }
+        }
+        
+        // Installation Management Functions
+        function addInstallationItem(type) {
+            let containerId;
+            let defaultKey;
+            
+            switch(type) {
+                case 'single':
+                    containerId = 'single-phase-installation';
+                    defaultKey = 'single-';
+                    break;
+                case 'three':
+                    containerId = 'three-phase-installation';
+                    defaultKey = 'three-';
+                    break;
+                case 'tesla':
+                    containerId = 'tesla-installation';
+                    defaultKey = 'tesla-';
+                    break;
+                default:
+                    return;
+            }
+            
+            const container = document.getElementById(containerId);
+            const newItem = document.createElement('div');
+            newItem.className = 'price-item';
+            newItem.innerHTML = `
+                <input type="text" class="item-name" placeholder="Item Name" value="">
+                <input type="text" class="item-key" placeholder="Key (e.g., ${defaultKey}item-name)" value="">
+                <input type="number" class="price-input" placeholder="Price" value="0">
+                <button class="btn-remove" onclick="removeInstallationItem(this)" title="Remove Item">
+                    <i class="fas fa-trash"></i> ×
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeInstallationItem(button) {
+            if (confirm('Are you sure you want to remove this installation item?')) {
+                button.parentElement.remove();
+            }
+        }
+        
+        // Load pricing on page load
+        document.addEventListener('DOMContentLoaded', loadPricing);
+    </script>
+</body>
+</html>
