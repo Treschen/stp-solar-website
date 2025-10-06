@@ -6,6 +6,11 @@
     <title>STP Solar - Pricing Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * {
             margin: 0;
@@ -24,6 +29,86 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+        }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .login-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-form h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #f39c12;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #fdf2f2;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .admin-content {
+            display: none;
         }
         
         .header {
@@ -331,7 +416,32 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-form">
+            <h1><i class="fas fa-lock"></i> Admin Access</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div class="error-message" id="errorMessage">
+                    Invalid username or password
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Content -->
+    <div class="admin-content" id="adminContent">
+        <div class="container">
         <div class="header">
             <h1><i class="fas fa-cogs"></i> STP Solar Pricing Admin</h1>
             <p>Update system pricing to keep website current with supplier costs</p>
@@ -373,10 +483,6 @@
                             <div class="field-row">
                                 <label>Name:</label>
                                 <input type="text" class="definition-input" placeholder="e.g., Sunsynk 5kW" value="Sunsynk 5kW">
-                            </div>
-                            <div class="field-row">
-                                <label>Brand:</label>
-                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk" value="Sunsynk">
                             </div>
                             <div class="field-row">
                                 <label>Key:</label>
@@ -435,7 +541,7 @@
         </div>
         
         <div class="admin-section">
-            <h2><i class="fas fa-battery-full"></i> Battery Prices</h2>
+            <h2><i class="fas fa-battery-full"></i> Battery Prices (Sunsynk)</h2>
             <div class="pricing-grid">
                 <div class="pricing-group">
                     <div class="group-header">
@@ -447,7 +553,7 @@
                     <div id="battery-items">
                     <div class="price-item">
                             <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 5.12kWh">
-                            <input type="text" class="item-key" placeholder="Key (e.g., Brand-5.12kWh)" value="Sunsynk-5.12kWh">
+                            <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-5.12kWh)" value="Sunsynk-5.12kWh">
                             <input type="number" class="price-input" placeholder="Price" value="45000">
                             <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
                                 <i class="fas fa-trash"></i> × ×
@@ -455,7 +561,7 @@
                     </div>
                     <div class="price-item">
                             <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 10kWh">
-                            <input type="text" class="item-key" placeholder="Key (e.g., Brand-10kWh)" value="Sunsynk-10kWh">
+                            <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-10kWh)" value="Sunsynk-10kWh">
                             <input type="number" class="price-input" placeholder="Price" value="90000">
                             <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
                                 <i class="fas fa-trash"></i> × ×
@@ -539,29 +645,6 @@
                                 <input type="text" class="definition-input" placeholder="Standard residential single phase installation" value="Standard residential single phase installation">
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="admin-section">
-            <h2><i class="fas fa-solar-panel"></i> Panel Installation Costs</h2>
-            <p class="section-description">Set the installation cost per solar panel. This cost scales with the number of panels - more panels = more work for your technical team.</p>
-            
-            <div class="pricing-group">
-                <div class="group-header">
-                    <h3>Panel Installation Pricing</h3>
-                </div>
-                <div class="price-items">
-                    <div class="price-item">
-                        <span class="price-label">Installation Cost Per Panel (R)</span>
-                        <input type="number" class="price-input" id="panel-installation-per-panel" value="850" step="50">
-                        <small>Cost per panel for installation (e.g., 6 panels = R850 × 6 = R5,100)</small>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-label">Concrete Roof Multiplier</span>
-                        <input type="number" class="price-input" id="concrete-roof-multiplier" value="1.5" step="0.1" min="1.0" max="3.0">
-                        <small>Multiplier for concrete roof installation (1.5 = 50% more expensive)</small>
                     </div>
                 </div>
             </div>
@@ -694,14 +777,6 @@
                 // Load installation
                 loadInstallation(pricingData.installation);
                 
-                // Load panel installation cost per panel
-                if (pricingData.installation && pricingData.installation['panel-installation-per-panel']) {
-                    document.getElementById('panel-installation-per-panel').value = pricingData.installation['panel-installation-per-panel'] || 850;
-                }
-                if (pricingData.installation && pricingData.installation['concrete-roof-multiplier']) {
-                    document.getElementById('concrete-roof-multiplier').value = pricingData.installation['concrete-roof-multiplier'] || 1.5;
-                }
-                
                 // Load markup
                 if (pricingData.markup) {
                     document.getElementById('markup-inverter').value = Math.round((pricingData.markup.inverter - 1) * 100);
@@ -755,10 +830,6 @@
                         <div class="field-row">
                             <label>Name:</label>
                             <input type="text" class="definition-input" placeholder="e.g., Sunsynk 5kW" value="${inverterData.name || ''}">
-                        </div>
-                        <div class="field-row">
-                            <label>Brand:</label>
-                            <input type="text" class="definition-input" placeholder="e.g., Sunsynk" value="${inverterData.brand || ''}">
                         </div>
                         <div class="field-row">
                             <label>Key:</label>
@@ -1008,21 +1079,19 @@
             document.querySelectorAll('#inverter-definitions .inverter-definition').forEach(definition => {
                 const fields = definition.querySelectorAll('.definition-input');
                 const name = fields[0].value;
-                const brand = fields[1].value;
-                const key = fields[2].value;
-                const price = parseInt(fields[3].value) || 0;
-                const type = fields[4].value;
-                const capacity = parseFloat(fields[5].value) || 0;
-                const compatibleBatteries = fields[6].value;
-                const compatiblePanels = fields[7].value;
-                const baseInstallation = parseInt(fields[8].value) || 0;
-                const accessoriesCost = parseInt(fields[9].value) || 0;
-                const linkedInstallation = fields[10].value;
+                const key = fields[1].value;
+                const price = parseInt(fields[2].value) || 0;
+                const type = fields[3].value;
+                const capacity = parseFloat(fields[4].value) || 0;
+                const compatibleBatteries = fields[5].value;
+                const compatiblePanels = fields[6].value;
+                const baseInstallation = parseInt(fields[7].value) || 0;
+                const accessoriesCost = parseInt(fields[8].value) || 0;
+                const linkedInstallation = fields[9].value;
                 
                 if (key && price > 0) {
                     pricingData.inverters[key] = {
                         name: name,
-                        brand: brand,
                         price: price,
                         type: type,
                         capacity: capacity,
@@ -1084,13 +1153,6 @@
                 }
             });
             
-            // Collect panel installation cost per panel
-            const panelInstallationPerPanel = parseInt(document.getElementById('panel-installation-per-panel').value) || 850;
-            const concreteRoofMultiplier = parseFloat(document.getElementById('concrete-roof-multiplier').value) || 1.5;
-            
-            pricingData.installation['panel-installation-per-panel'] = panelInstallationPerPanel;
-            pricingData.installation['concrete-roof-multiplier'] = concreteRoofMultiplier;
-            
             // Collect quantity limits
             pricingData.limits = {
                 'single-batteries-min': parseInt(document.getElementById('min-batteries-single').value) || 1,
@@ -1125,25 +1187,7 @@
             // Generate dynamic pricing config content
             const generateInvertersConfig = () => {
                 return Object.entries(pricingData.inverters)
-                    .map(([key, inverter]) => {
-                        if (typeof inverter === 'object' && inverter !== null) {
-                            return `        '${key}': {
-            name: '${inverter.name}',
-            brand: '${inverter.brand || ''}',
-            price: ${inverter.price},
-            type: '${inverter.type}',
-            capacity: ${inverter.capacity},
-            compatibleBatteries: [${inverter.compatibleBatteries ? inverter.compatibleBatteries.map(b => `'${b}'`).join(', ') : ''}],
-            compatiblePanels: [${inverter.compatiblePanels ? inverter.compatiblePanels.map(p => `'${p}'`).join(', ') : ''}],
-            installation: {
-                base: ${inverter.installation ? inverter.installation.base : 0},
-                accessories: ${inverter.installation ? inverter.installation.accessories : 0}
-            }
-        }`;
-                        } else {
-                            return `        '${key}': ${inverter}`;
-                        }
-                    })
+                    .map(([key, price]) => `        '${key}': ${price}`)
                     .join(',\n');
             };
             
@@ -1161,7 +1205,7 @@
             
             const generateInstallationConfig = () => {
                 return Object.entries(pricingData.installation)
-                    .map(([key, value]) => `        '${key}': ${value}`)
+                    .map(([key, price]) => `        '${key}': ${price}`)
                     .join(',\n');
             };
             
@@ -1176,22 +1220,22 @@
 
 const pricingConfig = {
     // Inverter Prices (R)
-    inverters: {
+                inverters: {
 ${generateInvertersConfig()}
     },
     
     // Battery Prices (R)
-    batteries: {
+                batteries: {
 ${generateBatteriesConfig()}
-    },
+                },
     
     // Solar Panel Prices (R)
-    panels: {
+                panels: {
 ${generatePanelsConfig()}
-    },
+                },
     
     // Installation & Accessories (R)
-    installation: {
+                installation: {
 ${generateInstallationConfig()}
     },
     
@@ -1201,7 +1245,7 @@ ${generateLimitsConfig()}
     },
     
     // System Markup (percentage)
-    markup: {
+                markup: {
         'inverter': ${pricingData.markup['inverter']}, // ${Math.round((pricingData.markup['inverter'] - 1) * 100)}% markup
         'battery': ${pricingData.markup['battery']}, // ${Math.round((pricingData.markup['battery'] - 1) * 100)}% markup
         'panels': ${pricingData.markup['panels']}, // ${Math.round((pricingData.markup['panels'] - 1) * 100)}% markup
@@ -1465,10 +1509,6 @@ if (typeof module !== 'undefined' && module.exports) {
                         <input type="text" class="definition-input" placeholder="e.g., Tesla Powerwall 4" value="">
                     </div>
                     <div class="field-row">
-                        <label>Brand:</label>
-                        <input type="text" class="definition-input" placeholder="e.g., Tesla" value="">
-                    </div>
-                    <div class="field-row">
                         <label>Key:</label>
                         <input type="text" class="definition-input" placeholder="e.g., Tesla-PW4" value="">
                     </div>
@@ -1679,8 +1719,81 @@ if (typeof module !== 'undefined' && module.exports) {
             }
         }
         
-        // Load pricing on page load
-        document.addEventListener('DOMContentLoaded', loadPricing);
+        // Admin Authentication
+        const ADMIN_CREDENTIALS = {
+            username: 'stpadmin',
+            password: 'Solar2024!'
+        };
+        
+        // Check if user is already logged in
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            showAdminContent();
+        }
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminContent();
+            } else {
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+        
+        function showAdminContent() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+        
+        // Add logout button to header
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('.header');
+            if (header) {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                logoutBtn.style.cssText = `
+                    position: absolute;
+                    top: 1rem;
+                    right: 1rem;
+                    background: rgba(255, 255, 255, 0.2);
+                    color: white;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    padding: 0.5rem 1rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    transition: all 0.3s ease;
+                `;
+                logoutBtn.onmouseover = function() {
+                    this.style.background = 'rgba(255, 255, 255, 0.3)';
+                };
+                logoutBtn.onmouseout = function() {
+                    this.style.background = 'rgba(255, 255, 255, 0.2)';
+                };
+                logoutBtn.onclick = logout;
+                header.style.position = 'relative';
+                header.appendChild(logoutBtn);
+            }
+            
+            // Load pricing on page load (only if logged in)
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                loadPricing();
+            }
+        });
     </script>
 </body>
 </html>

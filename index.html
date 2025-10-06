@@ -12,15 +12,20 @@
     <meta property="og:description" content="Transform your energy costs with STP Solar's premium solar solutions. Expert installation and maintenance across South Africa.">
     <meta property="og:type" content="website">
     
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=1.0">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <!-- Styles with cache busting -->
+    <link rel="stylesheet" href="styles.css?v=1.0">
 </head>
 <body>
     <!-- Navigation -->
@@ -2218,6 +2223,7 @@ Please provide me with a detailed quote for this system.`;
             console.log('System Builder initialized successfully!');
         });
     </script>
-    <script src="script.js"></script>
+    <script src="script.js?v=1.0"></script>
+    <script src="cache-buster.js?v=1.0"></script>
 </body>
 </html>

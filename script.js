@@ -14,6 +14,13 @@ const customizationSection = document.getElementById('customization-section');
 // Quote Form Elements
 const quoteForm = document.getElementById('quote-form');
 
+// Cache busting for development
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Add timestamp to prevent caching during development
+    const timestamp = new Date().getTime();
+    console.log('Development mode detected - Cache busting enabled:', timestamp);
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing...');
