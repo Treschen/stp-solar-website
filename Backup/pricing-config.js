@@ -3,28 +3,64 @@
 
 const pricingConfig = {
     // Inverter Prices (R)
-                inverters: {
-        'Sunsynk-5K': [object Object],
-        'Deye-5kw-Inverter': [object Object],
-        'Luxpower-5kw-Inverter': [object Object]
+    inverters: {
+        'Sunsynk-5kw': {
+            name: 'Sunsynk 5kw',
+            brand: 'Sunsynk',
+            price: 20000,
+            type: 'single',
+            capacity: 5,
+            compatibleBatteries: ['Sunsynk-5.12kWh'],
+            compatiblePanels: ['JA-Solar-565W'],
+            installation: {
+                base: 8550,
+                accessories: 12555
+            }
+        },
+        'Deye-5kw': {
+            name: 'Deye 5kw',
+            brand: 'Deye',
+            price: 18555,
+            type: 'single',
+            capacity: 5,
+            compatibleBatteries: ['Sunsynk-5.12kWh'],
+            compatiblePanels: ['JA-Solar-565W'],
+            installation: {
+                base: 8500,
+                accessories: 12555
+            }
+        },
+        'Tesla-PW4': {
+            name: 'Tesla Powerwall 3',
+            brand: 'Tesla',
+            price: 16555,
+            type: 'single',
+            capacity: 13,
+            compatibleBatteries: [],
+            compatiblePanels: [],
+            installation: {
+                base: 0,
+                accessories: 0
+            }
+        }
     },
     
     // Battery Prices (R)
-                batteries: {
+    batteries: {
         'Sunsynk-5.12kWh': 45000,
-        'Sunsynk-10kWh': 90000,
-        'Deye-5kwh': 55545
-                },
+        'Sunsynk-10kWh': 90000
+    },
     
     // Solar Panel Prices (R)
-                panels: {
+    panels: {
         'JA-Solar-565W': 2500,
         'Canadian-Solar-565W': 2600
-                },
+    },
     
     // Installation & Accessories (R)
-                installation: {
-
+    installation: {
+        'panel-installation-per-panel': 850,
+        'concrete-roof-multiplier': 1.5
     },
     
     // System Quantity Limits
@@ -43,7 +79,7 @@ const pricingConfig = {
     },
     
     // System Markup (percentage)
-                markup: {
+    markup: {
         'inverter': 1.2, // 20% markup
         'battery': 1.15, // 15% markup
         'panels': 1.1, // 10% markup

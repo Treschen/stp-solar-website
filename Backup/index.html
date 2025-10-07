@@ -348,11 +348,8 @@
                         </div>
                     </div>
                     
-                    <div class="quote-request-section">
-                        <button id="request-quote-btn" class="btn btn-primary" onclick="showQuoteModal()">
-                            <i class="fas fa-paper-plane"></i> Request Quote
-                        </button>
-                        <p class="quote-note">Get a formal estimate sent to your email within 24 hours</p>
+                    <div class="system-cta">
+                        <button onclick="getQuoteForSystem()" class="btn btn-success">Get Quote for This System</button>
                     </div>
                 </div>
             </div>
@@ -635,11 +632,144 @@
                 <button class="filter-btn" data-filter="commercial">Commercial</button>
                 <button class="filter-btn" data-filter="sunsynk">Sunsynk Systems</button>
                 <button class="filter-btn" data-filter="tesla">Tesla Powerwall</button>
-                <button class="filter-btn" data-filter="sigenergy">Sigenergy Systems</button>
             </div>
             
             <div class="gallery-grid" id="gallery-grid">
-                <!-- Gallery items will be dynamically generated from JSON data -->
+                <!-- Gallery Item 1 - Sunsynk Installation -->
+                <div class="gallery-item" data-category="residential sunsynk">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/2c3e50/ffffff?text=Sunsynk+Installation" alt="Professional Sunsynk inverter and battery installation">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Sunsynk Hybrid System</h4>
+                                <p>8kW Sunsynk inverter with dual 5.12kWh batteries</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Residential</span>
+                                    <span class="tag">Sunsynk</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 2 - Tesla Powerwall -->
+                <div class="gallery-item" data-category="residential tesla">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/34495e/ffffff?text=Tesla+Powerwall" alt="Tesla Powerwall installation">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Tesla Powerwall 3</h4>
+                                <p>Premium home energy storage solution</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Residential</span>
+                                    <span class="tag">Tesla</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 3 - Solar Panels -->
+                <div class="gallery-item" data-category="residential">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/27ae60/ffffff?text=Solar+Panels" alt="JA Solar panels installation on residential roof">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>JA Solar Panel Array</h4>
+                                <p>20x 565W JA Solar panels on residential roof</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Residential</span>
+                                    <span class="tag">JA Solar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 4 - Commercial Installation -->
+                <div class="gallery-item" data-category="commercial sunsynk">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/e74c3c/ffffff?text=Commercial+System" alt="Large commercial solar installation">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Commercial Solar System</h4>
+                                <p>50kW commercial installation with Sunsynk inverters</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Commercial</span>
+                                    <span class="tag">Sunsynk</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 5 - Complete System -->
+                <div class="gallery-item" data-category="residential sunsynk">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/8e44ad/ffffff?text=Complete+System" alt="Complete solar system with inverter and batteries">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Complete Home System</h4>
+                                <p>16kW system with backup batteries and monitoring</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Residential</span>
+                                    <span class="tag">Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 6 - Tesla Integration -->
+                <div class="gallery-item" data-category="residential tesla">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/3498db/ffffff?text=Tesla+Integration" alt="Tesla Powerwall with solar panels and EV charging">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Tesla Energy Ecosystem</h4>
+                                <p>Powerwall with solar panels and EV charging</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Residential</span>
+                                    <span class="tag">Tesla</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 7 - Professional Installation -->
+                <div class="gallery-item" data-category="residential sunsynk">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/f39c12/ffffff?text=Professional+Install" alt="Professional electrical installation work">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Professional Installation</h4>
+                                <p>Clean, organized electrical work and cable management</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Residential</span>
+                                    <span class="tag">Professional</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 8 - Large Commercial -->
+                <div class="gallery-item" data-category="commercial">
+                    <div class="gallery-image">
+                        <img src="https://via.placeholder.com/400x300/1abc9c/ffffff?text=Large+Commercial" alt="Large commercial solar panel array">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h4>Large Commercial Array</h4>
+                                <p>100kW+ commercial solar installation</p>
+                                <div class="gallery-tags">
+                                    <span class="tag">Commercial</span>
+                                    <span class="tag">Large Scale</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="gallery-cta">
@@ -1072,7 +1202,7 @@
                 
                 const system = {
                     id: `${isThreePhase ? 'three' : 'single'}-${capacity}kw`,
-                    name: `${capacity}kW ${inverterName.replace(/\d+kw?\s*/i, '').trim()} System`,
+                    name: `${capacity}kW ${inverterName} System`,
                     inverter: { 
                         name: inverterName,
                         key: inverterKey,
@@ -1771,97 +1901,10 @@
             });
         }
         
-        // Gallery Data and Functions
-        let galleryData = [];
-        
-        // Load gallery data from JSON file
-        async function loadGalleryData() {
-            try {
-                const response = await fetch('gallery-data.json');
-                const data = await response.json();
-                galleryData = data.galleryItems;
-                console.log('Gallery data loaded:', galleryData.length, 'items');
-                generateGalleryItems();
-            } catch (error) {
-                console.error('Error loading gallery data:', error);
-                // Fallback to empty gallery
-                galleryData = [];
-                generateGalleryItems();
-            }
-        }
-        
-        // Generate gallery items from JSON data
-        function generateGalleryItems() {
-            const galleryGrid = document.getElementById('gallery-grid');
-            
-            if (!galleryGrid) {
-                console.error('Gallery grid element not found');
-                return;
-            }
-            
-            // Clear existing items
-            galleryGrid.innerHTML = '';
-            
-            if (galleryData.length === 0) {
-                galleryGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #666;">No gallery items available. Please add images to the gallery-data.json file.</p>';
-                return;
-            }
-            
-            // Generate gallery items
-            galleryData.forEach(item => {
-                const galleryItem = document.createElement('div');
-                galleryItem.className = 'gallery-item';
-                galleryItem.dataset.category = item.categories.join(' ');
-                galleryItem.dataset.id = item.id;
-                
-                // Create tags HTML
-                const tagsHtml = item.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-                
-                // Create components HTML
-                const componentsHtml = item.components ? 
-                    `<div class="gallery-components">
-                        <strong>Components:</strong><br>
-                        ${item.components.map(comp => `• ${comp}`).join('<br>')}
-                    </div>` : '';
-                
-                galleryItem.innerHTML = `
-                    <div class="gallery-image">
-                        <img src="${item.image}" alt="${item.title}" 
-                             onerror="this.src='https://via.placeholder.com/400x300/2c3e50/ffffff?text=Image+Not+Found'">
-                        <div class="gallery-overlay">
-                            <div class="gallery-content">
-                                <h4>${item.title}</h4>
-                                <p>${item.description}</p>
-                                <div class="gallery-meta">
-                                    <div class="gallery-location">
-                                        <i class="fas fa-map-marker-alt"></i> ${item.location}
-                                    </div>
-                                    <div class="gallery-size">
-                                        <i class="fas fa-bolt"></i> ${item.systemSize}
-                                    </div>
-                                    <div class="gallery-date">
-                                        <i class="fas fa-calendar"></i> ${new Date(item.date).toLocaleDateString()}
-                                    </div>
-                                </div>
-                                <div class="gallery-tags">
-                                    ${tagsHtml}
-                                </div>
-                                ${componentsHtml}
-                                ${item.customerQuote ? `<div class="gallery-quote">"${item.customerQuote}"</div>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                galleryGrid.appendChild(galleryItem);
-            });
-            
-            console.log('Generated', galleryData.length, 'gallery items');
-        }
-        
         // Gallery Filter Functionality
         function initializeGalleryFilters() {
             const filterBtns = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
             
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1871,7 +1914,6 @@
                     this.classList.add('active');
                     
                     const filter = this.dataset.filter;
-                    const galleryItems = document.querySelectorAll('.gallery-item');
                     
                     galleryItems.forEach(item => {
                         if (filter === 'all' || item.dataset.category.includes(filter)) {
@@ -2157,198 +2199,6 @@ Please provide me with a detailed quote for this system.`;
             document.getElementById('name').focus();
         }
         
-        // ============================================
-        // QUOTE MODAL FUNCTIONS
-        // ============================================
-        
-        // Email validation function
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-        
-        
-        function showQuoteModal() {
-            if (!currentSystem) {
-                alert('Please select a system first!');
-                return;
-            }
-            
-            // Update modal with current system details
-            document.getElementById('modal-system-name').textContent = currentSystem.name;
-            document.getElementById('modal-system-price').textContent = document.getElementById('total-price').textContent;
-            
-            // Show modal
-            const modal = document.getElementById('quoteModal');
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.classList.add('show');
-                // Attach form listener after modal is shown
-                attachFormListener();
-            }, 10);
-            
-            // Focus on first input
-            setTimeout(() => {
-                document.getElementById('modal-name').focus();
-            }, 100);
-        }
-        
-        function closeQuoteModal() {
-            const modal = document.getElementById('quoteModal');
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        }
-        
-        // Handle form submission - attach when modal is shown
-        function attachFormListener() {
-            const quoteForm = document.getElementById('quoteForm');
-            if (quoteForm) {
-                // Remove any existing listeners to prevent duplicates
-                quoteForm.removeEventListener('submit', handleFormSubmit);
-                quoteForm.addEventListener('submit', handleFormSubmit);
-            }
-        }
-        
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            submitQuoteRequest();
-        }
-        
-        async function submitQuoteRequest() {
-            console.log('submitQuoteRequest called');
-            
-            if (!currentSystem) {
-                console.error('No current system selected');
-                alert('Please select a system first!');
-                return;
-            }
-            
-            console.log('Current system:', currentSystem);
-            
-            // Get form data
-            const formData = {
-                name: document.getElementById('modal-name').value.trim(),
-                email: document.getElementById('modal-email').value.trim(),
-                phone: document.getElementById('modal-phone').value.trim(),
-                location: document.getElementById('modal-location').value.trim() || 'South Africa',
-                message: document.getElementById('modal-message').value.trim()
-            };
-            
-            console.log('Form data collected:', formData);
-            
-            // Validate required fields
-            if (!formData.name || !formData.email || !formData.phone) {
-                alert('Please fill in all required fields (Name, Email, Phone)');
-                return;
-            }
-            
-            // Validate email
-            if (!isValidEmail(formData.email)) {
-                alert('Please enter a valid email address');
-                return;
-            }
-            
-            // Get current quantities from the UI
-            const panelQty = parseInt(document.getElementById('panels-quantity').textContent);
-            const batteryQty = parseInt(document.getElementById('batteries-quantity').textContent);
-            
-            // Calculate prices
-            const inverterTotal = currentSystem.inverter.price;
-            const batteryTotal = currentSystem.battery.price * batteryQty;
-            const panelTotal = currentSystem.panel.price * panelQty;
-            const installationTotal = currentSystem.installation;
-            const totalPrice = inverterTotal + batteryTotal + panelTotal + installationTotal;
-            
-            // Build the webhook payload
-            const quoteData = {
-                // Customer Info
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                location: formData.location,
-                message: formData.message,
-                
-                // System Info
-                system_name: currentSystem.name,
-                phase: currentPhase,
-                
-                // Inverter (with exact name for QuickBooks)
-                inverter_name: currentSystem.inverter.name,
-                inverter_qty: 1,
-                inverter_price: currentSystem.inverter.price,
-                
-                // Battery (with exact name for QuickBooks)
-                battery_name: currentSystem.battery.name,
-                battery_qty: batteryQty,
-                battery_price: currentSystem.battery.price,
-                
-                // Panels (with exact name for QuickBooks)
-                panel_name: currentSystem.panel.name,
-                panel_qty: panelQty,
-                panel_price: currentSystem.panel.price,
-                
-                // Installation
-                installation_name: 'Professional Installation',
-                installation_qty: 1,
-                installation_price: installationTotal,
-                
-                // Total
-                total_price: totalPrice
-            };
-            
-            // Show loading state
-            const submitBtn = document.querySelector('#quoteForm button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            submitBtn.disabled = true;
-            
-            try {
-                console.log('Sending quote to n8n:', quoteData);
-                
-                // Send to N8N webhook
-                const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(quoteData)
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    alert('✅ Quote request sent successfully! We will contact you within 24 hours with your formal estimate.');
-                    closeQuoteModal();
-                    // Reset form
-                    document.getElementById('quoteForm').reset();
-                } else {
-                    throw new Error('Failed to send quote request');
-                }
-            } catch (error) {
-                console.error('Error sending quote:', error);
-                alert('⚠️ Sorry, there was an error sending your quote request. Please try again or call us directly at +27 82 123 4567.');
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-        
-        // Close modal when clicking outside
-        document.addEventListener('click', function(e) {
-            const modal = document.getElementById('quoteModal');
-            if (e.target === modal) {
-                closeQuoteModal();
-            }
-        });
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeQuoteModal();
-            }
-        });
-
         // Initialize System Builder when page loads
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing System Builder...');
@@ -2367,58 +2217,12 @@ Please provide me with a detailed quote for this system.`;
             // Initialize reviews slider
             initializeReviewsSlider();
             
-            // Load and initialize gallery
-            loadGalleryData();
+            // Initialize gallery filters
             initializeGalleryFilters();
             
             console.log('System Builder initialized successfully!');
         });
     </script>
-    <!-- Quote Request Modal -->
-    <div id="quoteModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-paper-plane"></i> Request Your Solar Quote</h3>
-                <span class="close" onclick="closeQuoteModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>Please provide your details to receive a formal estimate for your selected system:</p>
-                <div class="system-summary">
-                    <h4>Selected System: <span id="modal-system-name">-</span></h4>
-                    <p>Total Price: <strong id="modal-system-price">-</strong></p>
-                </div>
-                <form id="quoteForm">
-                    <div class="form-group">
-                        <label for="modal-name">Full Name *</label>
-                        <input type="text" id="modal-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="modal-email">Email Address *</label>
-                        <input type="email" id="modal-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="modal-phone">Phone Number *</label>
-                        <input type="tel" id="modal-phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="modal-location">Location</label>
-                        <input type="text" id="modal-location" name="location" value="South Africa" placeholder="City, Province">
-                    </div>
-                    <div class="form-group">
-                        <label for="modal-message">Additional Notes (Optional)</label>
-                        <textarea id="modal-message" name="message" rows="3" placeholder="Any specific requirements or questions..."></textarea>
-                    </div>
-                    <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeQuoteModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="submit-quote-btn" onclick="submitQuoteRequest(); return false;">
-                            <i class="fas fa-paper-plane"></i> Send Quote Request
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script src="script.js?v=1.0"></script>
     <script src="cache-buster.js?v=1.0"></script>
 </body>

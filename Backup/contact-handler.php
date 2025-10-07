@@ -36,68 +36,14 @@ function send_email($to, $subject, $message, $from) {
 // Handle POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Check if this is a quote request from the system builder
-        if (isset($_POST['action']) && $_POST['action'] === 'quote_request') {
-            // Handle quote request from system builder
-            $quote_data = json_decode($_POST['data'], true);
-            
-            if (!$quote_data) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Invalid quote data received'
-                ]);
-                exit;
-            }
-            
-            // Extract data from quote request
-            $name = sanitize_input($quote_data['name'] ?? '');
-            $email = sanitize_input($quote_data['email'] ?? '');
-            $phone = sanitize_input($quote_data['phone'] ?? '');
-            $location = sanitize_input($quote_data['location'] ?? '');
-            $message = sanitize_input($quote_data['message'] ?? '');
-            
-            // System details
-            $system_name = sanitize_input($quote_data['system_name'] ?? '');
-            $phase = sanitize_input($quote_data['phase'] ?? '');
-            $total_price = sanitize_input($quote_data['total_price'] ?? '');
-            
-            // Component details
-            $inverter_name = sanitize_input($quote_data['inverter_name'] ?? '');
-            $inverter_qty = sanitize_input($quote_data['inverter_qty'] ?? '');
-            $inverter_price = sanitize_input($quote_data['inverter_price'] ?? '');
-            
-            $battery_name = sanitize_input($quote_data['battery_name'] ?? '');
-            $battery_qty = sanitize_input($quote_data['battery_qty'] ?? '');
-            $battery_price = sanitize_input($quote_data['battery_price'] ?? '');
-            
-            $panel_name = sanitize_input($quote_data['panel_name'] ?? '');
-            $panel_qty = sanitize_input($quote_data['panel_qty'] ?? '');
-            $panel_price = sanitize_input($quote_data['panel_price'] ?? '');
-            
-            $installation_name = sanitize_input($quote_data['installation_name'] ?? '');
-            $installation_qty = sanitize_input($quote_data['installation_qty'] ?? '');
-            $installation_price = sanitize_input($quote_data['installation_price'] ?? '');
-            
-            $monthly_bill = ''; // Not provided in quote request
-            $system_config = ''; // Not needed for quote request
-            
-        } else {
-            // Handle regular contact form
-            $name = sanitize_input($_POST['name'] ?? '');
-            $email = sanitize_input($_POST['email'] ?? '');
-            $phone = sanitize_input($_POST['phone'] ?? '');
-            $location = sanitize_input($_POST['location'] ?? '');
-            $monthly_bill = sanitize_input($_POST['monthly-bill'] ?? '');
-            $message = sanitize_input($_POST['message'] ?? '');
-            $system_config = sanitize_input($_POST['system-config'] ?? '');
-            
-            // Set empty values for quote-specific fields
-            $system_name = $phase = $total_price = '';
-            $inverter_name = $inverter_qty = $inverter_price = '';
-            $battery_name = $battery_qty = $battery_price = '';
-            $panel_name = $panel_qty = $panel_price = '';
-            $installation_name = $installation_qty = $installation_price = '';
-        }
+        // Get and sanitize form data
+        $name = sanitize_input($_POST['name'] ?? '');
+        $email = sanitize_input($_POST['email'] ?? '');
+        $phone = sanitize_input($_POST['phone'] ?? '');
+        $location = sanitize_input($_POST['location'] ?? '');
+        $monthly_bill = sanitize_input($_POST['monthly-bill'] ?? '');
+        $message = sanitize_input($_POST['message'] ?? '');
+        $system_config = sanitize_input($_POST['system-config'] ?? '');
         
         // Validation
         $errors = [];
@@ -176,76 +122,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class='value'>" . nl2br(htmlspecialchars($message)) . "</div>
                 </div>";
         
-        // Add system configuration if provided (from quote request or regular form)
-        if (!empty($system_name) || !empty($system_config)) {
-            $email_message .= "<h3>🌞 Requested Solar System</h3>";
-            
-            if (!empty($system_name)) {
-                // Quote request data
+        // Add system configuration if provided
+        if (!empty($system_config)) {
+            $system_data = json_decode($system_config, true);
+            if ($system_data) {
                 $email_message .= "
+                <h3>🌞 Requested Solar System</h3>
                 <div class='field'>
                     <span class='label'>System Name:</span>
-                    <span class='value'><strong>" . htmlspecialchars($system_name) . "</strong></span>
-                </div>
-                <div class='field'>
-                    <span class='label'>Phase:</span>
-                    <span class='value'>" . htmlspecialchars($phase) . "</span>
+                    <span class='value'><strong>" . htmlspecialchars($system_data['name']) . "</strong></span>
                 </div>
                 <div class='field'>
                     <span class='label'>Inverter:</span>
-                    <span class='value'>" . htmlspecialchars($inverter_qty) . "x " . htmlspecialchars($inverter_name) . " (R" . number_format($inverter_price) . ")</span>
+                    <span class='value'>" . htmlspecialchars($system_data['inverter']) . "</span>
                 </div>
                 <div class='field'>
                     <span class='label'>Battery:</span>
-                    <span class='value'>" . htmlspecialchars($battery_qty) . "x " . htmlspecialchars($battery_name) . " (R" . number_format($battery_price) . " each)</span>
+                    <span class='value'>" . htmlspecialchars($system_data['battery']) . "</span>
                 </div>
                 <div class='field'>
                     <span class='label'>Solar Panels:</span>
-                    <span class='value'>" . htmlspecialchars($panel_qty) . "x " . htmlspecialchars($panel_name) . " (R" . number_format($panel_price) . " each)</span>
+                    <span class='value'>" . htmlspecialchars($system_data['panel']) . "</span>
                 </div>
                 <div class='field'>
                     <span class='label'>Installation:</span>
-                    <span class='value'>" . htmlspecialchars($installation_name) . " (R" . number_format($installation_price) . ")</span>
+                    <span class='value'>" . htmlspecialchars($system_data['installation']) . "</span>
                 </div>
                 <div class='field'>
                     <span class='label'>Total Price:</span>
-                    <span class='value'><strong style='color: #f39c12; font-size: 18px;'>R" . number_format($total_price) . "</strong></span>
-                </div>";
-            } else {
-                // Regular form system config
-                $system_data = json_decode($system_config, true);
-                if ($system_data) {
-                    $email_message .= "
-                    <div class='field'>
-                        <span class='label'>System Name:</span>
-                        <span class='value'><strong>" . htmlspecialchars($system_data['name']) . "</strong></span>
-                    </div>
-                    <div class='field'>
-                        <span class='label'>Inverter:</span>
-                        <span class='value'>" . htmlspecialchars($system_data['inverter']) . "</span>
-                    </div>
-                    <div class='field'>
-                        <span class='label'>Battery:</span>
-                        <span class='value'>" . htmlspecialchars($system_data['battery']) . "</span>
-                    </div>
-                    <div class='field'>
-                        <span class='label'>Solar Panels:</span>
-                        <span class='value'>" . htmlspecialchars($system_data['panel']) . "</span>
-                    </div>
-                    <div class='field'>
-                        <span class='label'>Installation:</span>
-                        <span class='value'>" . htmlspecialchars($system_data['installation']) . "</span>
-                    </div>
-                    <div class='field'>
-                        <span class='label'>Total Price:</span>
-                        <span class='value'><strong style='color: #f39c12; font-size: 18px;'>" . htmlspecialchars($system_data['totalPrice']) . "</strong></span>
-                    </div>";
-                }
+                    <span class='value'><strong style='color: #f39c12; font-size: 18px;'>" . htmlspecialchars($system_data['totalPrice']) . "</strong></span>
+                </div>
+                <hr style='margin: 20px 0; border: 1px solid #eee;'>
+                <p><strong>This customer has already configured their preferred system and is ready for a detailed quote!</strong></p>";
             }
-            
-            $email_message .= "
-            <hr style='margin: 20px 0; border: 1px solid #eee;'>
-            <p><strong>This customer has already configured their preferred system and is ready for a detailed quote!</strong></p>";
         }
         
         $email_message .= "
