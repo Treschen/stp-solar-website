@@ -4,22 +4,24 @@
 const pricingConfig = {
     // Inverter Prices (R)
                 inverters: {
-        'Sunsynk-5K': [object Object],
-        'Deye-5kw-Inverter': [object Object],
-        'Luxpower-5kw-Inverter': [object Object]
+        'Sunsynk-5K': 25000,
+        'Sunsynk-5K-name': 'Sunsynk 5kW Inverter'
     },
     
     // Battery Prices (R)
                 batteries: {
         'Sunsynk-5.12kWh': 45000,
+        'Sunsynk-5.12kWh-name': 'Sunsynk 5.12kWh Battery',
         'Sunsynk-10kWh': 90000,
-        'Deye-5kwh': 55545
+        'Sunsynk-10kWh-name': 'Sunsynk 10kWh Battery'
                 },
     
     // Solar Panel Prices (R)
                 panels: {
         'JA-Solar-565W': 2500,
-        'Canadian-Solar-565W': 2600
+        'JA-Solar-565W-name': 'JA Solar 565W Panel',
+        'Canadian-Solar-565W': 2600,
+        'Canadian-Solar-565W-name': 'Canadian Solar 565W Panel'
                 },
     
     // Installation & Accessories (R)

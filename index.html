@@ -15,6 +15,7 @@
     <!-- Cache Control Meta Tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
+    <meta name="version" content="2.1">
     <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
@@ -323,24 +324,24 @@
                     <div class="pricing-summary">
                         <h4>System Pricing</h4>
                         <div class="pricing-item">
-                            <span>Inverter</span>
+                            <span id="inverter-label">Inverter</span>
                             <span id="inverter-price">R25,000</span>
                         </div>
                         <div class="pricing-item">
-                            <span>Batteries</span>
+                            <span id="battery-label">Batteries</span>
                             <span id="battery-price">R45,000</span>
                         </div>
                         <div class="pricing-item">
-                            <span>Solar Panels</span>
+                            <span id="panel-label">Solar Panels</span>
                             <span id="panel-price">R15,000</span>
                         </div>
                         <div class="pricing-item">
-                            <span>Installation</span>
-                            <span id="installation-price">R8,500</span>
+                            <span id="accessories-label">Accessories</span>
+                            <span id="accessories-price">R15,000</span>
                         </div>
                         <div class="pricing-item">
-                            <span>Accessories</span>
-                            <span id="accessories-price">R15,000</span>
+                            <span id="installation-label">Installation</span>
+                            <span id="installation-price">R8,500</span>
                         </div>
                         <div class="pricing-item">
                             <span><strong>Total System Price</strong></span>
@@ -353,6 +354,9 @@
                             <i class="fas fa-paper-plane"></i> Request Quote
                         </button>
                         <p class="quote-note">Get a formal estimate sent to your email within 24 hours</p>
+                        <div class="disclaimer">
+                            <p><strong>Please note:</strong> All estimates are preliminary and subject to change based on final site assessment. Maximum cable lengths included: 10m AC cable and 30m PV cable per string. All systems include sub-distribution boards, circuit breakers, isolators, and standard installation components. Final pricing will be confirmed after site visit and detailed assessment.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -636,6 +640,7 @@
                 <button class="filter-btn" data-filter="sunsynk">Sunsynk Systems</button>
                 <button class="filter-btn" data-filter="tesla">Tesla Powerwall</button>
                 <button class="filter-btn" data-filter="sigenergy">Sigenergy Systems</button>
+                <button class="filter-btn" data-filter="general">General Systems</button>
             </div>
             
             <div class="gallery-grid" id="gallery-grid">
@@ -927,11 +932,15 @@
             <div class="footer-bottom">
                 <p>&copy; 2024 STP Solar. All rights reserved. | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
             </div>
+            
+            <div class="footer-credit">
+                <p>Website designed and hosted by STP Networks Pty Ltd</p>
+            </div>
         </div>
     </footer>
 
     <!-- Scripts -->
-    <script src="pricing-config.js"></script>
+    <script src="pricing-config.js?v=2.1"></script>
     <script>
         // System Builder JavaScript (working version)
         console.log('System Builder script loaded');
@@ -945,6 +954,7 @@
             }
             console.log('Loading pricing from pricing-config.js (default for new clients):', pricingConfig);
             console.log('Available inverters:', Object.keys(pricingConfig.inverters));
+            console.log('Pricing config version loaded:', new Date().toISOString());
             return pricingConfig;
         }
         
@@ -982,8 +992,13 @@
             console.log('Available batteries:', Object.keys(batteries));
             console.log('Available panels:', Object.keys(panels));
             
-            // Create systems for each available inverter
+            // Create systems for each available inverter (skip -name entries)
             Object.entries(inverters).forEach(([inverterKey, inverterData]) => {
+                // Skip -name entries (descriptive names)
+                if (inverterKey.endsWith('-name')) {
+                    return;
+                }
+                
                 // Collect brands for dynamic system type dropdown
                 if (typeof inverterData === 'object' && inverterData !== null && inverterData.brand) {
                     window.__availableBrands = window.__availableBrands || new Set();
@@ -1153,6 +1168,11 @@
             
             // Create special systems for premium battery solutions (like Tesla Powerwall)
             Object.entries(batteries).forEach(([batteryKey, batteryPrice]) => {
+                // Skip -name entries (descriptive names)
+                if (batteryKey.endsWith('-name')) {
+                    return;
+                }
+                
                 // Check if this is a premium battery system (Tesla, etc.)
                 if (batteryKey.toLowerCase().includes('tesla') || batteryKey.toLowerCase().includes('powerwall')) {
                     // Extract capacity from battery key
@@ -1612,12 +1632,27 @@
             
             const totalPrice = inverterPrice + batteryPrice + panelPrice + installationCost + accessoriesCost;
             
-            // Update displays
+            // Get descriptive component names
+            const inverterName = currentSystem.inverter ? currentSystem.inverter.name : 'No Inverter';
+            const batteryName = currentPricing.batteries[selectedBatteryKey + '-name'] || selectedBatteryKey.replace(/-/g, ' ');
+            const panelName = currentPricing.panels[selectedPanelKey + '-name'] || selectedPanelKey.replace(/-/g, ' ');
+            
+            // Update displays with descriptive names including quantities and reordered items (Installation moved to last)
             document.getElementById('inverter-price').textContent = 'R' + inverterPrice.toLocaleString('en-ZA');
+            document.getElementById('inverter-label').textContent = `1x ${inverterName}`;
+            
             document.getElementById('battery-price').textContent = 'R' + batteryPrice.toLocaleString('en-ZA');
+            document.getElementById('battery-label').textContent = `${batteryQuantity}x ${batteryName}`;
+            
             document.getElementById('panel-price').textContent = 'R' + panelPrice.toLocaleString('en-ZA');
-            document.getElementById('installation-price').textContent = 'R' + installationCost.toLocaleString('en-ZA');
+            document.getElementById('panel-label').textContent = `${panelQuantity}x ${panelName}`;
+            
             document.getElementById('accessories-price').textContent = 'R' + accessoriesCost.toLocaleString('en-ZA');
+            document.getElementById('accessories-label').textContent = 'Accessories';
+            
+            document.getElementById('installation-price').textContent = 'R' + installationCost.toLocaleString('en-ZA');
+            document.getElementById('installation-label').textContent = 'Installation';
+            
             document.getElementById('total-price').textContent = 'R' + totalPrice.toLocaleString('en-ZA');
             
             // Update customization prices
@@ -1827,7 +1862,14 @@
                 galleryItem.innerHTML = `
                     <div class="gallery-image">
                         <img src="${item.image}" alt="${item.title}" 
-                             onerror="this.src='https://via.placeholder.com/400x300/2c3e50/ffffff?text=Image+Not+Found'">
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-placeholder" style="display: none; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 20px;">
+                            <div>
+                                <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <h4>${item.title}</h4>
+                                <p>Image coming soon</p>
+                            </div>
+                        </div>
                         <div class="gallery-overlay">
                             <div class="gallery-content">
                                 <h4>${item.title}</h4>
@@ -2121,11 +2163,22 @@
             const system = currentSystem;
             const totalPrice = document.getElementById('total-price').textContent;
             
+            // Get descriptive component names (same as used in pricing display)
+            const panelQuantity = parseInt(document.getElementById('panels-quantity').textContent);
+            const batteryQuantity = parseInt(document.getElementById('batteries-quantity').textContent);
+            
+            const selectedPanelKey = currentSystem.selectedPanel || 'JA-Solar-565W';
+            const selectedBatteryKey = currentSystem.selectedBattery || 'Sunsynk-5.12kWh';
+            
+            const inverterName = system.inverter ? system.inverter.name : 'Not specified';
+            const batteryName = currentPricing.batteries[selectedBatteryKey + '-name'] || selectedBatteryKey.replace(/-/g, ' ');
+            const panelName = currentPricing.panels[selectedPanelKey + '-name'] || selectedPanelKey.replace(/-/g, ' ');
+            
             return {
                 name: system.name,
-                inverter: system.inverter ? system.inverter.name : 'Not specified',
-                battery: system.battery ? `${system.battery.quantity}x ${system.battery.name}` : 'Not specified',
-                panel: system.panel ? `${system.panel.quantity}x ${system.panel.name}` : 'Not specified',
+                inverter: inverterName,
+                battery: `${batteryQuantity}x ${batteryName}`,
+                panel: `${panelQuantity}x ${panelName}`,
                 totalPrice: totalPrice,
                 installation: system.installationBreakdown ? 
                     `Installation: R${system.installationBreakdown.installation.toLocaleString('en-ZA')}, Accessories: R${system.installationBreakdown.accessories.toLocaleString('en-ZA')}` : 
@@ -2254,6 +2307,12 @@ Please provide me with a detailed quote for this system.`;
             const panelQty = parseInt(document.getElementById('panels-quantity').textContent);
             const batteryQty = parseInt(document.getElementById('batteries-quantity').textContent);
             
+            // Get descriptive component names (same as used in pricing display)
+            const selectedPanelKey = currentSystem.selectedPanel || 'JA-Solar-565W';
+            const selectedBatteryKey = currentSystem.selectedBattery || 'Sunsynk-5.12kWh';
+            const batteryName = currentPricing.batteries[selectedBatteryKey + '-name'] || selectedBatteryKey.replace(/-/g, ' ');
+            const panelName = currentPricing.panels[selectedPanelKey + '-name'] || selectedPanelKey.replace(/-/g, ' ');
+            
             // Calculate prices
             const inverterTotal = currentSystem.inverter.price;
             const batteryTotal = currentSystem.battery.price * batteryQty;
@@ -2280,12 +2339,12 @@ Please provide me with a detailed quote for this system.`;
                 inverter_price: currentSystem.inverter.price,
                 
                 // Battery (with exact name for QuickBooks)
-                battery_name: currentSystem.battery.name,
+                battery_name: batteryName,
                 battery_qty: batteryQty,
                 battery_price: currentSystem.battery.price,
                 
                 // Panels (with exact name for QuickBooks)
-                panel_name: currentSystem.panel.name,
+                panel_name: panelName,
                 panel_qty: panelQty,
                 panel_price: currentSystem.panel.price,
                 
@@ -2306,6 +2365,7 @@ Please provide me with a detailed quote for this system.`;
             
             try {
                 console.log('Sending quote to n8n:', quoteData);
+                console.log('Quote data JSON:', JSON.stringify(quoteData, null, 2));
                 
                 // Send to N8N webhook
                 const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
@@ -2316,14 +2376,39 @@ Please provide me with a detailed quote for this system.`;
                     body: JSON.stringify(quoteData)
                 });
                 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
                 if (response.ok) {
-                    const result = await response.json();
+                    // Check if response has JSON content
+                    const contentType = response.headers.get('content-type');
+                    console.log('Content-Type:', contentType);
+                    
+                    try {
+                        if (contentType && contentType.includes('application/json')) {
+                            const result = await response.json();
+                            console.log('N8N response:', result);
+                        } else {
+                            // Response is not JSON, but still successful
+                            const text = await response.text();
+                            console.log('N8N response (text):', text);
+                        }
+                    } catch (jsonError) {
+                        // Even if JSON parsing fails, the request was successful
+                        console.log('N8N response received but not JSON parseable - this is OK');
+                        console.log('JSON Error details:', jsonError);
+                        // Don't try to read the response again as it's already been consumed
+                        console.log('Response was successful (status 200) - workflow should have executed');
+                    }
+                    
                     alert('✅ Quote request sent successfully! We will contact you within 24 hours with your formal estimate.');
                     closeQuoteModal();
                     // Reset form
                     document.getElementById('quoteForm').reset();
                 } else {
-                    throw new Error('Failed to send quote request');
+                    const errorText = await response.text();
+                    console.error('N8N error response:', errorText);
+                    throw new Error(`Failed to send quote request: ${response.status} - ${errorText}`);
                 }
             } catch (error) {
                 console.error('Error sending quote:', error);

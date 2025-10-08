@@ -3,8 +3,8 @@
     {
       "id": 1,
       "title": "Sunsynk Hybrid System",
-      "description": "8kW Sunsynk inverter with dual 5.12kWh batteries providing reliable backup power",
-      "image": "images/gallery/residential/sunsynk/sunsynk-cape-town-1.jpg",
+      "description": "8kW Sunsynk inverter with dual BSL batteries providing reliable backup power",
+      "image": "images/gallery/residential/sunsynk/Sunsynk.jpg",
       "categories": ["residential", "sunsynk"],
       "tags": ["Residential", "Sunsynk", "Cape Town"],
       "date": "2024-01-15",
@@ -155,6 +155,32 @@
       "systemSize": "30kW + 60kWh",
       "components": ["2x Sigenergy 15kW Inverters", "4x Sigenergy 15kWh Batteries", "60x JA Solar Panels"],
       "customerQuote": "Professional installation, significant reduction in electricity costs"
+    },
+    {
+      "id": 13,
+      "title": "General Residential System",
+      "description": "5kW general solar system with battery backup for residential use",
+      "image": "images/gallery/residential/general/general-residential-durban-1.jpg",
+      "categories": ["residential", "general"],
+      "tags": ["Residential", "General", "Durban"],
+      "date": "2024-03-15",
+      "location": "Durban",
+      "systemSize": "5kW + 5kWh",
+      "components": ["5kW Inverter", "5kWh Battery Bank", "15x Solar Panels"],
+      "customerQuote": "Great value system, reliable power during outages"
+    },
+    {
+      "id": 14,
+      "title": "General Commercial Installation",
+      "description": "20kW general commercial solar system for small business",
+      "image": "images/gallery/commercial/general/general-commercial-pretoria-1.jpg",
+      "categories": ["commercial", "general"],
+      "tags": ["Commercial", "General", "Pretoria"],
+      "date": "2024-03-20",
+      "location": "Pretoria",
+      "systemSize": "20kW + 40kWh",
+      "components": ["20kW Inverter", "40kWh Battery Bank", "50x Solar Panels"],
+      "customerQuote": "Excellent ROI, reduced electricity bills significantly"
     }
   ]
 }
