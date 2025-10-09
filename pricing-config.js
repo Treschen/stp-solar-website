@@ -25,8 +25,16 @@ const pricingConfig = {
                 },
     
     // Installation & Accessories (R)
-                installation: {
-
+    installation: {
+        'single-base-installation': 8500,
+        'single-accessories': 15000,
+        'single-per-panel': 900,  // Additional cost per panel
+        'three-base-installation': 12000,
+        'three-accessories': 20000,
+        'three-per-panel': 1000,  // Additional cost per panel
+        'tesla-base-installation': 10000,
+        'tesla-accessories': 18000,
+        'tesla-per-panel': 950    // Additional cost per panel
     },
     
     // System Quantity Limits

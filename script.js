@@ -547,21 +547,26 @@ function createSystemConfigurations() {
         const maxPanels = isThreePhase ? (currentPricing.limits?.['three-panels-max'] || 100) : (currentPricing.limits?.['single-panels-max'] || 50);
         const panelQuantity = Math.min(maxPanels, Math.max(minPanels, Math.ceil(capacity * 1000 / 565))); // Within limits, at least minimum panels, or enough for capacity
         
+        // Get proper display names from pricing config
+        const inverterDisplayName = inverters[`${inverterKey}-name`] || inverterName;
+        const batteryDisplayName = batteries[`${batteryKey}-name`] || batteryKey.replace(/-/g, ' ');
+        const panelDisplayName = panels[`${panelKey}-name`] || panelKey.replace(/-/g, ' ');
+        
         const system = {
             id: `${isThreePhase ? 'three' : 'single'}-${capacity}kw`,
-            name: `${capacity}kW ${inverterName} System`,
+            name: `${capacity}kW Sunsynk System`,
             phase: isThreePhase ? 'three' : 'single',
             inverter: { 
-                name: inverterName, 
+                name: inverterDisplayName, 
                 price: (inverterPrice || 25000) * (markup.inverter || 1.2) 
             },
             battery: { 
-                name: batteryKey.replace(/-/g, ' '), 
+                name: batteryDisplayName, 
                 price: (batteries[batteryKey] || 45000) * (markup.battery || 1.15), 
                 quantity: batteryQuantity 
             },
             panel: { 
-                name: panelKey.replace(/-/g, ' '), 
+                name: panelDisplayName, 
                 price: (panels[panelKey] || 2500) * (markup.panels || 1.1), 
                 quantity: panelQuantity 
             },
@@ -621,13 +626,15 @@ function createSystemConfigurations() {
             const capacity = capacityMatch ? parseFloat(capacityMatch[1]) : 13.5; // Default for Tesla Powerwall 3
             
             // Tesla Powerwall is standalone - no inverter required
+            const batteryDisplayName = batteries[`${batteryKey}-name`] || batteryKey.replace(/-/g, ' ');
+            
             const system = {
                 id: `single-${batteryKey.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
-                name: `${batteryKey.replace(/-/g, ' ')} System`,
+                name: `Tesla Powerwall System`,
                 phase: 'tesla',
                 inverter: null, // Tesla Powerwall doesn't need an inverter
                 battery: { 
-                    name: batteryKey.replace(/-/g, ' '), 
+                    name: batteryDisplayName, 
                     price: (batteryPrice || 180000) * (markup.battery || 1.15), 
                     quantity: 1 
                 },
