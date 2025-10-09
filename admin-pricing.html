@@ -10,6 +10,7 @@
     <!-- Cache Control Meta Tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
+    <meta name="version" content="2.2">
     <meta http-equiv="Expires" content="0">
     <style>
         * {
@@ -413,6 +414,141 @@
             border-color: #f39c12;
             box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
         }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        /* Upload Section Styles */
+        .upload-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+        }
+        
+        .upload-container h2 {
+            color: #f39c12;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .upload-container p {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-container code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f39c12;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.05);
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+        
+        .upload-prompt {
+            color: #6c757d;
+        }
+        
+        .upload-prompt i {
+            font-size: 2.5rem;
+            color: #f39c12;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .upload-prompt p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .upload-prompt small {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .upload-success {
+            color: #28a745;
+        }
+        
+        .upload-success i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .upload-success p {
+            color: #28a745;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-success small {
+            color: #6c757d;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .upload-btn:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+        }
+        
+        .upload-btn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -441,12 +577,40 @@
 
     <!-- Admin Content -->
     <div class="admin-content" id="adminContent">
-        <div class="container">
+    <div class="container">
         <div class="header">
             <h1><i class="fas fa-cogs"></i> STP Solar Pricing Admin</h1>
-            <p>Update system pricing to keep website current with supplier costs</p>
+            <p>Upload your pricing configuration file to manage solar system components</p>
         </div>
         
+        <!-- File Upload Section -->
+        <div class="upload-section">
+            <div class="upload-container">
+                <h2><i class="fas fa-upload"></i> Upload Pricing Configuration</h2>
+                <p>Upload your <code>pricing-config.js</code> file to load current pricing data:</p>
+                
+                <div class="file-upload-area" id="file-upload-area">
+                    <input type="file" id="pricing-file-input" accept=".js" style="display: none;">
+                    <div class="upload-prompt" id="upload-prompt">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload <strong>pricing-config.js</strong> or drag and drop</p>
+                        <small>No pricing configuration loaded</small>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('pricing-file-input').click();">
+                            <i class="fas fa-upload"></i> Choose File
+                        </button>
+                    </div>
+                    <div class="upload-success" id="upload-success" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <p><strong>Pricing configuration loaded successfully!</strong></p>
+                        <small id="loaded-file-info">File loaded</small>
+                        <button class="btn btn-secondary" onclick="clearPricingConfig()">Clear & Upload New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin sections (hidden until file is uploaded) -->
+        <div class="admin-sections" id="adminSections" style="display: none;">
         <div class="instructions">
             <h3><i class="fas fa-info-circle"></i> Instructions</h3>
             <ul>
@@ -746,10 +910,176 @@
                 <i class="fas fa-eye"></i> View Website
             </a>
         </div>
+        </div> <!-- End admin-sections -->
     </div>
     
     <script>
-        // Load current pricing
+        // Clean slate: Clear all localStorage data on page load
+        function clearAllData() {
+            localStorage.removeItem('stp-solar-pricing');
+            console.log('All pricing data cleared - starting with clean slate');
+        }
+        
+        // File upload functionality
+        function initializeFileUpload() {
+            console.log('Initializing file upload...');
+            
+            const fileInput = document.getElementById('pricing-file-input');
+            const uploadArea = document.getElementById('file-upload-area');
+            const uploadPrompt = document.getElementById('upload-prompt');
+            const uploadSuccess = document.getElementById('upload-success');
+            
+            if (!fileInput || !uploadArea) {
+                console.error('File upload elements not found!');
+                return;
+            }
+            
+            console.log('File upload elements found, setting up event listeners...');
+            
+            // Note: Click handling is now done by the direct button onclick
+            
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                console.log('File input changed:', e.target.files);
+                handleFileUpload(e);
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                console.log('Files dropped:', files);
+                if (files.length > 0) {
+                    handleFileUpload({ target: { files: files } });
+                }
+            });
+            
+            console.log('File upload initialized successfully');
+        }
+        
+        // Handle file upload
+        function handleFileUpload(event) {
+            console.log('handleFileUpload called with event:', event);
+            
+            const file = event.target.files[0];
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+            
+            console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
+            
+            if (!file.name.endsWith('.js')) {
+                alert('Please upload a .js file (pricing-config.js)');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    console.log('File read successfully, parsing content...');
+                    
+                    // Evaluate the JavaScript file content
+                    const fileContent = e.target.result;
+                    console.log('File content length:', fileContent.length);
+                    
+                    // Create a safe evaluation context
+                    const context = {};
+                    
+                    // Use Function constructor to evaluate in isolated context
+                    const parseFunction = new Function('context', `
+                        ${fileContent}
+                        context.pricingConfig = pricingConfig;
+                        return context.pricingConfig;
+                    `);
+                    const pricingConfig = parseFunction(context);
+                    
+                    // Validate that we have the expected structure
+                    if (!pricingConfig || typeof pricingConfig !== 'object') {
+                        throw new Error('Invalid pricing configuration structure');
+                    }
+                    
+                    // Ensure required sections exist with defaults
+                    pricingConfig.inverters = pricingConfig.inverters || {};
+                    pricingConfig.batteries = pricingConfig.batteries || {};
+                    pricingConfig.panels = pricingConfig.panels || {};
+                    pricingConfig.installation = pricingConfig.installation || {};
+                    pricingConfig.limits = pricingConfig.limits || {};
+                    pricingConfig.markup = pricingConfig.markup || {
+                        'inverter': 1.2,
+                        'battery': 1.15,
+                        'panels': 1.1,
+                        'installation': 1.25
+                    };
+                    
+                    console.log('File parsed successfully, loading pricing data...', pricingConfig);
+                    
+                    // Load the pricing data
+                    loadPricingFromUploadedFile(pricingConfig, file.name);
+                    
+                } catch (error) {
+                    console.error('Error parsing pricing file:', error);
+                    alert('Error parsing the pricing configuration file. Please ensure it\'s a valid pricing-config.js file.\n\nError: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function(e) {
+                console.error('Error reading file:', e);
+                alert('Error reading the file. Please try again.');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Load pricing from uploaded file
+        function loadPricingFromUploadedFile(config, fileName) {
+            console.log('Loading pricing from uploaded file:', fileName);
+            
+            // Show success message
+            document.getElementById('upload-prompt').style.display = 'none';
+            document.getElementById('upload-success').style.display = 'block';
+            document.getElementById('loaded-file-info').textContent = `Loaded: ${fileName}`;
+            
+            // Show admin sections
+            document.getElementById('adminSections').style.display = 'block';
+            
+            // Convert and load the pricing data
+            loadPricingFromConfig(config);
+            
+            // Show success message
+            showMessage(`Pricing configuration loaded from ${fileName}`, 'success');
+        }
+        
+        // Clear pricing config and start over
+        function clearPricingConfig() {
+            // Hide admin sections
+            document.getElementById('adminSections').style.display = 'none';
+            
+            // Show upload prompt
+            document.getElementById('upload-prompt').style.display = 'block';
+            document.getElementById('upload-success').style.display = 'none';
+            
+            // Clear file input
+            document.getElementById('pricing-file-input').value = '';
+            
+            // Clear any loaded data
+            clearAllData();
+            
+            console.log('Pricing configuration cleared - ready for new upload');
+        }
+        
+        // Load current pricing (now only used for uploaded files)
         function loadPricing() {
             const savedPricing = localStorage.getItem('stp-solar-pricing');
             if (savedPricing) {
@@ -850,53 +1180,96 @@
         
         // Helper function to load pricing data into the UI
         function loadPricingData(pricingData) {
-            // Load dynamic inverter definitions
-            loadInverterDefinitions(pricingData.inverters);
+            console.log('Loading pricing data into UI:', pricingData);
             
-            // Load dynamic installation definitions
-            loadInstallationDefinitions(pricingData.installationDefinitions);
+            try {
+                // Load dynamic inverter definitions
+                if (pricingData.inverters && Object.keys(pricingData.inverters).length > 0) {
+                    loadInverterDefinitions(pricingData.inverters);
+                }
+                
+                // Load dynamic installation definitions
+                if (pricingData.installationDefinitions && Object.keys(pricingData.installationDefinitions).length > 0) {
+                    loadInstallationDefinitions(pricingData.installationDefinitions);
+                }
+                
+                // Load inverters (traditional Sunsynk systems) - fallback
+                if (pricingData.inverters && Object.keys(pricingData.inverters).length > 0) {
+                    loadInverters(pricingData.inverters);
+                }
+                
+                // Load Tesla units
+                if (pricingData.inverters && Object.keys(pricingData.inverters).length > 0) {
+                    loadTeslaUnits(pricingData.inverters);
+                }
+                
+                // Load batteries
+                if (pricingData.batteries && Object.keys(pricingData.batteries).length > 0) {
+                    loadBatteries(pricingData.batteries);
+                }
             
-            // Load inverters (traditional Sunsynk systems) - fallback
-            loadInverters(pricingData.inverters);
+                // Load panels
+                if (pricingData.panels && Object.keys(pricingData.panels).length > 0) {
+                    loadPanels(pricingData.panels);
+                }
+                
+                // Load installation
+                if (pricingData.installation && Object.keys(pricingData.installation).length > 0) {
+                    loadInstallation(pricingData.installation);
+                }
+                
+                // Load markup
+                if (pricingData.markup) {
+                    const inverterEl = document.getElementById('markup-inverter');
+                    const batteryEl = document.getElementById('markup-battery');
+                    const panelsEl = document.getElementById('markup-panels');
+                    const installationEl = document.getElementById('markup-installation');
+                    
+                    if (inverterEl) inverterEl.value = Math.round((pricingData.markup.inverter - 1) * 100);
+                    if (batteryEl) batteryEl.value = Math.round((pricingData.markup.battery - 1) * 100);
+                    if (panelsEl) panelsEl.value = Math.round((pricingData.markup.panels - 1) * 100);
+                    if (installationEl) installationEl.value = Math.round((pricingData.markup.installation - 1) * 100);
+                }
             
-            // Load Tesla units
-            loadTeslaUnits(pricingData.inverters);
-            
-            // Load batteries
-            loadBatteries(pricingData.batteries);
-            
-            // Load panels
-            loadPanels(pricingData.panels);
-            
-            // Load installation
-            loadInstallation(pricingData.installation);
-            
-            // Load markup
-            if (pricingData.markup) {
-                document.getElementById('markup-inverter').value = Math.round((pricingData.markup.inverter - 1) * 100);
-                document.getElementById('markup-battery').value = Math.round((pricingData.markup.battery - 1) * 100);
-                document.getElementById('markup-panels').value = Math.round((pricingData.markup.panels - 1) * 100);
-                document.getElementById('markup-installation').value = Math.round((pricingData.markup.installation - 1) * 100);
-            }
-            
-            // Load limits
-            if (pricingData.limits) {
-                document.getElementById('min-batteries-single').value = pricingData.limits['single-batteries-min'] || 1;
-                document.getElementById('max-batteries-single').value = pricingData.limits['single-batteries-max'] || 10;
-                document.getElementById('min-panels-single').value = pricingData.limits['single-panels-min'] || 6;
-                document.getElementById('max-panels-single').value = pricingData.limits['single-panels-max'] || 50;
-                document.getElementById('min-batteries-three').value = pricingData.limits['three-batteries-min'] || 2;
-                document.getElementById('max-batteries-three').value = pricingData.limits['three-batteries-max'] || 20;
-                document.getElementById('min-panels-three').value = pricingData.limits['three-panels-min'] || 8;
-                document.getElementById('max-panels-three').value = pricingData.limits['three-panels-max'] || 100;
-                document.getElementById('min-panels-tesla').value = pricingData.limits['tesla-panels-min'] || 0;
-                document.getElementById('max-panels-tesla').value = pricingData.limits['tesla-panels-max'] || 40;
-                document.getElementById('max-tesla-units').value = pricingData.limits['tesla-units-max'] || 4;
+                // Load limits
+                if (pricingData.limits) {
+                    const limitsElements = {
+                        'min-batteries-single': pricingData.limits['single-batteries-min'] || 1,
+                        'max-batteries-single': pricingData.limits['single-batteries-max'] || 10,
+                        'min-panels-single': pricingData.limits['single-panels-min'] || 6,
+                        'max-panels-single': pricingData.limits['single-panels-max'] || 50,
+                        'min-batteries-three': pricingData.limits['three-batteries-min'] || 2,
+                        'max-batteries-three': pricingData.limits['three-batteries-max'] || 20,
+                        'min-panels-three': pricingData.limits['three-panels-min'] || 8,
+                        'max-panels-three': pricingData.limits['three-panels-max'] || 100,
+                        'min-panels-tesla': pricingData.limits['tesla-panels-min'] || 0,
+                        'max-panels-tesla': pricingData.limits['tesla-panels-max'] || 40,
+                        'max-tesla-units': pricingData.limits['tesla-units-max'] || 4
+                    };
+                    
+                    Object.entries(limitsElements).forEach(([id, value]) => {
+                        const element = document.getElementById(id);
+                        if (element) {
+                            element.value = value;
+                        }
+                    });
+                }
+                
+                console.log('Pricing data loaded successfully');
+                
+            } catch (error) {
+                console.error('Error loading pricing data:', error);
+                alert('Error loading pricing data: ' + error.message);
             }
         }
         
         function loadInverterDefinitions(inverters) {
             const container = document.getElementById('inverter-definitions');
+            
+            if (!container) {
+                console.warn('Inverter definitions container not found');
+                return;
+            }
             
             // Clear existing definitions
             container.innerHTML = '';
@@ -986,6 +1359,11 @@
         function loadInstallationDefinitions(installationDefinitions) {
             const container = document.getElementById('installation-definitions');
             
+            if (!container) {
+                console.warn('Installation definitions container not found');
+                return;
+            }
+            
             // Clear existing definitions
             container.innerHTML = '';
             
@@ -1032,6 +1410,11 @@
             const singleContainer = document.getElementById('single-phase-inverters');
             const threeContainer = document.getElementById('three-phase-inverters');
             
+            if (!singleContainer || !threeContainer) {
+                console.warn('Inverter containers not found');
+                return;
+            }
+            
             // Clear existing items
             singleContainer.innerHTML = '';
             threeContainer.innerHTML = '';
@@ -1061,6 +1444,12 @@
         
         function loadTeslaUnits(inverters) {
             const container = document.getElementById('tesla-units');
+            
+            if (!container) {
+                console.warn('Tesla units container not found');
+                return;
+            }
+            
             container.innerHTML = '';
             
             Object.entries(inverters).forEach(([key, price]) => {
@@ -1083,6 +1472,12 @@
         
         function loadBatteries(batteries) {
             const container = document.getElementById('battery-items');
+            
+            if (!container) {
+                console.warn('Battery items container not found');
+                return;
+            }
+            
             container.innerHTML = '';
             
             Object.entries(batteries).forEach(([key, price]) => {
@@ -1102,6 +1497,12 @@
         
         function loadPanels(panels) {
             const container = document.getElementById('panel-items');
+            
+            if (!container) {
+                console.warn('Panel items container not found');
+                return;
+            }
+            
             container.innerHTML = '';
             
             Object.entries(panels).forEach(([key, price]) => {
@@ -1123,6 +1524,11 @@
             const singleContainer = document.getElementById('single-phase-installation');
             const threeContainer = document.getElementById('three-phase-installation');
             const teslaContainer = document.getElementById('tesla-installation');
+            
+            if (!singleContainer || !threeContainer || !teslaContainer) {
+                console.warn('Installation containers not found');
+                return;
+            }
             
             // Clear existing items
             singleContainer.innerHTML = '';
@@ -1423,7 +1829,7 @@ if (typeof module !== 'undefined' && module.exports) {
             
             // Show instruction to user
             setTimeout(() => {
-                showMessage('Download the updated pricing-config.js file and replace the existing one in your project folder. Then increment the version number in index.html (e.g., ?v=2.1 → ?v=2.2) and refresh your website.', 'success');
+                showMessage('Download the updated pricing-config.js file and replace the existing one in your project folder. Then increment the version number in index.html (e.g., ?v=2.2 → ?v=2.3) and refresh your website.', 'success');
             }, 1000);
         }
         
@@ -1901,9 +2307,15 @@ if (typeof module !== 'undefined' && module.exports) {
                 header.appendChild(logoutBtn);
             }
             
-            // Load pricing on page load (only if logged in)
+            // Initialize file upload for everyone
+            initializeFileUpload();
+            
+            // Initialize admin functionality (only if logged in)
             if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-                loadPricing();
+                // Clear all data for clean slate
+                clearAllData();
+                
+                console.log('Admin portal initialized - ready for file upload');
             }
         });
     </script>

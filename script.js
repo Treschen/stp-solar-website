@@ -24,6 +24,11 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing...');
+    
+    // Clear pricing cache first to ensure we use the latest config
+    // This ensures pricing matches the admin portal configuration
+    clearPricingCache();
+    
     initializeNavigation();
     initializeSystemBuilder();
     initializeQuoteForm();
@@ -134,7 +139,257 @@ function initializeSystemBuilder() {
             selectPhase(phase);
         });
     });
+    
+    // Populate system type dropdown
+    const systemTypeSelect = document.getElementById('system-type-select');
+    if (systemTypeSelect) {
+        systemTypeSelect.innerHTML = '<option value="">Select System Type</option>';
+        systemTypeSelect.innerHTML += '<option value="sunsynk">Sunsynk Systems</option>';
+        systemTypeSelect.innerHTML += '<option value="tesla">Tesla Powerwall</option>';
+    }
+    
+    // Auto-select single phase if systems are available
+    if (systems && systems.single && systems.single.length > 0) {
+        console.log('Auto-selecting single phase with', systems.single.length, 'systems');
+        selectPhase('single');
+    } else if (systems && systems.three && systems.three.length > 0) {
+        console.log('Auto-selecting three phase with', systems.three.length, 'systems');
+        selectPhase('three');
+    }
+    
     console.log('System builder initialized');
+}
+
+// System Type Selection Function
+function selectSystemType() {
+    const systemTypeSelect = document.getElementById('system-type-select');
+    const selectedType = systemTypeSelect.value;
+    
+    console.log('System type selected:', selectedType);
+    
+    if (selectedType === 'sunsynk') {
+        // Show phase selection for Sunsynk systems
+        document.getElementById('phase-selection').style.display = 'block';
+        document.getElementById('tesla-configuration').style.display = 'none';
+    } else if (selectedType === 'tesla') {
+        // Show Tesla configuration
+        document.getElementById('phase-selection').style.display = 'none';
+        document.getElementById('tesla-configuration').style.display = 'block';
+    } else {
+        // Hide both
+        document.getElementById('phase-selection').style.display = 'none';
+        document.getElementById('tesla-configuration').style.display = 'none';
+    }
+}
+
+// Quote Modal Functions
+function showQuoteModal() {
+    console.log('showQuoteModal called!');
+    console.log('currentSystem:', currentSystem);
+    console.log('Document ready state:', document.readyState);
+    
+    if (!currentSystem) {
+        alert('Please select a system first!');
+        return;
+    }
+    
+    // Wait for DOM to be ready if needed
+    if (document.readyState === 'loading') {
+        console.log('DOM still loading, waiting...');
+        document.addEventListener('DOMContentLoaded', showQuoteModal);
+        return;
+    }
+    
+    // Show modal
+    const modal = document.getElementById('quoteModal');
+    console.log('Modal element found:', modal);
+    console.log('All elements with id quoteModal:', document.querySelectorAll('#quoteModal'));
+    
+    if (!modal) {
+        console.error('Modal element not found!');
+        console.log('Available elements:', document.querySelectorAll('[id*="quote"]'));
+        return;
+    }
+    
+    // Populate system details in modal
+    const modalDetails = document.getElementById('modal-system-details');
+    if (modalDetails) {
+        const panelQty = parseInt(document.getElementById('panels-quantity').textContent);
+        const batteryQty = parseInt(document.getElementById('batteries-quantity').textContent);
+        const installationTotal = calculateInstallationCost(panelQty, currentSystem.phase || 'single');
+        const totalPrice = currentSystem.inverter.price + (currentSystem.battery.price * batteryQty) + (currentSystem.panel.price * panelQty) + installationTotal;
+        
+        modalDetails.innerHTML = `
+            <div class="system-detail">
+                <strong>System:</strong> ${currentSystem.name}
+            </div>
+            <div class="system-detail">
+                <strong>Inverter:</strong> ${currentSystem.inverter.name} - R${currentSystem.inverter.price.toLocaleString('en-ZA')}
+            </div>
+            <div class="system-detail">
+                <strong>Battery:</strong> ${batteryQty}x ${currentSystem.battery.name} - R${(currentSystem.battery.price * batteryQty).toLocaleString('en-ZA')}
+            </div>
+            <div class="system-detail">
+                <strong>Panels:</strong> ${panelQty}x ${currentSystem.panel.name} - R${(currentSystem.panel.price * panelQty).toLocaleString('en-ZA')}
+            </div>
+            <div class="system-detail">
+                <strong>Installation:</strong> R${installationTotal.toLocaleString('en-ZA')}
+            </div>
+            <div class="system-detail total">
+                <strong>Total Price:</strong> R${totalPrice.toLocaleString('en-ZA')}
+            </div>
+        `;
+    }
+    
+    console.log('Adding show class to modal');
+    modal.classList.add('show');
+    modal.style.display = ''; // Remove inline display: none
+    console.log('Modal classes after adding show:', modal.className);
+    console.log('Modal style after removing display none:', modal.style.display);
+}
+
+function closeQuoteModal() {
+    const modal = document.getElementById('quoteModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none'; // Restore display: none when closing
+    }
+}
+
+// Handle quote form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const quoteForm = document.getElementById('modal-quote-form');
+    if (quoteForm) {
+        quoteForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(quoteForm);
+            const customerName = formData.get('name');
+            const customerEmail = formData.get('email');
+            const customerPhone = formData.get('phone');
+            const customerLocation = formData.get('location') || 'South Africa';
+            const customerMessage = formData.get('message') || '';
+            
+            // Validate email
+            if (!isValidEmail(customerEmail)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            // Close modal
+            closeQuoteModal();
+            
+            // Send quote request
+            await sendQuoteRequest(customerName, customerEmail, customerPhone, customerLocation, customerMessage);
+        });
+    }
+});
+
+// Send quote request function
+async function sendQuoteRequest(customerName, customerEmail, customerPhone, customerLocation, customerMessage) {
+    if (!currentSystem) {
+        alert('Please select a system first!');
+        return;
+    }
+    
+    // Get current quantities from the UI
+    const panelQty = parseInt(document.getElementById('panels-quantity').textContent);
+    const batteryQty = parseInt(document.getElementById('batteries-quantity').textContent);
+    
+    // Calculate prices
+    const inverterTotal = currentSystem.inverter.price;
+    const batteryTotal = currentSystem.battery.price * batteryQty;
+    const panelTotal = currentSystem.panel.price * panelQty;
+    
+    // Recalculate installation cost based on current panel quantity
+    const installationTotal = calculateInstallationCost(panelQty, currentSystem.phase || 'single');
+    const totalPrice = inverterTotal + batteryTotal + panelTotal + installationTotal;
+    
+    // Build the webhook payload (new format for n8n workflow)
+    const quoteData = {
+        // Customer Info
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        customer_location: customerLocation,
+        customer_message: customerMessage,
+        
+        // System Info
+        system_name: currentSystem.name,
+        phase: currentPhase,
+        
+        // Line 1: Inverter
+        line1_item_name: currentSystem.inverter.name,
+        line1_description: `1x ${currentSystem.inverter.name}`,
+        line1_amount: currentSystem.inverter.price,
+        line1_quantity: 1,
+        
+        // Line 2: Battery
+        line2_item_name: currentSystem.battery.name,
+        line2_description: `${batteryQty}x ${currentSystem.battery.name}`,
+        line2_amount: currentSystem.battery.price * batteryQty,
+        line2_quantity: batteryQty,
+        
+        // Line 3: Panels
+        line3_item_name: currentSystem.panel.name,
+        line3_description: `${panelQty}x ${currentSystem.panel.name}`,
+        line3_amount: currentSystem.panel.price * panelQty,
+        line3_quantity: panelQty,
+        
+        // Line 4: Accessories (empty for now)
+        line4_item_name: '',
+        line4_description: '',
+        line4_amount: 0,
+        line4_quantity: 0,
+        
+        // Line 5: Installation
+        line5_item_name: 'Installation',
+        line5_description: 'Installation',
+        line5_amount: installationTotal,
+        line5_quantity: 1,
+        
+        // Total
+        total_price: totalPrice
+    };
+    
+    // Show loading state
+    const btn = document.getElementById('request-quote-btn');
+    if (!btn) {
+        console.error('Request Quote button not found!');
+        return;
+    }
+    
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    btn.disabled = true;
+    
+    try {
+        console.log('Sending quote to n8n:', quoteData);
+        
+        // Send to n8n webhook
+        const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quoteData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            alert('✅ Quote request sent successfully! We will contact you within 24 hours with your formal estimate.');
+            console.log('n8n response:', result);
+        } else {
+            throw new Error('Failed to send quote request');
+        }
+    } catch (error) {
+        console.error('Error sending quote:', error);
+        alert('⚠️ Sorry, there was an error sending your quote request. Please try again or call us directly at +27 82 123 4567.');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 }
 
 // Load pricing from localStorage or use default from pricing-config.js
@@ -155,6 +410,22 @@ function refreshPricing() {
     console.log('Pricing refreshed:', currentPricing);
 }
 
+// Function to clear cached pricing and reload from config
+function clearPricingCache() {
+    console.log('🧹 Clearing pricing cache...');
+    const oldPricing = localStorage.getItem('stp-solar-pricing');
+    console.log('Old cached pricing:', oldPricing ? JSON.parse(oldPricing) : 'None');
+    
+    localStorage.removeItem('stp-solar-pricing');
+    currentPricing = pricingConfig;
+    
+    console.log('✅ Pricing cache cleared, using config:');
+    console.log('   Installation config:', currentPricing.installation);
+    console.log('   Markup config:', currentPricing.markup);
+    
+    updateSystemConfigurations();
+}
+
 // Listen for pricing updates
 window.addEventListener('pricingUpdated', function(event) {
     currentPricing = event.detail;
@@ -169,6 +440,9 @@ window.addEventListener('pricingUpdated', function(event) {
 
 // Function to create system configurations with current pricing
 function createSystemConfigurations() {
+    console.log('🔧 Creating system configurations...');
+    console.log('🔧 Current pricing:', currentPricing);
+    
     const singlePhaseSystems = [];
     const threePhaseSystems = [];
     
@@ -179,8 +453,17 @@ function createSystemConfigurations() {
     const installation = currentPricing.installation || {};
     const markup = currentPricing.markup || {};
     
+    console.log('🔧 Available inverters:', Object.keys(inverters));
+    console.log('🔧 Available batteries:', Object.keys(batteries));
+    console.log('🔧 Available panels:', Object.keys(panels));
+    
     // Create systems for each available inverter
     Object.entries(inverters).forEach(([inverterKey, inverterData]) => {
+        // Skip -name entries (descriptive names)
+        if (inverterKey.endsWith('-name')) {
+            return;
+        }
+        
         // Skip Tesla inverters - they will be handled as special battery systems
         if (inverterKey.toLowerCase().includes('tesla')) {
             return;
@@ -234,6 +517,7 @@ function createSystemConfigurations() {
         const system = {
             id: `${isThreePhase ? 'three' : 'single'}-${capacity}kw`,
             name: `${capacity}kW ${inverterName} System`,
+            phase: isThreePhase ? 'three' : 'single',
             inverter: { 
                 name: inverterName, 
                 price: (inverterPrice || 25000) * (markup.inverter || 1.2) 
@@ -250,12 +534,13 @@ function createSystemConfigurations() {
             },
             installation: (() => {
                 // Use installation costs from inverter definition or fallback to system-specific costs
-                let baseCost, accessoriesCost;
+                let baseCost, accessoriesCost, perPanelCost;
                 
                 if (typeof inverterData === 'object' && inverterData.installation) {
                     // New format - use installation costs from inverter definition
                     baseCost = inverterData.installation.base || 0;
                     accessoriesCost = inverterData.installation.accessories || 0;
+                    perPanelCost = inverterData.installation.perPanel || 0;
                     
                     // If linked to an installation package, use that instead
                     if (inverterData.linkedInstallation && currentPricing.installationDefinitions) {
@@ -263,18 +548,30 @@ function createSystemConfigurations() {
                         if (linkedInstallation) {
                             baseCost = linkedInstallation.base || baseCost;
                             accessoriesCost = linkedInstallation.accessories || accessoriesCost;
+                            perPanelCost = linkedInstallation.perPanel || perPanelCost;
                         }
                     }
                 } else {
                     // Old format - use system-specific installation costs
                     const baseKey = isThreePhase ? 'three-base-installation' : 'single-base-installation';
                     const accessoriesKey = isThreePhase ? 'three-accessories' : 'single-accessories';
+                    const perPanelKey = isThreePhase ? 'three-per-panel' : 'single-per-panel';
+                    
                     baseCost = installation[baseKey] || (isThreePhase ? 12000 : 8500);
                     accessoriesCost = installation[accessoriesKey] || (isThreePhase ? 20000 : 15000);
+                    perPanelCost = installation[perPanelKey] || (isThreePhase ? 1000 : 900);
                 }
                 
-                const total = (baseCost + accessoriesCost) * (markup.installation || 1);
-                console.log(`Installation calculation for ${inverterKey}: base=${baseCost}, accessories=${accessoriesCost}, total=${total}`);
+                // Calculate total installation cost: base + accessories + (panels × per-panel cost)
+                const panelCost = panelQuantity * perPanelCost;
+                const total = (baseCost + accessoriesCost + panelCost) * (markup.installation || 1);
+                
+                console.log(`🔧 Installation calculation for ${inverterKey}:`);
+                console.log(`   Base Cost: R${baseCost}`);
+                console.log(`   Accessories Cost: R${accessoriesCost}`);
+                console.log(`   Panel Cost (${panelQuantity} × R${perPanelCost}): R${panelCost}`);
+                console.log(`   Markup: ${markup.installation || 1}`);
+                console.log(`   Total: R${total}`);
                 return total;
             })()
         };
@@ -294,6 +591,7 @@ function createSystemConfigurations() {
             const system = {
                 id: `single-${batteryKey.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
                 name: `${batteryKey.replace(/-/g, ' ')} System`,
+                phase: 'tesla',
                 inverter: null, // Tesla Powerwall doesn't need an inverter
                 battery: { 
                     name: batteryKey.replace(/-/g, ' '), 
@@ -301,14 +599,25 @@ function createSystemConfigurations() {
                     quantity: 1 
                 },
                 panel: null, // Solar panels are optional
-                installation: ((installation['tesla-base-installation'] || 10000) + 
-                             (installation['tesla-accessories'] || 18000)) * (markup.installation || 1)
+                installation: (() => {
+                    const baseCost = installation['tesla-base-installation'] || 10000;
+                    const accessoriesCost = installation['tesla-accessories'] || 18000;
+                    const perPanelCost = installation['tesla-per-panel'] || 950;
+                    const panelCost = panelQuantity * perPanelCost;
+                    const total = (baseCost + accessoriesCost + panelCost) * (markup.installation || 1);
+                    
+                    console.log(`🔧 Tesla Installation calculation:`);
+                    console.log(`   Base Cost: R${baseCost}`);
+                    console.log(`   Accessories Cost: R${accessoriesCost}`);
+                    console.log(`   Panel Cost (${panelQuantity} × R${perPanelCost}): R${panelCost}`);
+                    console.log(`   Total: R${total}`);
+                    return total;
+                })()
             };
             
             singlePhaseSystems.push(system);
         }
     });
-    
     
     // Sort systems by capacity
     singlePhaseSystems.sort((a, b) => {
@@ -403,7 +712,7 @@ function initializeCustomization(system) {
     document.getElementById('batteries-quantity').textContent = system.battery.quantity;
     
     // Update pricing
-    updatePricing();
+    updateSystemPrice();
 }
 
 function adjustPanels(change) {
@@ -413,7 +722,7 @@ function adjustPanels(change) {
     
     if (newQuantity >= 0 && newQuantity <= 50) {
         quantityEl.textContent = newQuantity;
-        updatePricing();
+        updateSystemPrice();
     }
 }
 
@@ -424,11 +733,11 @@ function adjustBatteries(change) {
     
     if (newQuantity >= 1 && newQuantity <= 10) {
         quantityEl.textContent = newQuantity;
-        updatePricing();
+        updateSystemPrice();
     }
 }
 
-function updatePricing() {
+function updateSystemPrice() {
     if (!currentSystem) return;
     
     const panelQuantity = parseInt(document.getElementById('panels-quantity').textContent);
@@ -437,7 +746,9 @@ function updatePricing() {
     const inverterPrice = currentSystem.inverter.price;
     const batteryPrice = currentSystem.battery.price * batteryQuantity;
     const panelPrice = currentSystem.panel.price * panelQuantity;
-    const installationPrice = currentSystem.installation;
+    
+    // Recalculate installation cost based on current panel quantity
+    const installationPrice = calculateInstallationCost(panelQuantity, currentSystem.phase || 'single');
     
     const totalPrice = inverterPrice + batteryPrice + panelPrice + installationPrice;
     
@@ -453,6 +764,43 @@ function updatePricing() {
     document.getElementById('batteries-price').textContent = 'R' + batteryPrice.toLocaleString('en-ZA');
 }
 
+// Calculate installation cost based on panel quantity and phase
+function calculateInstallationCost(panelQuantity, phase = 'single') {
+    const installation = currentPricing.installation || {};
+    const markup = currentPricing.markup || {};
+    
+    let baseCost, accessoriesCost, perPanelCost;
+    
+    if (phase === 'three') {
+        baseCost = installation['three-base-installation'] || 12000;
+        accessoriesCost = installation['three-accessories'] || 20000;
+        perPanelCost = installation['three-per-panel'] || 1000;
+    } else if (phase === 'tesla') {
+        baseCost = installation['tesla-base-installation'] || 10000;
+        accessoriesCost = installation['tesla-accessories'] || 18000;
+        perPanelCost = installation['tesla-per-panel'] || 950;
+    } else {
+        // Single phase (default)
+        baseCost = installation['single-base-installation'] || 8500;
+        accessoriesCost = installation['single-accessories'] || 15000;
+        perPanelCost = installation['single-per-panel'] || 900;
+    }
+    
+    // Calculate total installation cost: base + accessories + (panels × per-panel cost)
+    const panelCost = panelQuantity * perPanelCost;
+    const total = (baseCost + accessoriesCost + panelCost) * (markup.installation || 1);
+    
+    console.log(`🔧 Installation recalculation for ${phase} phase:`);
+    console.log(`   Panel Quantity: ${panelQuantity}`);
+    console.log(`   Base Cost: R${baseCost}`);
+    console.log(`   Accessories Cost: R${accessoriesCost}`);
+    console.log(`   Panel Cost (${panelQuantity} × R${perPanelCost}): R${panelCost}`);
+    console.log(`   Markup: ${markup.installation || 1}`);
+    console.log(`   Total: R${total}`);
+    
+    return total;
+}
+
 function calculateSystemPrice(system) {
     let total = 0;
     if (system.inverter) total += system.inverter.price;
@@ -462,355 +810,76 @@ function calculateSystemPrice(system) {
     return total;
 }
 
-// ============================================
-// WEBHOOK FUNCTION - Send Quote to n8n/QuickBooks
-// ============================================
-async function requestQuoteFromSystem() {
-    if (!currentSystem) {
-        alert('Please select a system first!');
-        return;
+// Tesla System Functions
+function adjustTeslaUnits(change) {
+    const quantityEl = document.getElementById('tesla-units-quantity');
+    let currentQuantity = parseInt(quantityEl.textContent);
+    let newQuantity = currentQuantity + change;
+    
+    if (newQuantity >= 1 && newQuantity <= 4) {
+        quantityEl.textContent = newQuantity;
+        updateTeslaPricing();
+    }
+}
+
+function adjustTeslaPanels(change) {
+    const quantityEl = document.getElementById('tesla-panels-count');
+    let currentQuantity = parseInt(quantityEl.textContent);
+    let newQuantity = currentQuantity + change;
+    
+    if (newQuantity >= 0 && newQuantity <= 40) {
+        quantityEl.textContent = newQuantity;
+        updateTeslaPricing();
+    }
+}
+
+function toggleTeslaPanels() {
+    const includePanels = document.getElementById('include-panels').checked;
+    const panelQuantity = document.getElementById('tesla-panel-quantity');
+    
+    if (includePanels) {
+        panelQuantity.style.display = 'block';
+    } else {
+        panelQuantity.style.display = 'none';
     }
     
-    // Get current quantities from the UI
-    const panelQty = parseInt(document.getElementById('panels-quantity').textContent);
-    const batteryQty = parseInt(document.getElementById('batteries-quantity').textContent);
+    updateTeslaPricing();
+}
+
+function updateTeslaPricing() {
+    const units = parseInt(document.getElementById('tesla-units-quantity').textContent);
+    const includePanels = document.getElementById('include-panels').checked;
+    const panels = includePanels ? parseInt(document.getElementById('tesla-panels-count').textContent) : 0;
     
-    // Calculate prices
-    const inverterTotal = currentSystem.inverter.price;
-    const batteryTotal = currentSystem.battery.price * batteryQty;
-    const panelTotal = currentSystem.panel.price * panelQty;
-    const installationTotal = currentSystem.installation;
-    const totalPrice = inverterTotal + batteryTotal + panelTotal + installationTotal;
+    // Tesla Powerwall 3 pricing (per unit)
+    const teslaUnitPrice = 180000; // R180,000 per unit
+    const panelPrice = 2500; // R2,500 per panel
+    const installationBase = 10000; // R10,000 base installation
+    const installationAccessories = 18000; // R18,000 accessories
+    const installationPerPanel = 950; // R950 per panel
     
-    // Prompt for customer details (you can make this a prettier modal later)
-    const customerName = prompt('Please enter your name:');
-    if (!customerName) return;
+    const totalUnitsPrice = units * teslaUnitPrice;
+    const totalPanelsPrice = panels * panelPrice;
+    const totalInstallation = installationBase + installationAccessories + (panels * installationPerPanel);
+    const totalPrice = totalUnitsPrice + totalPanelsPrice + totalInstallation;
     
-    const customerEmail = prompt('Please enter your email:');
-    if (!customerEmail || !isValidEmail(customerEmail)) {
-        alert('Please enter a valid email address');
-        return;
-    }
-    
-    const customerPhone = prompt('Please enter your phone number:');
-    if (!customerPhone) return;
-    
-    // Build the webhook payload
-    const quoteData = {
-        // Customer Info
-        name: customerName,
-        email: customerEmail,
-        phone: customerPhone,
-        location: 'South Africa',
-        
-        // System Info
-        system_name: currentSystem.name,
-        phase: currentPhase,
-        
-        // Inverter (with exact name for QuickBooks)
-        inverter_name: currentSystem.inverter.name,
-        inverter_qty: 1,
-        inverter_price: currentSystem.inverter.price,
-        
-        // Battery (with exact name for QuickBooks)
-        battery_name: currentSystem.battery.name,
-        battery_qty: batteryQty,
-        battery_price: currentSystem.battery.price,
-        
-        // Panels (with exact name for QuickBooks)
-        panel_name: currentSystem.panel.name,
-        panel_qty: panelQty,
-        panel_price: currentSystem.panel.price,
-        
-        // Installation
-        installation_name: 'Professional Installation',
-        installation_qty: 1,
-        installation_price: installationTotal,
-        
-        // Total
-        total_price: totalPrice
-    };
-    
-    // Show loading state
-    const btn = document.getElementById('request-quote-btn');
-    if (!btn) {
-        console.error('Request Quote button not found!');
-        return;
-    }
-    
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    btn.disabled = true;
-    
-    try {
-        console.log('Sending quote to n8n:', quoteData);
-        
-        // Send to n8n webhook
-        const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(quoteData)
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            alert('✅ Quote request sent successfully! We will contact you within 24 hours with your formal estimate.');
-            console.log('n8n response:', result);
-        } else {
-            throw new Error('Failed to send quote request');
+    // Update pricing display (you can add this to your HTML)
+    console.log('Tesla System Pricing:', {
+        units: units,
+        panels: panels,
+        totalPrice: totalPrice
+    });
+}
+
+// Roof Type Functions
+function updateRoofType(checkbox) {
+    // Uncheck other roof type when one is selected
+    const roofOptions = document.querySelectorAll('.roof-option input[type="checkbox"]');
+    roofOptions.forEach(option => {
+        if (option !== checkbox) {
+            option.checked = false;
         }
-    } catch (error) {
-        console.error('Error sending quote:', error);
-        alert('⚠️ Sorry, there was an error sending your quote request. Please try again or call us directly at +27 82 123 4567.');
-    } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    }
-}
-
-// Old hardcoded systemConfigs removed - now using dynamic systems from pricing data
-
-// Old system customization functions removed - now using the main system builder
-
-function compareSystems() {
-    // This would open a comparison modal or redirect to a comparison page
-    alert('System comparison feature coming soon!');
-}
-
-function calculateSolarSavings() {
-    const monthlyBill = parseFloat(monthlyBillInput.value) || 0;
-    const roofSize = parseFloat(roofSizeInput.value) || 0;
-    const location = locationSelect.value;
-    const systemType = systemTypeSelect.value;
-
-    if (monthlyBill <= 0) {
-        hideResults();
-        return;
-    }
-
-    // Solar calculation logic
-    const results = performSolarCalculation(monthlyBill, roofSize, location, systemType);
-    displayResults(results);
-}
-
-function performSolarCalculation(monthlyBill, roofSize, location, systemType) {
-    // Current electricity cost in South Africa (R/kWh) - Updated 2024
-    const electricityCost = 3.2; // R/kWh (increased from load shedding and inflation)
-    
-    // Average daily sun hours by location (South African data)
-    const sunHours = {
-        'jhb': 6.8, // Johannesburg - High sun exposure
-        'cpt': 6.2, // Cape Town - Good sun, some winter clouds
-        'dbn': 5.8, // Durban - Good sun, some humidity
-        'pta': 6.9, // Pretoria - Excellent sun exposure
-        'other': 6.3 // Default - Average South African sun
-    };
-    
-    // System efficiency factors based on STP Solar equipment
-    const efficiencyFactors = {
-        'grid-tie': 0.88, // JA Solar/Canadian Solar panels with Sigenstor/Sunsynk inverters
-        'hybrid': 0.85,   // With battery storage
-        'off-grid': 0.82  // Full off-grid with Tesla Powerwall 3
-    };
-    
-    // Calculate monthly kWh consumption
-    const monthlyKwh = monthlyBill / electricityCost;
-    
-    // Calculate required system size (kW)
-    const dailyKwh = monthlyKwh / 30;
-    const systemSize = Math.min(
-        dailyKwh / (sunHours[location] * efficiencyFactors[systemType]),
-        roofSize * 0.18 // Max 180W per m² (modern panels)
-    );
-    
-    // Round to nearest 0.5kW and ensure minimum viable size
-    const roundedSystemSize = Math.max(Math.round(systemSize * 2) / 2, 3.0);
-    
-    // Calculate monthly generation
-    const monthlyGeneration = roundedSystemSize * sunHours[location] * 30 * efficiencyFactors[systemType];
-    
-    // Calculate savings (assuming 95% of generation is used)
-    const monthlySavings = Math.min(monthlyGeneration * 0.95 * electricityCost, monthlyBill * 0.95);
-    const annualSavings = monthlySavings * 12;
-    
-    // STP Solar pricing (R/kW) - Real market pricing 2024
-    const systemCosts = {
-        'grid-tie': 18000, // R18,000 per kW - JA Solar/Canadian Solar + Sigenstor/Sunsynk
-        'hybrid': 25000,   // R25,000 per kW - With battery backup
-        'off-grid': 35000  // R35,000 per kW - Tesla Powerwall 3 system
-    };
-    
-    const systemCost = roundedSystemSize * systemCosts[systemType];
-    const paybackPeriod = systemCost / annualSavings;
-    
-    // Calculate 25-year savings
-    const twentyFiveYearSavings = (annualSavings * 25) - systemCost;
-    
-    // Get system recommendations
-    const recommendations = getSystemRecommendations(roundedSystemSize, systemType, location);
-    
-    return {
-        systemSize: roundedSystemSize,
-        monthlySavings: monthlySavings,
-        annualSavings: annualSavings,
-        paybackPeriod: paybackPeriod,
-        systemCost: systemCost,
-        twentyFiveYearSavings: twentyFiveYearSavings,
-        recommendations: recommendations,
-        monthlyGeneration: monthlyGeneration
-    };
-}
-
-function getSystemRecommendations(systemSize, systemType, location) {
-    const recommendations = {
-        panels: [],
-        inverters: [],
-        batteries: [],
-        accessories: []
-    };
-    
-    // Panel recommendations based on system size
-    if (systemSize <= 5) {
-        recommendations.panels = [
-            { brand: 'JA Solar', model: 'JAM60S20-540/MR', quantity: Math.ceil(systemSize * 1000 / 540), power: '540W' },
-            { brand: 'Canadian Solar', model: 'CS3K-540MS', quantity: Math.ceil(systemSize * 1000 / 540), power: '540W' }
-        ];
-    } else if (systemSize <= 10) {
-        recommendations.panels = [
-            { brand: 'JA Solar', model: 'JAM72S20-550/MR', quantity: Math.ceil(systemSize * 1000 / 550), power: '550W' },
-            { brand: 'Canadian Solar', model: 'CS3K-550MS', quantity: Math.ceil(systemSize * 1000 / 550), power: '550W' }
-        ];
-    } else {
-        recommendations.panels = [
-            { brand: 'JA Solar', model: 'JAM72S20-600/MR', quantity: Math.ceil(systemSize * 1000 / 600), power: '600W' },
-            { brand: 'Canadian Solar', model: 'CS3K-600MS', quantity: Math.ceil(systemSize * 1000 / 600), power: '600W' }
-        ];
-    }
-    
-    // Inverter recommendations
-    if (systemType === 'grid-tie') {
-        recommendations.inverters = [
-            { brand: 'Sigenstor', model: 'SG5K-DT', capacity: '5kW', price: 15000 },
-            { brand: 'Sunsynk', model: '5K-SG01LP1', capacity: '5kW', price: 18000 }
-        ];
-    } else if (systemType === 'hybrid') {
-        recommendations.inverters = [
-            { brand: 'Sunsynk', model: '5K-SG01LP1', capacity: '5kW Hybrid', price: 25000 },
-            { brand: 'Sigenstor', model: 'SG5K-DT-H', capacity: '5kW Hybrid', price: 22000 }
-        ];
-    } else {
-        recommendations.inverters = [
-            { brand: 'Tesla', model: 'Powerwall 3', capacity: '13.5kWh', price: 180000 }
-        ];
-    }
-    
-    // Battery recommendations for hybrid/off-grid
-    if (systemType !== 'grid-tie') {
-        recommendations.batteries = [
-            { brand: 'Tesla', model: 'Powerwall 3', capacity: '13.5kWh', price: 180000 },
-            { brand: 'Sunsynk', model: '5.12kWh Battery', capacity: '5.12kWh', price: 45000 }
-        ];
-    }
-    
-    // Accessories
-    recommendations.accessories = [
-        'DC Isolator Switches',
-        'AC Distribution Board',
-        'Earthing System',
-        'Lightning Protection',
-        'Monitoring System'
-    ];
-    
-    return recommendations;
-}
-
-function displayResults(results) {
-    const systemSizeEl = document.getElementById('system-size');
-    const monthlySavingsEl = document.getElementById('monthly-savings');
-    const annualSavingsEl = document.getElementById('annual-savings');
-    const paybackPeriodEl = document.getElementById('payback-period');
-    
-    systemSizeEl.textContent = `${results.systemSize}kW`;
-    monthlySavingsEl.textContent = `R${results.monthlySavings.toLocaleString('en-ZA', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
-    annualSavingsEl.textContent = `R${results.annualSavings.toLocaleString('en-ZA', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
-    paybackPeriodEl.textContent = `${results.paybackPeriod.toFixed(1)} years`;
-    
-    // Add detailed system information
-    displaySystemDetails(results);
-    
-    calculatorResults.style.display = 'block';
-    calculatorResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function displaySystemDetails(results) {
-    // Create or update system details section
-    let detailsSection = document.getElementById('system-details');
-    if (!detailsSection) {
-        detailsSection = document.createElement('div');
-        detailsSection.id = 'system-details';
-        detailsSection.className = 'system-details';
-        calculatorResults.appendChild(detailsSection);
-    }
-    
-    detailsSection.innerHTML = `
-        <div class="details-grid">
-            <div class="detail-item">
-                <h4>System Cost</h4>
-                <p>R${results.systemCost.toLocaleString('en-ZA', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</p>
-            </div>
-            <div class="detail-item">
-                <h4>25-Year Savings</h4>
-                <p>R${results.twentyFiveYearSavings.toLocaleString('en-ZA', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Monthly Generation</h4>
-                <p>${results.monthlyGeneration.toFixed(0)} kWh</p>
-            </div>
-        </div>
-        
-        <div class="recommendations">
-            <h4>Recommended Equipment</h4>
-            <div class="equipment-grid">
-                <div class="equipment-category">
-                    <h5>Solar Panels</h5>
-                    ${results.recommendations.panels.map(panel => `
-                        <div class="equipment-item">
-                            <strong>${panel.brand} ${panel.model}</strong><br>
-                            ${panel.quantity} panels × ${panel.power}
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div class="equipment-category">
-                    <h5>Inverters</h5>
-                    ${results.recommendations.inverters.map(inverter => `
-                        <div class="equipment-item">
-                            <strong>${inverter.brand} ${inverter.model}</strong><br>
-                            ${inverter.capacity}
-                        </div>
-                    `).join('')}
-                </div>
-                
-                ${results.recommendations.batteries.length > 0 ? `
-                <div class="equipment-category">
-                    <h5>Battery Storage</h5>
-                    ${results.recommendations.batteries.map(battery => `
-                        <div class="equipment-item">
-                            <strong>${battery.brand} ${battery.model}</strong><br>
-                            ${battery.capacity}
-                        </div>
-                    `).join('')}
-                </div>
-                ` : ''}
-            </div>
-        </div>
-    `;
-}
-
-function hideResults() {
-    calculatorResults.style.display = 'none';
+    });
 }
 
 // Quote Form Functions

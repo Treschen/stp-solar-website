@@ -15,7 +15,7 @@
     <!-- Cache Control Meta Tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta name="version" content="3.7">
+    <meta name="version" content="3.1">
     <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
@@ -939,62 +939,8 @@
         </div>
     </footer>
 
-    <!-- Quote Request Modal -->
-    <div id="quoteModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-paper-plane"></i> Request Your Solar Quote</h3>
-                <span class="close" onclick="closeQuoteModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="modal-quote-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="quote-name">Full Name *</label>
-                            <input type="text" id="quote-name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="quote-email">Email Address *</label>
-                            <input type="email" id="quote-email" name="email" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="quote-phone">Phone Number *</label>
-                            <input type="tel" id="quote-phone" name="phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="quote-location">Location</label>
-                            <input type="text" id="quote-location" name="location" placeholder="e.g., Cape Town">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="quote-message">Additional Information</label>
-                        <textarea id="quote-message" name="message" rows="4" placeholder="Tell us about your energy needs, roof type, or any specific requirements..."></textarea>
-                    </div>
-                    
-                    <div class="system-summary">
-                        <h4>Selected System</h4>
-                        <div id="modal-system-details">
-                            <!-- System details will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeQuoteModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Send Quote Request
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Scripts -->
-    <script src="pricing-config.js?v=3.7"></script>
+    <script src="pricing-config.js?v=3.1"></script>
     <script>
         // Essential pricing loading only - all system builder functions are in script.js
         console.log('Essential pricing script loaded');
@@ -1008,7 +954,7 @@
             }, 1000);
         });
     </script>
-    <script src="script.js?v=4.0"></script>
-    <script src="cache-buster.js?v=4.0"></script>
+    <script src="script.js?v=3.1"></script>
+    <script src="cache-buster.js?v=3.1"></script>
 </body>
 </html>
