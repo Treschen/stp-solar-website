@@ -306,6 +306,39 @@ async function sendQuoteRequest(customerName, customerEmail, customerPhone, cust
     const installationTotal = calculateInstallationCost(panelQty, currentSystem.phase || 'single');
     const totalPrice = inverterTotal + batteryTotal + panelTotal + installationTotal;
     
+    // Calculate separate accessories and installation costs
+    const installation = currentPricing.installation || {};
+    const markup = currentPricing.markup || {};
+    
+    let accessoriesCost, baseInstallationCost, perPanelCost;
+    
+    if (currentSystem.phase === 'three') {
+        accessoriesCost = installation['three-accessories'] || 20000;
+        baseInstallationCost = installation['three-base-installation'] || 12000;
+        perPanelCost = installation['three-per-panel'] || 1000;
+    } else if (currentSystem.phase === 'tesla') {
+        accessoriesCost = installation['tesla-accessories'] || 18000;
+        baseInstallationCost = installation['tesla-base-installation'] || 10000;
+        perPanelCost = installation['tesla-per-panel'] || 950;
+    } else {
+        // Single phase (default)
+        accessoriesCost = installation['single-accessories'] || 15000;
+        baseInstallationCost = installation['single-base-installation'] || 8500;
+        perPanelCost = installation['single-per-panel'] || 900;
+    }
+    
+    // Calculate separate costs
+    const accessoriesTotal = accessoriesCost * (markup.installation || 1);
+    const panelInstallationCost = panelQty * perPanelCost * (markup.installation || 1);
+    const baseInstallationTotal = baseInstallationCost * (markup.installation || 1);
+    const totalInstallationCost = accessoriesTotal + baseInstallationTotal + panelInstallationCost;
+    
+    console.log('🔧 Webhook cost breakdown:');
+    console.log(`   Accessories: R${accessoriesTotal}`);
+    console.log(`   Base Installation: R${baseInstallationTotal}`);
+    console.log(`   Panel Installation (${panelQty} × R${perPanelCost}): R${panelInstallationCost}`);
+    console.log(`   Total Installation: R${totalInstallationCost}`);
+    
     // Build the webhook payload (new format for n8n workflow)
     const quoteData = {
         // Customer Info
@@ -337,16 +370,16 @@ async function sendQuoteRequest(customerName, customerEmail, customerPhone, cust
         line3_amount: currentSystem.panel.price * panelQty,
         line3_quantity: panelQty,
         
-        // Line 4: Accessories (empty for now)
-        line4_item_name: '',
-        line4_description: '',
-        line4_amount: 0,
-        line4_quantity: 0,
+        // Line 4: Accessories
+        line4_item_name: 'Accessories',
+        line4_description: 'Installation Accessories',
+        line4_amount: accessoriesTotal,
+        line4_quantity: 1,
         
         // Line 5: Installation
         line5_item_name: 'Installation',
-        line5_description: 'Installation',
-        line5_amount: installationTotal,
+        line5_description: `Base Installation + ${panelQty} Panels`,
+        line5_amount: baseInstallationTotal + panelInstallationCost,
         line5_quantity: 1,
         
         // Total
