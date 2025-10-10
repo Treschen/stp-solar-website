@@ -1038,22 +1038,28 @@
                 return;
             }
             
-            container.innerHTML = items.map((item, index) => `
-                <div class="item-card">
-                    <div class="item-info">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-price">R ${parseFloat(item.price).toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+            container.innerHTML = items.map((item, index) => {
+                // Phases don't have pricing
+                const priceHtml = type === 'phases' ? '' : 
+                    `<div class="item-price">R ${parseFloat(item.price).toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>`;
+                
+                return `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <div class="item-name">${item.name}</div>
+                            ${priceHtml}
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-secondary btn-icon" onclick="editItem('${type}', ${index})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-icon" onclick="deleteItem('${type}', ${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="item-actions">
-                        <button class="btn btn-secondary btn-icon" onclick="editItem('${type}', ${index})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger btn-icon" onclick="deleteItem('${type}', ${index})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         // Render systems list
@@ -1119,6 +1125,14 @@
             document.getElementById('item-name').value = '';
             document.getElementById('item-price').value = '';
             
+            // Hide price field for phases
+            const priceGroup = document.getElementById('item-price').closest('.form-group');
+            if (type === 'phase') {
+                priceGroup.style.display = 'none';
+            } else {
+                priceGroup.style.display = 'block';
+            }
+            
             document.getElementById('item-modal').classList.add('active');
         }
         
@@ -1131,7 +1145,15 @@
             const item = appData[type][index];
             document.getElementById('modal-title').textContent = `Edit ${type.charAt(0).toUpperCase() + type.slice(1, -1)}`;
             document.getElementById('item-name').value = item.name;
-            document.getElementById('item-price').value = item.price;
+            document.getElementById('item-price').value = item.price || '';
+            
+            // Hide price field for phases
+            const priceGroup = document.getElementById('item-price').closest('.form-group');
+            if (currentEditType === 'phase') {
+                priceGroup.style.display = 'none';
+            } else {
+                priceGroup.style.display = 'block';
+            }
             
             document.getElementById('item-modal').classList.add('active');
         }
@@ -1171,7 +1193,8 @@
             const name = document.getElementById('item-name').value.trim();
             const price = parseFloat(document.getElementById('item-price').value);
             
-            if (!name || isNaN(price)) {
+            // Phases don't require price
+            if (!name || (currentEditType !== 'phase' && isNaN(price))) {
                 showToast('Please fill in all fields correctly', 'error');
                 return;
             }
@@ -1196,9 +1219,13 @@
             
             const item = {
                 id: currentEditId !== null ? appData[dataType][currentEditId].id : Date.now().toString(),
-                name: name,
-                price: price
+                name: name
             };
+            
+            // Only add price if not a phase
+            if (currentEditType !== 'phase') {
+                item.price = price;
+            }
             
             if (currentEditId !== null) {
                 appData[dataType][currentEditId] = item;
@@ -1327,13 +1354,13 @@
             `).join('');
             document.getElementById('system-rooftypes').innerHTML = rooftypesHtml || '<p style="color: #7f8c8d;">No roof types defined yet</p>';
             
-            // Phases (radio)
+            // Phases (radio) - no pricing
             const phasesHtml = appData.phases.map(item => `
                 <label class="selection-item ${existingSystem && existingSystem.phase === item.id ? 'selected' : ''}">
                     <input type="radio" name="system-phase" value="${item.id}"
                         ${existingSystem && existingSystem.phase === item.id ? 'checked' : ''}
                         onchange="toggleSelection(this)">
-                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                    <span>${item.name}</span>
                 </label>
             `).join('');
             document.getElementById('system-phases').innerHTML = phasesHtml || '<p style="color: #7f8c8d;">No phases defined yet</p>';
