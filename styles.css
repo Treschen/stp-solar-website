@@ -1361,6 +1361,102 @@ section > * {
     font-size: var(--font-size-xl);
 }
 
+.system-title {
+    text-align: left;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.system-features {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.system-features .feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    padding-left: 0;
+}
+
+.system-features .feature i {
+    font-size: var(--font-size-lg);
+    color: var(--primary-color);
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.system-features .feature span {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+/* No Panels Checkbox Styling */
+.no-panels-option {
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-sm);
+    background: rgba(243, 156, 18, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(243, 156, 18, 0.2);
+}
+
+.no-panels-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-dark);
+    gap: var(--spacing-sm);
+}
+
+.no-panels-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    position: relative;
+    transition: all var(--transition-normal);
+    flex-shrink: 0;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 10px;
+    border: solid var(--white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.no-panels-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.no-panels-checkbox input[type="checkbox"]:checked + .checkmark:after {
+    display: block;
+}
+
+.checkbox-label {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+}
+
+.no-panels-checkbox:hover .checkmark {
+    border-color: var(--secondary-color);
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.2);
+}
+
 .system-specs {
     list-style: none;
     margin-bottom: var(--spacing-lg);
