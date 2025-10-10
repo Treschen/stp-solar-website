@@ -9,32 +9,28 @@ const pricingConfig = {
     },
     
     // Battery Prices (R)
-                batteries: {
+    batteries: {
         'Sunsynk-5.12kWh': 45000,
-        'Sunsynk-5.12kWh-name': 'Sunsynk 5.12kWh',
-        'Sunsynk-10kWh': 90000,
-        'Sunsynk-10kWh-name': 'Sunsynk 10kWh'
-                },
+        'Sunsynk-10kWh': 90000
+    },
     
     // Solar Panel Prices (R)
-                panels: {
+    panels: {
         'JA-Solar-565W': 2500,
-        'JA-Solar-565W-name': 'JA Solar 565W',
-        'Canadian-Solar-565W': 2600,
-        'Canadian-Solar-565W-name': 'Canadian Solar 565W'
-                },
+        'Canadian-Solar-565W': 2600
+    },
     
     // Installation & Accessories (R)
-                installation: {
+    installation: {
         'single-base-installation': 8500,
         'single-accessories': 15000,
-        'single-per-panel': 900,
+        'single-per-panel': 900,  // Additional cost per panel
         'three-base-installation': 12000,
         'three-accessories': 20000,
-        'three-per-panel': 1000,
+        'three-per-panel': 1000,  // Additional cost per panel
         'tesla-base-installation': 10000,
         'tesla-accessories': 18000,
-        'tesla-per-panel': 950
+        'tesla-per-panel': 950    // Additional cost per panel
     },
     
     // System Quantity Limits

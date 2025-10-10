@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System Builder - Demo Integration V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-left-color: #0dcaf0;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 0.75rem;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #f39c12;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #f39c12;
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .quantity-btn:hover {
+            background: #e67e22;
+            transform: scale(1.1);
+        }
+        
+        .quantity-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+        
+        .quantity-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .price-breakdown {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e9ecef;
+        }
+        
+        .price-breakdown h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        
+        .price-item.total {
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 3px solid #f39c12;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #f39c12;
+        }
+        
+        .price-label {
+            color: #2c3e50;
+        }
+        
+        .price-value {
+            font-weight: 600;
+            color: #27ae60;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #842029;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .success-message {
+            background: #d1e7dd;
+            color: #0f5132;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border-left: 4px solid #28a745;
+        }
+        
+        .note {
+            background: #e7f3ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            color: #004085;
+            font-size: 0.9rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-solar-panel"></i> Solar System Builder</h1>
+            <p>Demo Integration with Admin Portal V2</p>
+        </div>
+        
+        <div class="alert alert-info">
+            <strong><i class="fas fa-info-circle"></i> Demo Mode:</strong> This page demonstrates how the Solar Admin Portal V2 integrates with your main website. Configure your systems in <a href="admin-pricing-v2.html" target="_blank">admin-pricing-v2.html</a> first.
+        </div>
+        
+        <div id="no-data-warning" class="alert" style="display: none;">
+            <strong><i class="fas fa-exclamation-triangle"></i> No Configuration Found:</strong> 
+            Please open <a href="admin-pricing-v2.html" target="_blank">admin-pricing-v2.html</a> and create your systems first.
+        </div>
+        
+        <div id="system-builder">
+            <!-- Step 1: Choose System -->
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> Step 1: Choose Your System</h2>
+                <div class="form-group">
+                    <label for="system-select">Select System Type</label>
+                    <select id="system-select" onchange="loadSystem()">
+                        <option value="">-- Select a system --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Step 2: System Configuration (shown when system selected) -->
+            <div id="system-config" style="display: none;">
+                <!-- Power Type -->
+                <div class="section">
+                    <h2><i class="fas fa-plug"></i> Step 2: Select Your Power Type</h2>
+                    <div class="form-group">
+                        <label id="phase-label">Installation Phase</label>
+                        <div class="note" id="phase-info"></div>
+                    </div>
+                </div>
+                
+                <!-- Customize System -->
+                <div class="section">
+                    <h2><i class="fas fa-sliders-h"></i> Step 3: Customize Your System</h2>
+                    
+                    <!-- Batteries -->
+                    <div class="form-group">
+                        <label for="battery-type">Battery Type</label>
+                        <select id="battery-type" onchange="updatePrice()">
+                            <option value="">-- Select battery type --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Number of Batteries</label>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="changeBatteries(-1)">-</button>
+                            <span class="quantity-value" id="battery-qty">0</span>
+                            <button class="quantity-btn" onclick="changeBatteries(1)">+</button>
+                        </div>
+                        <div class="note" id="battery-note"></div>
+                    </div>
+                    
+                    <!-- Solar Panels -->
+                    <div class="form-group">
+                        <label for="panel-type">Solar Panel Type</label>
+                        <select id="panel-type" onchange="updatePrice()">
+                            <option value="">-- Select panel type --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Number of Solar Panels</label>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="changePanels(-1)">-</button>
+                            <span class="quantity-value" id="panel-qty">0</span>
+                            <button class="quantity-btn" onclick="changePanels(1)">+</button>
+                        </div>
+                        <div class="note" id="panel-note"></div>
+                    </div>
+                    
+                    <!-- Roof Type -->
+                    <div class="form-group">
+                        <label for="roof-type">Roof Type (for mounting kit)</label>
+                        <select id="roof-type" onchange="updatePrice()">
+                            <option value="">-- Select roof type --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Price Breakdown -->
+                <div class="section">
+                    <div class="price-breakdown">
+                        <h3><i class="fas fa-calculator"></i> Price Breakdown</h3>
+                        <div id="price-items"></div>
+                        <div class="price-item total">
+                            <span class="price-label">Total System Price:</span>
+                            <span class="price-value" id="total-price">R 0.00</span>
+                        </div>
+                    </div>
+                    <div id="validation-errors"></div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn" onclick="requestQuote()">
+                        <i class="fas fa-file-invoice"></i> Request Quote
+                    </button>
+                    <button class="btn" onclick="resetBuilder()" style="background: linear-gradient(135deg, #95a5a6, #7f8c8d);">
+                        <i class="fas fa-redo"></i> Start Over
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="solar-config-v2.js"></script>
+    <script>
+        let currentSystem = null;
+        let batteryQty = 0;
+        let panelQty = 0;
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSystems();
+        });
+        
+        // Load available systems
+        function loadSystems() {
+            const systems = solarConfigV2.getSystems();
+            const select = document.getElementById('system-select');
+            
+            if (systems.length === 0) {
+                document.getElementById('no-data-warning').style.display = 'block';
+                select.disabled = true;
+                return;
+            }
+            
+            systems.forEach(system => {
+                const option = document.createElement('option');
+                option.value = system.id;
+                option.textContent = system.name;
+                select.appendChild(option);
+            });
+        }
+        
+        // Load selected system
+        function loadSystem() {
+            const systemId = document.getElementById('system-select').value;
+            if (!systemId) {
+                document.getElementById('system-config').style.display = 'none';
+                return;
+            }
+            
+            currentSystem = solarConfigV2.getSystemById(systemId);
+            if (!currentSystem) return;
+            
+            // Show configuration section
+            document.getElementById('system-config').style.display = 'block';
+            
+            // Load phase info
+            if (currentSystem.phase) {
+                document.getElementById('phase-label').textContent = currentSystem.phase.name;
+                document.getElementById('phase-info').innerHTML = `
+                    <strong>Installation Phase:</strong> ${currentSystem.phase.name} - 
+                    R ${parseFloat(currentSystem.phase.price).toLocaleString('en-ZA', {minimumFractionDigits: 2})}
+                `;
+            }
+            
+            // Load battery options
+            const batterySelect = document.getElementById('battery-type');
+            batterySelect.innerHTML = '<option value="">-- Select battery type --</option>';
+            currentSystem.batteries.forEach(battery => {
+                const option = document.createElement('option');
+                option.value = battery.id;
+                option.textContent = `${battery.name} - R ${parseFloat(battery.price).toLocaleString('en-ZA')}`;
+                batterySelect.appendChild(option);
+            });
+            
+            // Set battery note
+            if (currentSystem.batteryMin === 0) {
+                document.getElementById('battery-note').innerHTML = '<strong>Note:</strong> Batteries not available for this system';
+                batterySelect.disabled = true;
+            } else {
+                document.getElementById('battery-note').innerHTML = `<strong>Range:</strong> ${currentSystem.batteryMin} to ${currentSystem.batteryMax} batteries`;
+                batterySelect.disabled = false;
+                batteryQty = currentSystem.batteryMin;
+            }
+            
+            // Load panel options
+            const panelSelect = document.getElementById('panel-type');
+            panelSelect.innerHTML = '<option value="">-- Select panel type --</option>';
+            currentSystem.panels.forEach(panel => {
+                const option = document.createElement('option');
+                option.value = panel.id;
+                option.textContent = `${panel.name} - R ${parseFloat(panel.price).toLocaleString('en-ZA')}`;
+                panelSelect.appendChild(option);
+            });
+            
+            // Set panel note
+            if (currentSystem.panelMin === 0) {
+                document.getElementById('panel-note').innerHTML = `<strong>Range:</strong> 0 (optional) or ${currentSystem.panelMin > 0 ? currentSystem.panelMin : 1} to ${currentSystem.panelMax} panels`;
+            } else {
+                document.getElementById('panel-note').innerHTML = `<strong>Range:</strong> ${currentSystem.panelMin} to ${currentSystem.panelMax} panels`;
+            }
+            panelQty = currentSystem.panelMin;
+            
+            // Load roof type options
+            const roofSelect = document.getElementById('roof-type');
+            roofSelect.innerHTML = '<option value="">-- Select roof type --</option>';
+            currentSystem.rooftypes.forEach(roof => {
+                const option = document.createElement('option');
+                option.value = roof.id;
+                option.textContent = `${roof.name} - R ${parseFloat(roof.price).toLocaleString('en-ZA')} per panel`;
+                roofSelect.appendChild(option);
+            });
+            
+            // Update display and price
+            updateQuantityDisplay();
+            updatePrice();
+        }
+        
+        // Change battery quantity
+        function changeBatteries(delta) {
+            if (!currentSystem) return;
+            
+            const newQty = batteryQty + delta;
+            if (newQty >= currentSystem.batteryMin && newQty <= currentSystem.batteryMax) {
+                batteryQty = newQty;
+                updateQuantityDisplay();
+                updatePrice();
+            }
+        }
+        
+        // Change panel quantity
+        function changePanels(delta) {
+            if (!currentSystem) return;
+            
+            let newQty = panelQty + delta;
+            
+            // Handle zero crossing
+            if (currentSystem.panelMin === 0) {
+                if (panelQty === 0 && delta > 0) {
+                    newQty = Math.max(1, currentSystem.panelMin); // Jump to minimum or 1
+                } else if (panelQty > 0 && newQty < currentSystem.panelMin && newQty > 0) {
+                    newQty = 0; // Go to zero if below minimum
+                }
+            }
+            
+            if (newQty >= 0 && newQty <= currentSystem.panelMax) {
+                if (currentSystem.panelMin > 0 && newQty > 0 && newQty < currentSystem.panelMin) {
+                    return; // Don't allow quantities below minimum (unless zero)
+                }
+                panelQty = newQty;
+                updateQuantityDisplay();
+                updatePrice();
+            }
+        }
+        
+        // Update quantity display
+        function updateQuantityDisplay() {
+            document.getElementById('battery-qty').textContent = batteryQty;
+            document.getElementById('panel-qty').textContent = panelQty;
+        }
+        
+        // Update price calculation
+        function updatePrice() {
+            if (!currentSystem) return;
+            
+            const config = {
+                batteryType: document.getElementById('battery-type').value,
+                batteryQuantity: batteryQty,
+                panelType: document.getElementById('panel-type').value,
+                panelQuantity: panelQty,
+                roofType: document.getElementById('roof-type').value
+            };
+            
+            // Get price breakdown
+            const breakdown = solarConfigV2.getPriceBreakdown(currentSystem.id, config);
+            
+            // Display price items
+            const priceItemsDiv = document.getElementById('price-items');
+            priceItemsDiv.innerHTML = breakdown.items.map(item => `
+                <div class="price-item">
+                    <span class="price-label">
+                        ${item.name}
+                        ${item.quantity > 1 ? ` (${item.quantity} × R ${parseFloat(item.unitPrice).toLocaleString('en-ZA', {minimumFractionDigits: 2})})` : ''}
+                    </span>
+                    <span class="price-value">R ${parseFloat(item.totalPrice).toLocaleString('en-ZA', {minimumFractionDigits: 2})}</span>
+                </div>
+            `).join('');
+            
+            // Display total
+            document.getElementById('total-price').textContent = `R ${breakdown.total.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+            
+            // Validate configuration
+            const validation = solarConfigV2.validateConfig(currentSystem.id, config);
+            const errorsDiv = document.getElementById('validation-errors');
+            
+            if (!validation.valid) {
+                errorsDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>Configuration Issues:</strong>
+                        <ul style="margin: 0.5rem 0 0 1.5rem;">
+                            ${validation.errors.map(err => `<li>${err}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                errorsDiv.innerHTML = '<div class="success-message"><i class="fas fa-check-circle"></i> Configuration is valid!</div>';
+            }
+        }
+        
+        // Request quote
+        function requestQuote() {
+            if (!currentSystem) return;
+            
+            const config = {
+                batteryType: document.getElementById('battery-type').value,
+                batteryQuantity: batteryQty,
+                panelType: document.getElementById('panel-type').value,
+                panelQuantity: panelQty,
+                roofType: document.getElementById('roof-type').value
+            };
+            
+            const validation = solarConfigV2.validateConfig(currentSystem.id, config);
+            
+            if (!validation.valid) {
+                alert('Please fix configuration issues before requesting a quote.');
+                return;
+            }
+            
+            const breakdown = solarConfigV2.getPriceBreakdown(currentSystem.id, config);
+            
+            // In a real implementation, this would send to your contact form or email
+            alert(`Quote Request Summary:\n\nSystem: ${currentSystem.name}\nTotal Price: R ${breakdown.total.toLocaleString('en-ZA')}\n\nThis would normally be sent to your contact form.`);
+        }
+        
+        // Reset builder
+        function resetBuilder() {
+            document.getElementById('system-select').value = '';
+            document.getElementById('system-config').style.display = 'none';
+            currentSystem = null;
+            batteryQty = 0;
+            panelQty = 0;
+        }
+    </script>
+</body>
+</html>
+

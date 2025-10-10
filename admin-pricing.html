@@ -646,15 +646,15 @@
                         <div class="definition-fields">
                             <div class="field-row">
                                 <label>Name:</label>
-                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk 5kW" value="Sunsynk 5kW">
+                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk 5kW">
                             </div>
                             <div class="field-row">
                                 <label>Key:</label>
-                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk-5K" value="Sunsynk-5K">
+                                <input type="text" class="definition-input" placeholder="e.g., Sunsynk-5K">
                             </div>
                             <div class="field-row">
                                 <label>Price (R):</label>
-                                <input type="number" class="definition-input" placeholder="25000" value="25000">
+                                <input type="number" class="definition-input" placeholder="25000">
                             </div>
                             <div class="field-row">
                                 <label>Type:</label>
@@ -666,26 +666,26 @@
                             </div>
                             <div class="field-row">
                                 <label>Capacity (kW):</label>
-                                <input type="number" class="definition-input" placeholder="5" value="5" step="0.1">
+                                <input type="number" class="definition-input" placeholder="5" step="0.1">
                             </div>
                             <div class="field-row">
                                 <label>Compatible Batteries:</label>
-                                <input type="text" class="definition-input" placeholder="Sunsynk-5.12kWh,Sunsynk-10kWh" value="Sunsynk-5.12kWh,Sunsynk-10kWh">
+                                <input type="text" class="definition-input" placeholder="Sunsynk-5.12kWh,Sunsynk-10kWh">
                                 <small>Comma-separated battery keys</small>
                             </div>
                             <div class="field-row">
                                 <label>Compatible Panels:</label>
-                                <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W" value="JA-Solar-565W,Canadian-Solar-565W">
+                                <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W">
                                 <small>Comma-separated panel keys</small>
                             </div>
                             <div class="field-row">
                                 <label>Base Installation Cost (R):</label>
-                                <input type="number" class="definition-input" placeholder="8500" value="8500">
+                                <input type="number" class="definition-input" placeholder="8500">
                                 <small>Base installation cost for this inverter type</small>
                             </div>
                             <div class="field-row">
                                 <label>Accessories Cost (R):</label>
-                                <input type="number" class="definition-input" placeholder="15000" value="15000">
+                                <input type="number" class="definition-input" placeholder="15000">
                                 <small>Additional accessories and components cost</small>
                             </div>
                             <div class="field-row">
@@ -715,22 +715,6 @@
                         </button>
                     </div>
                     <div id="battery-items">
-                    <div class="price-item">
-                            <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 5.12kWh">
-                            <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-5.12kWh)" value="Sunsynk-5.12kWh">
-                            <input type="number" class="price-input" placeholder="Price" value="45000">
-                            <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
-                                <i class="fas fa-trash"></i> × ×
-                            </button>
-                    </div>
-                    <div class="price-item">
-                            <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 10kWh">
-                            <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-10kWh)" value="Sunsynk-10kWh">
-                            <input type="number" class="price-input" placeholder="Price" value="90000">
-                            <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
-                                <i class="fas fa-trash"></i> × ×
-                            </button>
-                        </div>
                     </div>
                 </div>
                     </div>
@@ -747,22 +731,6 @@
                         </button>
                     </div>
                     <div id="panel-items">
-                    <div class="price-item">
-                            <input type="text" class="item-name" placeholder="Item Name" value="JA Solar 565W">
-                            <input type="text" class="item-key" placeholder="Key (e.g., JA-Solar-565W)" value="JA-Solar-565W">
-                            <input type="number" class="price-input" placeholder="Price" value="2500">
-                            <button class="btn-remove" onclick="removePanelItem(this)" title="Remove Item">
-                                <i class="fas fa-trash"></i> × ×
-                            </button>
-                    </div>
-                    <div class="price-item">
-                            <input type="text" class="item-name" placeholder="Item Name" value="Canadian Solar 565W">
-                            <input type="text" class="item-key" placeholder="Key (e.g., Canadian-Solar-565W)" value="Canadian-Solar-565W">
-                            <input type="number" class="price-input" placeholder="Price" value="2600">
-                            <button class="btn-remove" onclick="removePanelItem(this)" title="Remove Item">
-                                <i class="fas fa-trash"></i> × ×
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -916,8 +884,8 @@
     <script>
         // Clean slate: Clear all localStorage data on page load
         function clearAllData() {
-            localStorage.removeItem('stp-solar-pricing');
-            console.log('All pricing data cleared - starting with clean slate');
+            // Don't clear localStorage automatically - preserve user changes
+            console.log('Preserving existing pricing data - not clearing localStorage');
         }
         
         // File upload functionality
@@ -1164,8 +1132,8 @@
                         price: value,
                         type: key.includes('3P') ? 'three' : 'single',
                         capacity: parseFloat(key.match(/\d+/)?.[0]) || 5,
-                        compatibleBatteries: ['Sunsynk-5.12kWh'],
-                        compatiblePanels: ['JA-Solar-565W'],
+                        compatibleBatteries: [],
+                        compatiblePanels: [],
                         installation: {
                             base: config.installation['single-base-installation'] || 8500,
                             accessories: config.installation['single-accessories'] || 15000
@@ -1322,12 +1290,12 @@
                         </div>
                         <div class="field-row">
                             <label>Compatible Batteries:</label>
-                            <input type="text" class="definition-input" placeholder="Sunsynk-5.12kWh,Sunsynk-10kWh" value="${(inverterData.compatibleBatteries || []).join(',')}">
+                            <input type="text" class="definition-input" placeholder="Sunsynk-5.12kWh,Sunsynk-10kWh" value="${inverterData.compatibleBatteries && inverterData.compatibleBatteries.length > 0 ? inverterData.compatibleBatteries.join(',') : ''}">
                             <small>Comma-separated battery keys</small>
                         </div>
                         <div class="field-row">
                             <label>Compatible Panels:</label>
-                            <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W" value="${(inverterData.compatiblePanels || []).join(',')}">
+                            <input type="text" class="definition-input" placeholder="JA-Solar-565W,Canadian-Solar-565W" value="${inverterData.compatiblePanels && inverterData.compatiblePanels.length > 0 ? inverterData.compatiblePanels.join(',') : ''}">
                             <small>Comma-separated panel keys</small>
                         </div>
                         <div class="field-row">
@@ -1478,21 +1446,24 @@
                 return;
             }
             
-            container.innerHTML = '';
-            
-            Object.entries(batteries).forEach(([key, price]) => {
-                const item = document.createElement('div');
-                item.className = 'price-item';
-                item.innerHTML = `
-                    <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
-                    <input type="text" class="item-key" placeholder="Key" value="${key}">
-                    <input type="number" class="price-input" placeholder="Price" value="${price}">
-                    <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
-                        <i class="fas fa-trash"></i> × ×
-                    </button>
-                `;
-                container.appendChild(item);
-            });
+            // Only load if container is empty (preserve user changes)
+            if (container.children.length === 0) {
+                Object.entries(batteries).forEach(([key, price]) => {
+                    const item = document.createElement('div');
+                    item.className = 'price-item';
+                    item.innerHTML = `
+                        <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                        <input type="text" class="item-key" placeholder="Key" value="${key}">
+                        <input type="number" class="price-input" placeholder="Price" value="${price}">
+                        <button class="btn-remove" onclick="removeBatteryItem(this)" title="Remove Item">
+                            <i class="fas fa-trash"></i> × ×
+                        </button>
+                    `;
+                    container.appendChild(item);
+                });
+            } else {
+                console.log('Battery items already exist - preserving user changes');
+            }
         }
         
         function loadPanels(panels) {
@@ -1503,21 +1474,24 @@
                 return;
             }
             
-            container.innerHTML = '';
-            
-            Object.entries(panels).forEach(([key, price]) => {
-                const item = document.createElement('div');
-                item.className = 'price-item';
-                item.innerHTML = `
-                    <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
-                    <input type="text" class="item-key" placeholder="Key" value="${key}">
-                    <input type="number" class="price-input" placeholder="Price" value="${price}">
-                    <button class="btn-remove" onclick="removePanelItem(this)">
-                        <i class="fas fa-trash"></i> ×
-                    </button>
-                `;
-                container.appendChild(item);
-            });
+            // Only load if container is empty (preserve user changes)
+            if (container.children.length === 0) {
+                Object.entries(panels).forEach(([key, price]) => {
+                    const item = document.createElement('div');
+                    item.className = 'price-item';
+                    item.innerHTML = `
+                        <input type="text" class="item-name" placeholder="Item Name" value="${key.replace(/-/g, ' ')}">
+                        <input type="text" class="item-key" placeholder="Key" value="${key}">
+                        <input type="number" class="price-input" placeholder="Price" value="${price}">
+                        <button class="btn-remove" onclick="removePanelItem(this)">
+                            <i class="fas fa-trash"></i> ×
+                        </button>
+                    `;
+                    container.appendChild(item);
+                });
+            } else {
+                console.log('Panel items already exist - preserving user changes');
+            }
         }
         
         function loadInstallation(installation) {
@@ -1631,18 +1605,30 @@
             // Collect battery data
             document.querySelectorAll('#battery-items .price-item').forEach(item => {
                 const key = item.querySelector('.item-key').value;
+                const name = item.querySelector('.item-name').value;
                 const price = parseInt(item.querySelector('.price-input').value) || 0;
                 if (key && price > 0) {
                     pricingData.batteries[key] = price;
+                    // Store the display name for later use
+                    if (name) {
+                        pricingData.batteryNames = pricingData.batteryNames || {};
+                        pricingData.batteryNames[key] = name;
+                    }
                 }
             });
             
             // Collect panel data
             document.querySelectorAll('#panel-items .price-item').forEach(item => {
                 const key = item.querySelector('.item-key').value;
+                const name = item.querySelector('.item-name').value;
                 const price = parseInt(item.querySelector('.price-input').value) || 0;
                 if (key && price > 0) {
                     pricingData.panels[key] = price;
+                    // Store the display name for later use
+                    if (name) {
+                        pricingData.panelNames = pricingData.panelNames || {};
+                        pricingData.panelNames[key] = name;
+                    }
                 }
             });
             
@@ -1706,8 +1692,7 @@
             const generateBatteriesConfig = () => {
                 return Object.entries(pricingData.batteries)
                     .map(([key, price]) => {
-                        const name = key.replace(/-/g, ' ') + ' Battery';
-                        return `        '${key}': ${price},\n        '${key}-name': '${name}'`;
+                        return `        '${key}': ${price}`;
                     })
                     .join(',\n');
             };
@@ -1715,14 +1700,28 @@
             const generatePanelsConfig = () => {
                 return Object.entries(pricingData.panels)
                     .map(([key, price]) => {
-                        const name = key.replace(/-/g, ' ') + ' Panel';
-                        return `        '${key}': ${price},\n        '${key}-name': '${name}'`;
+                        return `        '${key}': ${price}`;
                     })
                     .join(',\n');
             };
             
             const generateInstallationConfig = () => {
-                return Object.entries(pricingData.installation)
+                const installationEntries = Object.entries(pricingData.installation);
+                
+                // If no installation data, provide defaults
+                if (installationEntries.length === 0) {
+                    return `        'single-base-installation': 8500,
+        'single-accessories': 15000,
+        'single-per-panel': 900,
+        'three-base-installation': 12000,
+        'three-accessories': 20000,
+        'three-per-panel': 1000,
+        'tesla-base-installation': 10000,
+        'tesla-accessories': 18000,
+        'tesla-per-panel': 950`;
+                }
+                
+                return installationEntries
                     .map(([key, price]) => `        '${key}': ${price}`)
                     .join(',\n');
             };
@@ -1896,45 +1895,11 @@ if (typeof module !== 'undefined' && module.exports) {
                 
                 // Reset batteries
                 const batteries = document.getElementById('battery-items');
-                batteries.innerHTML = `
-                    <div class="price-item">
-                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 5.12kWh">
-                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-5.12kWh)" value="Sunsynk-5.12kWh">
-                        <input type="number" class="price-input" placeholder="Price" value="45000">
-                        <button class="btn-remove" onclick="removeBatteryItem(this)">
-                            <i class="fas fa-trash"></i> ×
-                        </button>
-                    </div>
-                    <div class="price-item">
-                        <input type="text" class="item-name" placeholder="Item Name" value="Sunsynk 10kWh">
-                        <input type="text" class="item-key" placeholder="Key (e.g., Sunsynk-10kWh)" value="Sunsynk-10kWh">
-                        <input type="number" class="price-input" placeholder="Price" value="90000">
-                        <button class="btn-remove" onclick="removeBatteryItem(this)">
-                            <i class="fas fa-trash"></i> ×
-                        </button>
-                    </div>
-                `;
+                batteries.innerHTML = '';
                 
                 // Reset panels
                 const panels = document.getElementById('panel-items');
-                panels.innerHTML = `
-                    <div class="price-item">
-                        <input type="text" class="item-name" placeholder="Item Name" value="JA Solar 565W">
-                        <input type="text" class="item-key" placeholder="Key (e.g., JA-Solar-565W)" value="JA-Solar-565W">
-                        <input type="number" class="price-input" placeholder="Price" value="2500">
-                        <button class="btn-remove" onclick="removePanelItem(this)">
-                            <i class="fas fa-trash"></i> ×
-                        </button>
-                    </div>
-                    <div class="price-item">
-                        <input type="text" class="item-name" placeholder="Item Name" value="Canadian Solar 565W">
-                        <input type="text" class="item-key" placeholder="Key (e.g., Canadian-Solar-565W)" value="Canadian-Solar-565W">
-                        <input type="number" class="price-input" placeholder="Price" value="2600">
-                        <button class="btn-remove" onclick="removePanelItem(this)">
-                            <i class="fas fa-trash"></i> ×
-                        </button>
-                    </div>
-                `;
+                panels.innerHTML = '';
                 
                 // Reset installation
                 const installation = document.getElementById('installation-items');

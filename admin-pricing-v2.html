@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Admin Portal V2 - System Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        
+        .header p {
+            opacity: 0.95;
+            font-size: 1.1rem;
+        }
+        
+        .toolbar {
+            background: #2c3e50;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .tab.active {
+            color: #f39c12;
+            border-bottom-color: #f39c12;
+        }
+        
+        .tab:hover {
+            color: #f39c12;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .item-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e9ecef;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .item-card:hover {
+            border-color: #f39c12;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+        
+        .item-price {
+            font-size: 1.2rem;
+            color: #f39c12;
+            font-weight: 700;
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            padding: 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem 1rem 0 0;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #f39c12;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 2px solid #e9ecef;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        
+        .system-builder-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 2px solid #e9ecef;
+            margin-bottom: 1.5rem;
+        }
+        
+        .system-builder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f39c12;
+        }
+        
+        .system-builder-header h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        
+        .system-config-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .config-field {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .config-field-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .selection-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .selection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 0.5rem;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .selection-item:hover {
+            border-color: #f39c12;
+        }
+        
+        .selection-item input[type="checkbox"],
+        .selection-item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .selection-item.selected {
+            border-color: #f39c12;
+            background: #fff9f0;
+        }
+        
+        .range-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .toast.active {
+            display: flex;
+        }
+        
+        .toast.success {
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .toast.error {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .toast.info {
+            border-left: 4px solid #3498db;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
+            .container {
+                border-radius: 0;
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .toolbar-left, .toolbar-right {
+                justify-content: center;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .item-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .range-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-solar-panel"></i> Solar Admin Portal V2</h1>
+            <p>Complete System Builder & Price Management</p>
+        </div>
+        
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn" onclick="exportConfig()">
+                    <i class="fas fa-file-export"></i> Export Config
+                </button>
+                <button class="btn btn-secondary" onclick="importConfig()">
+                    <i class="fas fa-file-import"></i> Import Config
+                </button>
+            </div>
+            <div class="toolbar-right">
+                <button class="btn btn-success" onclick="saveChanges()">
+                    <i class="fas fa-save"></i> Save All Changes
+                </button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('inverters')">
+                    <i class="fas fa-bolt"></i> Inverters
+                </button>
+                <button class="tab" onclick="switchTab('batteries')">
+                    <i class="fas fa-battery-full"></i> Batteries
+                </button>
+                <button class="tab" onclick="switchTab('panels')">
+                    <i class="fas fa-solar-panel"></i> Solar Panels
+                </button>
+                <button class="tab" onclick="switchTab('rooftypes')">
+                    <i class="fas fa-home"></i> Roof Types
+                </button>
+                <button class="tab" onclick="switchTab('phases')">
+                    <i class="fas fa-plug"></i> Installation Phases
+                </button>
+                <button class="tab" onclick="switchTab('accessories')">
+                    <i class="fas fa-tools"></i> Accessories
+                </button>
+                <button class="tab" onclick="switchTab('installation')">
+                    <i class="fas fa-wrench"></i> Installation
+                </button>
+                <button class="tab" onclick="switchTab('systems')">
+                    <i class="fas fa-cogs"></i> System Builder
+                </button>
+            </div>
+            
+            <!-- Inverters Tab -->
+            <div id="inverters-tab" class="tab-content active">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Inverter Price Definitions</h2>
+                        <button class="btn" onclick="openAddModal('inverter')">
+                            <i class="fas fa-plus"></i> Add Inverter
+                        </button>
+                    </div>
+                    <div id="inverters-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- Batteries Tab -->
+            <div id="batteries-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Battery Price Definitions</h2>
+                        <button class="btn" onclick="openAddModal('battery')">
+                            <i class="fas fa-plus"></i> Add Battery
+                        </button>
+                    </div>
+                    <div id="batteries-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- Solar Panels Tab -->
+            <div id="panels-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Solar Panel Price Definitions</h2>
+                        <button class="btn" onclick="openAddModal('panel')">
+                            <i class="fas fa-plus"></i> Add Solar Panel
+                        </button>
+                    </div>
+                    <div id="panels-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- Roof Types Tab -->
+            <div id="rooftypes-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Roof Type & Mounting Kit Prices</h2>
+                        <button class="btn" onclick="openAddModal('rooftype')">
+                            <i class="fas fa-plus"></i> Add Roof Type
+                        </button>
+                    </div>
+                    <div id="rooftypes-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- Installation Phases Tab -->
+            <div id="phases-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Installation Phase Definitions</h2>
+                        <button class="btn" onclick="openAddModal('phase')">
+                            <i class="fas fa-plus"></i> Add Phase Type
+                        </button>
+                    </div>
+                    <div id="phases-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- Accessories Tab -->
+            <div id="accessories-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Accessories Price Definitions</h2>
+                        <button class="btn" onclick="openAddModal('accessory')">
+                            <i class="fas fa-plus"></i> Add Accessory
+                        </button>
+                    </div>
+                    <div id="accessories-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- Installation Tab -->
+            <div id="installation-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Installation Price Definitions</h2>
+                        <button class="btn" onclick="openAddModal('installation')">
+                            <i class="fas fa-plus"></i> Add Installation Type
+                        </button>
+                    </div>
+                    <div id="installation-list" class="items-list"></div>
+                </div>
+            </div>
+            
+            <!-- System Builder Tab -->
+            <div id="systems-tab" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>System Builder - Create Complete Systems</h2>
+                        <button class="btn" onclick="openSystemBuilderModal()">
+                            <i class="fas fa-plus"></i> Create New System
+                        </button>
+                    </div>
+                    <div id="systems-list" class="items-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Item</h2>
+            </div>
+            <div class="modal-body">
+                <form id="item-form">
+                    <div class="form-group">
+                        <label for="item-name">Name</label>
+                        <input type="text" id="item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-price">Price (R)</label>
+                        <input type="number" id="item-price" min="0" step="0.01" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveItem()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Builder Modal -->
+    <div id="system-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 id="system-modal-title">Create New System</h2>
+            </div>
+            <div class="modal-body">
+                <form id="system-form">
+                    <div class="form-group">
+                        <label for="system-name">System Name</label>
+                        <input type="text" id="system-name" placeholder="e.g., Sunsynk System" required>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-bolt"></i> Select Inverter (Choose 1)
+                        </label>
+                        <div id="system-inverters" class="selection-list"></div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-battery-full"></i> Select Batteries (Choose Multiple)
+                        </label>
+                        <div id="system-batteries" class="selection-list"></div>
+                        <div class="range-inputs">
+                            <div class="form-group">
+                                <label>Min Batteries (0 = Not Allowed)</label>
+                                <input type="number" id="battery-min" min="0" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Max Batteries</label>
+                                <input type="number" id="battery-max" min="1" value="10">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-solar-panel"></i> Select Solar Panels (Choose Multiple)
+                        </label>
+                        <div id="system-panels" class="selection-list"></div>
+                        <div class="range-inputs">
+                            <div class="form-group">
+                                <label>Min Panels (0 = Optional)</label>
+                                <input type="number" id="panel-min" min="0" value="6">
+                            </div>
+                            <div class="form-group">
+                                <label>Max Panels</label>
+                                <input type="number" id="panel-max" min="1" value="50">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-home"></i> Select Roof Types (Choose Multiple)
+                        </label>
+                        <div id="system-rooftypes" class="selection-list"></div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-plug"></i> Select Installation Phase (Choose 1)
+                        </label>
+                        <div id="system-phases" class="selection-list"></div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-tools"></i> Select Accessories (Choose 1)
+                        </label>
+                        <div id="system-accessories" class="selection-list"></div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-wrench"></i> Select Installation Type (Choose 1)
+                        </label>
+                        <div id="system-installation" class="selection-list"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSystemModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveSystem()">Save System</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Success!</span>
+    </div>
+    
+    <!-- Hidden file input for import -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+    
+    <script>
+        // Data Store
+        let appData = {
+            inverters: [],
+            batteries: [],
+            panels: [],
+            rooftypes: [],
+            phases: [],
+            accessories: [],
+            installation: [],
+            systems: []
+        };
+        
+        // Track if appData is being reset
+        let originalAppData = null;
+        
+        // Override appData assignment to track when it's being modified
+        let _appData = appData;
+        Object.defineProperty(window, 'appData', {
+            get: function() { return _appData; },
+            set: function(value) { 
+                console.log('appData being set to:', value);
+                console.log('Previous appData.inverters:', _appData.inverters);
+                console.log('New appData.inverters:', value.inverters);
+                _appData = value; 
+            }
+        });
+        
+        let currentEditType = null;
+        let currentEditId = null;
+        
+        // Initialize the app
+        function init() {
+            console.log('Initializing app...');
+            loadData();
+            console.log('After loadData, appData:', appData);
+            
+            // Store original data for comparison
+            originalAppData = JSON.parse(JSON.stringify(appData));
+            console.log('Original appData stored:', originalAppData);
+            
+            renderAll();
+            console.log('App initialized');
+            
+            // Setup import file handler
+            document.getElementById('import-file').addEventListener('change', handleImport);
+            
+            // Add global function to reset data if needed
+            window.resetAllData = function() {
+                if (confirm('This will clear all data. Are you sure?')) {
+                    localStorage.removeItem('solarAdminV2Data');
+                    localStorage.removeItem('stp-solar-pricing');
+                    location.reload();
+                }
+            };
+            
+            // Add global function to check data integrity
+            window.checkDataIntegrity = function() {
+                console.log('Current appData:', appData);
+                console.log('Original appData:', originalAppData);
+                console.log('localStorage data:', localStorage.getItem('stp-solar-pricing'));
+            };
+            
+            // Add global function to manually add test inverter
+            window.addTestInverter = function() {
+                const testInverter = {
+                    id: 'test-' + Date.now(),
+                    name: 'Test Inverter',
+                    price: 1000
+                };
+                appData.inverters.push(testInverter);
+                console.log('Added test inverter:', testInverter);
+                console.log('appData.inverters now:', appData.inverters);
+                renderList('inverters');
+                saveData();
+            };
+            
+            // Add global function to check what's in localStorage
+            window.checkLocalStorage = function() {
+                const data = localStorage.getItem('stp-solar-pricing');
+                console.log('Raw localStorage data:', data);
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        console.log('Parsed localStorage data:', parsed);
+                        console.log('Inverters in localStorage:', parsed.inverters);
+                        console.log('Panels in localStorage:', parsed.panels);
+                    } catch (e) {
+                        console.log('Error parsing localStorage:', e);
+                    }
+                }
+            };
+            
+            console.log('Tip: If data is corrupted, run resetAllData() in console');
+            console.log('Tip: To check data integrity, run checkDataIntegrity() in console');
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            // Check for any old data in localStorage first
+            const allKeys = Object.keys(localStorage);
+            console.log('All localStorage keys:', allKeys);
+            
+            // Try multiple possible keys
+            const possibleKeys = ['solarAdminV2Data', 'stp-solar-pricing', 'solarAdminData'];
+            let savedData = null;
+            let usedKey = null;
+            
+            for (const key of possibleKeys) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    savedData = data;
+                    usedKey = key;
+                    console.log(`Found data in key: ${key}`);
+                    break;
+                }
+            }
+            
+            console.log('Loading data from localStorage:', savedData);
+            
+            if (savedData) {
+                const loadedData = JSON.parse(savedData);
+                console.log('Parsed loadedData:', loadedData);
+                console.log('Raw inverters data:', loadedData.inverters);
+                console.log('Raw panels data:', loadedData.panels);
+                
+                // Helper function to convert object to array
+                function convertObjectToArray(obj) {
+                    if (Array.isArray(obj)) return obj; // Already an array
+                    if (!obj || typeof obj !== 'object') return []; // Not an object
+                    
+                    console.log('Converting object to array:', obj);
+                    
+                    // Convert object to array format
+                    const result = Object.keys(obj).map(key => {
+                        const item = obj[key];
+                        console.log(`Converting key ${key}:`, item);
+                        return {
+                            id: key, // Use the key as ID
+                            name: item.name || key,
+                            price: item.price || 0
+                        };
+                    });
+                    
+                    console.log('Converted result:', result);
+                    return result;
+                }
+                
+                // Migrate old format (objects/singular keys) to new format (arrays/plural keys)
+                console.log('Converting inverters:', loadedData.inverters, 'or', loadedData.inverter);
+                console.log('Converting panels:', loadedData.panels, 'or', loadedData.panel);
+                
+                // Simple direct assignment - if data exists, use it; if not, use empty array
+                appData = {
+                    inverters: loadedData.inverters || [],
+                    batteries: loadedData.batteries || [],
+                    panels: loadedData.panels || [],
+                    rooftypes: loadedData.rooftypes || [],
+                    phases: loadedData.phases || [],
+                    accessories: loadedData.accessories || [],
+                    installation: loadedData.installation || [],
+                    systems: loadedData.systems || []
+                };
+                
+                console.log('Direct assignment result - inverters:', appData.inverters);
+                console.log('Direct assignment result - panels:', appData.panels);
+                
+                console.log('Migrated appData:', appData);
+                console.log('After migration - inverters:', appData.inverters);
+                console.log('After migration - panels:', appData.panels);
+                
+                // Don't auto-save during migration - let user save manually
+                console.log('Migration complete - data ready to save');
+                
+                // Force update the UI immediately after migration
+                setTimeout(() => {
+                    console.log('Force rendering after migration...');
+                    renderAll();
+                }, 100);
+            } else {
+                // Initialize with default structure if no saved data
+                appData = {
+                    inverters: [],
+                    batteries: [],
+                    panels: [],
+                    rooftypes: [],
+                    phases: [],
+                    accessories: [],
+                    installation: [],
+                    systems: []
+                };
+                console.log('Initialized empty appData:', appData);
+            }
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            console.log('=== SAVE DATA DEBUG ===');
+            console.log('Saving appData to localStorage:', appData);
+            console.log('Inverters before save:', appData.inverters);
+            console.log('Panels before save:', appData.panels);
+            
+            // Save directly without complex merging logic
+            localStorage.setItem('stp-solar-pricing', JSON.stringify(appData));
+            console.log('Data saved successfully to stp-solar-pricing key');
+            console.log('=== END SAVE DATA DEBUG ===');
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.closest('.tab').classList.add('active');
+            
+            // Update tab contents
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        // Render all lists
+        function renderAll() {
+            renderList('inverters');
+            renderList('batteries');
+            renderList('panels');
+            renderList('rooftypes');
+            renderList('phases');
+            renderList('accessories');
+            renderList('installation');
+            renderSystemsList();
+        }
+        
+        // Render current tab only
+        function renderCurrentTab() {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                const tabName = activeTab.getAttribute('onclick').match(/'([^']+)'/)[1];
+                if (tabName === 'systems') {
+                    renderSystemsList();
+                } else {
+                    renderList(tabName);
+                }
+            }
+        }
+        
+        // Render a list of items
+        function renderList(type) {
+            console.log('Rendering list for type:', type);
+            
+            // Map type names to actual HTML IDs
+            const typeToIdMap = {
+                'inverter': 'inverters-list',
+                'battery': 'batteries-list',
+                'panel': 'panels-list',
+                'rooftype': 'rooftypes-list',
+                'phase': 'phases-list',
+                'accessory': 'accessories-list',
+                'installation': 'installation-list'
+            };
+            
+            const containerId = typeToIdMap[type] || `${type}-list`;
+            const container = document.getElementById(containerId);
+            
+            // Safety check - if container doesn't exist, skip rendering
+            if (!container) {
+                console.log(`Container ${containerId} not found, skipping render`);
+                return;
+            }
+            
+            const items = appData[type];
+            console.log('Items for', type, ':', items);
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No items yet. Click "Add" to create your first ${type} definition.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = items.map((item, index) => `
+                <div class="item-card">
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">R ${parseFloat(item.price).toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-secondary btn-icon" onclick="editItem('${type}', ${index})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon" onclick="deleteItem('${type}', ${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Render systems list
+        function renderSystemsList() {
+            const container = document.getElementById('systems-list');
+            
+            // Safety check - if container doesn't exist, skip rendering
+            if (!container) {
+                console.log('Container systems-list not found, skipping render');
+                return;
+            }
+            
+            const systems = appData.systems;
+            
+            if (systems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-cogs"></i>
+                        <p>No systems created yet. Click "Create New System" to build your first solar system configuration.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = systems.map((system, index) => {
+                const inverter = system.inverter ? appData.inverters.find(i => i.id === system.inverter) : null;
+                const phase = system.phase ? appData.phases.find(p => p.id === system.phase) : null;
+                
+                return `
+                    <div class="system-builder-card">
+                        <div class="system-builder-header">
+                            <h3>${system.name}</h3>
+                            <div class="item-actions">
+                                <button class="btn btn-secondary btn-icon" onclick="editSystem(${index})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteSystem(${index})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+                            <div><strong>Inverter:</strong> ${inverter ? inverter.name : 'Not selected'}</div>
+                            <div><strong>Batteries:</strong> ${system.batteries.length} types, ${system.batteryMin}-${system.batteryMax} units</div>
+                            <div><strong>Panels:</strong> ${system.panels.length} types, ${system.panelMin}-${system.panelMax} units</div>
+                            <div><strong>Roof Types:</strong> ${system.rooftypes.length} options</div>
+                            <div><strong>Phase:</strong> ${phase ? phase.name : 'Not selected'}</div>
+                            <div><strong>Accessories:</strong> ${system.accessories ? 'Selected' : 'Not selected'}</div>
+                            <div><strong>Installation:</strong> ${system.installation ? 'Selected' : 'Not selected'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Open Add/Edit Modal
+        function openAddModal(type) {
+            console.log('Opening modal for type:', type);
+            currentEditType = type;
+            currentEditId = null;
+            
+            document.getElementById('modal-title').textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-price').value = '';
+            
+            document.getElementById('item-modal').classList.add('active');
+        }
+        
+        // Edit Item
+        function editItem(type, index) {
+            // Type is already plural when called from renderList
+            currentEditType = getSingularType(type);
+            currentEditId = index;
+            
+            const item = appData[type][index];
+            document.getElementById('modal-title').textContent = `Edit ${type.charAt(0).toUpperCase() + type.slice(1, -1)}`;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-price').value = item.price;
+            
+            document.getElementById('item-modal').classList.add('active');
+        }
+        
+        // Delete Item
+        function deleteItem(type, index) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                // Type is already plural when called from renderList
+                appData[type].splice(index, 1);
+                saveData();
+                renderList(type);
+                showToast('Item deleted successfully', 'success');
+            }
+        }
+        
+        // Helper function to convert plural to singular
+        function getSingularType(pluralType) {
+            const reverseMapping = {
+                'inverters': 'inverter',
+                'batteries': 'battery',
+                'panels': 'panel',
+                'rooftypes': 'rooftype',
+                'phases': 'phase',
+                'accessories': 'accessory',
+                'installation': 'installation'
+            };
+            return reverseMapping[pluralType] || pluralType;
+        }
+        
+        // Close Modal
+        function closeModal() {
+            document.getElementById('item-modal').classList.remove('active');
+        }
+        
+        // Save Item
+        function saveItem() {
+            const name = document.getElementById('item-name').value.trim();
+            const price = parseFloat(document.getElementById('item-price').value);
+            
+            if (!name || isNaN(price)) {
+                showToast('Please fill in all fields correctly', 'error');
+                return;
+            }
+            
+            // Convert singular type names to plural for data storage
+            const typeMapping = {
+                'inverter': 'inverters',
+                'battery': 'batteries',
+                'panel': 'panels',
+                'rooftype': 'rooftypes',
+                'phase': 'phases',
+                'accessory': 'accessories',
+                'installation': 'installation'
+            };
+            
+            const dataType = typeMapping[currentEditType] || currentEditType;
+            
+            // Ensure the array exists for this type
+            if (!appData[dataType]) {
+                appData[dataType] = [];
+            }
+            
+            const item = {
+                id: currentEditId !== null ? appData[dataType][currentEditId].id : Date.now().toString(),
+                name: name,
+                price: price
+            };
+            
+            if (currentEditId !== null) {
+                appData[dataType][currentEditId] = item;
+            } else {
+                appData[dataType].push(item);
+            }
+            
+            // Save the data properly
+            console.log('=== SAVE ITEM DEBUG ===');
+            console.log('Saved item:', item);
+            console.log('Type:', currentEditType);
+            console.log('Data type (plural):', dataType);
+            console.log('Data for this type:', appData[dataType]);
+            console.log('Full appData after saving item:', appData);
+            console.log('Inverters specifically:', appData.inverters);
+            console.log('Panels specifically:', appData.panels);
+            
+            // Save all data to localStorage
+            saveData();
+            console.log('=== END SAVE ITEM DEBUG ===');
+            renderList(dataType);
+            
+            // Refresh system builder if modal is open
+            if (document.getElementById('system-modal').classList.contains('active')) {
+                populateSystemSelections();
+            }
+            
+            closeModal();
+            showToast('Item saved successfully', 'success');
+        }
+        
+        // Open System Builder Modal
+        function openSystemBuilderModal() {
+            currentEditId = null;
+            document.getElementById('system-modal-title').textContent = 'Create New System';
+            document.getElementById('system-name').value = '';
+            
+            // Reset ranges
+            document.getElementById('battery-min').value = 1;
+            document.getElementById('battery-max').value = 10;
+            document.getElementById('panel-min').value = 6;
+            document.getElementById('panel-max').value = 50;
+            
+            // Populate selection lists
+            populateSystemSelections();
+            
+            document.getElementById('system-modal').classList.add('active');
+        }
+        
+        // Edit System
+        function editSystem(index) {
+            currentEditId = index;
+            const system = appData.systems[index];
+            
+            document.getElementById('system-modal-title').textContent = 'Edit System';
+            document.getElementById('system-name').value = system.name;
+            document.getElementById('battery-min').value = system.batteryMin;
+            document.getElementById('battery-max').value = system.batteryMax;
+            document.getElementById('panel-min').value = system.panelMin;
+            document.getElementById('panel-max').value = system.panelMax;
+            
+            // Populate and pre-select
+            populateSystemSelections(system);
+            
+            document.getElementById('system-modal').classList.add('active');
+        }
+        
+        // Delete System
+        function deleteSystem(index) {
+            if (confirm('Are you sure you want to delete this system?')) {
+                appData.systems.splice(index, 1);
+                saveData();
+                renderSystemsList();
+                showToast('System deleted successfully', 'success');
+            }
+        }
+        
+        // Populate system builder selections
+        function populateSystemSelections(existingSystem = null) {
+            console.log('Populating system selections, appData:', appData);
+            console.log('Inverters:', appData.inverters);
+            console.log('Batteries:', appData.batteries);
+            console.log('Panels:', appData.panels);
+            
+            // Inverters (radio)
+            const invertersHtml = appData.inverters.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.inverter === item.id ? 'selected' : ''}">
+                    <input type="radio" name="system-inverter" value="${item.id}" 
+                        ${existingSystem && existingSystem.inverter === item.id ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                </label>
+            `).join('');
+            document.getElementById('system-inverters').innerHTML = invertersHtml || '<p style="color: #7f8c8d;">No inverters defined yet</p>';
+            
+            // Batteries (checkbox)
+            const batteriesHtml = appData.batteries.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.batteries.includes(item.id) ? 'selected' : ''}">
+                    <input type="checkbox" name="system-battery" value="${item.id}"
+                        ${existingSystem && existingSystem.batteries.includes(item.id) ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                </label>
+            `).join('');
+            document.getElementById('system-batteries').innerHTML = batteriesHtml || '<p style="color: #7f8c8d;">No batteries defined yet</p>';
+            
+            // Panels (checkbox)
+            const panelsHtml = appData.panels.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.panels.includes(item.id) ? 'selected' : ''}">
+                    <input type="checkbox" name="system-panel" value="${item.id}"
+                        ${existingSystem && existingSystem.panels.includes(item.id) ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                </label>
+            `).join('');
+            document.getElementById('system-panels').innerHTML = panelsHtml || '<p style="color: #7f8c8d;">No panels defined yet</p>';
+            
+            // Roof Types (checkbox)
+            const rooftypesHtml = appData.rooftypes.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.rooftypes.includes(item.id) ? 'selected' : ''}">
+                    <input type="checkbox" name="system-rooftype" value="${item.id}"
+                        ${existingSystem && existingSystem.rooftypes.includes(item.id) ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')} per panel</span>
+                </label>
+            `).join('');
+            document.getElementById('system-rooftypes').innerHTML = rooftypesHtml || '<p style="color: #7f8c8d;">No roof types defined yet</p>';
+            
+            // Phases (radio)
+            const phasesHtml = appData.phases.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.phase === item.id ? 'selected' : ''}">
+                    <input type="radio" name="system-phase" value="${item.id}"
+                        ${existingSystem && existingSystem.phase === item.id ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                </label>
+            `).join('');
+            document.getElementById('system-phases').innerHTML = phasesHtml || '<p style="color: #7f8c8d;">No phases defined yet</p>';
+            
+            // Accessories (radio)
+            const accessoriesHtml = appData.accessories.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.accessories === item.id ? 'selected' : ''}">
+                    <input type="radio" name="system-accessory" value="${item.id}"
+                        ${existingSystem && existingSystem.accessories === item.id ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                </label>
+            `).join('');
+            document.getElementById('system-accessories').innerHTML = accessoriesHtml || '<p style="color: #7f8c8d;">No accessories defined yet</p>';
+            
+            // Installation (radio)
+            const installationHtml = appData.installation.map(item => `
+                <label class="selection-item ${existingSystem && existingSystem.installation === item.id ? 'selected' : ''}">
+                    <input type="radio" name="system-installation" value="${item.id}"
+                        ${existingSystem && existingSystem.installation === item.id ? 'checked' : ''}
+                        onchange="toggleSelection(this)">
+                    <span>${item.name} - R ${parseFloat(item.price).toLocaleString('en-ZA')}</span>
+                </label>
+            `).join('');
+            document.getElementById('system-installation').innerHTML = installationHtml || '<p style="color: #7f8c8d;">No installation types defined yet</p>';
+        }
+        
+        // Toggle selection visual feedback
+        function toggleSelection(input) {
+            const label = input.closest('.selection-item');
+            if (input.type === 'radio') {
+                // Clear all selections in the same group
+                const name = input.getAttribute('name');
+                document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                    radio.closest('.selection-item').classList.remove('selected');
+                });
+            }
+            
+            if (input.checked) {
+                label.classList.add('selected');
+            } else {
+                label.classList.remove('selected');
+            }
+        }
+        
+        // Close System Modal
+        function closeSystemModal() {
+            document.getElementById('system-modal').classList.remove('active');
+        }
+        
+        // Save System
+        function saveSystem() {
+            const name = document.getElementById('system-name').value.trim();
+            
+            if (!name) {
+                showToast('Please enter a system name', 'error');
+                return;
+            }
+            
+            // Get selected inverter
+            const inverterRadio = document.querySelector('input[name="system-inverter"]:checked');
+            if (!inverterRadio) {
+                showToast('Please select an inverter', 'error');
+                return;
+            }
+            
+            // Get selected phase
+            const phaseRadio = document.querySelector('input[name="system-phase"]:checked');
+            if (!phaseRadio) {
+                showToast('Please select an installation phase', 'error');
+                return;
+            }
+            
+            // Get selected batteries
+            const batteries = Array.from(document.querySelectorAll('input[name="system-battery"]:checked'))
+                .map(cb => cb.value);
+            
+            // Get selected panels
+            const panels = Array.from(document.querySelectorAll('input[name="system-panel"]:checked'))
+                .map(cb => cb.value);
+            
+            // Get selected roof types
+            const rooftypes = Array.from(document.querySelectorAll('input[name="system-rooftype"]:checked'))
+                .map(cb => cb.value);
+            
+            // Get selected accessory
+            const accessoryRadio = document.querySelector('input[name="system-accessory"]:checked');
+            
+            // Get selected installation
+            const installationRadio = document.querySelector('input[name="system-installation"]:checked');
+            
+            const system = {
+                id: currentEditId !== null ? appData.systems[currentEditId].id : Date.now().toString(),
+                name: name,
+                inverter: inverterRadio.value,
+                batteries: batteries,
+                batteryMin: parseInt(document.getElementById('battery-min').value),
+                batteryMax: parseInt(document.getElementById('battery-max').value),
+                panels: panels,
+                panelMin: parseInt(document.getElementById('panel-min').value),
+                panelMax: parseInt(document.getElementById('panel-max').value),
+                rooftypes: rooftypes,
+                phase: phaseRadio.value,
+                accessories: accessoryRadio ? accessoryRadio.value : null,
+                installation: installationRadio ? installationRadio.value : null
+            };
+            
+            if (currentEditId !== null) {
+                appData.systems[currentEditId] = system;
+            } else {
+                appData.systems.push(system);
+            }
+            
+            saveData();
+            renderSystemsList();
+            closeSystemModal();
+            showToast('System saved successfully', 'success');
+        }
+        
+        // Export Configuration
+        function exportConfig() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `solar-config-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('Configuration exported successfully', 'success');
+        }
+        
+        // Import Configuration
+        function importConfig() {
+            document.getElementById('import-file').click();
+        }
+        
+        // Handle Import
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    // Validate structure
+                    if (!imported.inverters || !imported.batteries || !imported.systems) {
+                        throw new Error('Invalid configuration file structure');
+                    }
+                    
+                    if (confirm('This will replace your current configuration. Continue?')) {
+                        appData = imported;
+                        saveData();
+                        renderAll();
+                        showToast('Configuration imported successfully', 'success');
+                    }
+                } catch (error) {
+                    showToast('Error importing configuration: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset input
+            event.target.value = '';
+        }
+        
+
+        
+        // Save Changes
+        function saveChanges() {
+            console.log('saveChanges() called - appData before save:', appData);
+            console.log('Inverters before save:', appData.inverters);
+            console.log('Batteries before save:', appData.batteries);
+            console.log('Panels before save:', appData.panels);
+            
+            saveData();
+            showToast('All changes saved successfully!', 'success');
+        }
+        
+        // Show Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toast.className = `toast ${type}`;
+            toastMessage.textContent = message;
+            
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+        
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+

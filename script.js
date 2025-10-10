@@ -219,6 +219,21 @@ function showQuoteModal() {
         const installationTotal = calculateInstallationCost(panelQty, currentSystem.phase || 'single');
         const totalPrice = currentSystem.inverter.price + (currentSystem.battery.price * batteryQty) + (currentSystem.panel.price * panelQty) + installationTotal;
         
+        // Calculate accessories cost for display
+        const installation = currentPricing.installation || {};
+        const markup = currentPricing.markup || {};
+        
+        let accessoriesCost;
+        if (currentSystem.phase === 'three') {
+            accessoriesCost = installation['three-accessories'] || 20000;
+        } else if (currentSystem.phase === 'tesla') {
+            accessoriesCost = installation['tesla-accessories'] || 18000;
+        } else {
+            accessoriesCost = installation['single-accessories'] || 15000;
+        }
+        
+        const accessoriesTotal = accessoriesCost * (markup.installation || 1);
+        
         modalDetails.innerHTML = `
             <div class="system-detail">
                 <strong>System:</strong> ${currentSystem.name}
@@ -231,6 +246,9 @@ function showQuoteModal() {
             </div>
             <div class="system-detail">
                 <strong>Panels:</strong> ${panelQty}x ${currentSystem.panel.name} - R${(currentSystem.panel.price * panelQty).toLocaleString('en-ZA')}
+            </div>
+            <div class="system-detail">
+                <strong>Accessories:</strong> R${accessoriesTotal.toLocaleString('en-ZA')}
             </div>
             <div class="system-detail">
                 <strong>Installation:</strong> R${installationTotal.toLocaleString('en-ZA')}
@@ -268,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const customerName = formData.get('name');
             const customerEmail = formData.get('email');
             const customerPhone = formData.get('phone');
-            const customerLocation = formData.get('location') || 'South Africa';
+            const customerLocation = 'South Africa'; // Default location
             const customerMessage = formData.get('message') || '';
             
             // Validate email
@@ -549,8 +567,8 @@ function createSystemConfigurations() {
         
         // Get proper display names from pricing config
         const inverterDisplayName = inverters[`${inverterKey}-name`] || inverterName;
-        const batteryDisplayName = batteries[`${batteryKey}-name`] || batteryKey.replace(/-/g, ' ');
-        const panelDisplayName = panels[`${panelKey}-name`] || panelKey.replace(/-/g, ' ');
+        const batteryDisplayName = batteryKey.replace(/-/g, ' ');
+        const panelDisplayName = panelKey.replace(/-/g, ' ');
         
         const system = {
             id: `${isThreePhase ? 'three' : 'single'}-${capacity}kw`,
@@ -626,7 +644,7 @@ function createSystemConfigurations() {
             const capacity = capacityMatch ? parseFloat(capacityMatch[1]) : 13.5; // Default for Tesla Powerwall 3
             
             // Tesla Powerwall is standalone - no inverter required
-            const batteryDisplayName = batteries[`${batteryKey}-name`] || batteryKey.replace(/-/g, ' ');
+            const batteryDisplayName = batteryKey.replace(/-/g, ' ');
             
             const system = {
                 id: `single-${batteryKey.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
@@ -635,7 +653,7 @@ function createSystemConfigurations() {
                 inverter: null, // Tesla Powerwall doesn't need an inverter
                 battery: { 
                     name: batteryDisplayName, 
-                    price: (batteryPrice || 180000) * (markup.battery || 1.15), 
+                    price: (batteries[batteryKey] || 180000) * (markup.battery || 1.15), 
                     quantity: 1 
                 },
                 panel: null, // Solar panels are optional
@@ -751,8 +769,82 @@ function initializeCustomization(system) {
     document.getElementById('panels-quantity').textContent = system.panel.quantity;
     document.getElementById('batteries-quantity').textContent = system.battery.quantity;
     
+    // Populate dropdowns
+    populatePanelDropdown();
+    populateBatteryDropdown();
+    
     // Update pricing
     updateSystemPrice();
+}
+
+function populatePanelDropdown() {
+    const panelSelect = document.getElementById('panel-selection');
+    if (!panelSelect) return;
+    
+    const panels = currentPricing.panels || {};
+    panelSelect.innerHTML = '<option value="">Select Panel Type</option>';
+    
+    Object.keys(panels).forEach(key => {
+        const displayName = key.replace(/-/g, ' ');
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = displayName;
+        panelSelect.appendChild(option);
+    });
+}
+
+function populateBatteryDropdown() {
+    const batterySelect = document.getElementById('battery-selection');
+    if (!batterySelect) return;
+    
+    const batteries = currentPricing.batteries || {};
+    batterySelect.innerHTML = '<option value="">Select Battery Type</option>';
+    
+    Object.keys(batteries).forEach(key => {
+        const displayName = key.replace(/-/g, ' ');
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = displayName;
+        batterySelect.appendChild(option);
+    });
+}
+
+function selectPanel() {
+    const panelSelect = document.getElementById('panel-selection');
+    if (!panelSelect || !currentSystem) return;
+    
+    const selectedKey = panelSelect.value;
+    if (selectedKey) {
+        const panels = currentPricing.panels || {};
+        const displayName = selectedKey.replace(/-/g, ' ');
+        const price = panels[selectedKey] || 2500;
+        
+        // Update current system
+        currentSystem.panel.name = displayName;
+        currentSystem.panel.price = price;
+        
+        // Update pricing
+        updateSystemPrice();
+    }
+}
+
+function selectBattery() {
+    const batterySelect = document.getElementById('battery-selection');
+    if (!batterySelect || !currentSystem) return;
+    
+    const selectedKey = batterySelect.value;
+    if (selectedKey) {
+        const batteries = currentPricing.batteries || {};
+        const displayName = selectedKey.replace(/-/g, ' ');
+        const price = batteries[selectedKey] || 45000;
+        
+        // Update current system
+        currentSystem.battery.name = displayName;
+        currentSystem.battery.price = price;
+        
+        // Update pricing
+        updateSystemPrice();
+    }
 }
 
 function adjustPanels(change) {
