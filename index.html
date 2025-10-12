@@ -290,7 +290,7 @@
                                 <button class="quantity-btn" onclick="adjustBatteries(1)">+</button>
                             </div>
                             <div class="quantity-limits">
-                                <small>Range: <span id="batteries-min">1</span> - <span id="batteries-max">10</span> batteries (required)</small>
+                                <small>Range: <span id="batteries-min">1</span> - <span id="batteries-max">10</span> batteries</small>
                             </div>
                             <p class="customization-price" id="batteries-price">R0</p>
                         </div>
@@ -883,6 +883,7 @@
             
             const systemTypes = SolarConfigV2.getSystemTypes();
             console.log('getSystemTypes() returned:', systemTypes);
+            console.log('System types length:', systemTypes ? systemTypes.length : 'undefined');
             
             // Populate system type dropdown
             populateSystemTypeDropdown();
@@ -1330,6 +1331,10 @@
             const installation = SolarConfigV2.getComponent(system.installation, 'installation');
             const installationPrice = installation ? parseFloat(installation.price) : 0;
             document.getElementById('installation-price').textContent = `R${installationPrice.toLocaleString('en-ZA')}`;
+            
+            // Update individual component price displays in customization section
+            document.getElementById('panels-price').textContent = `R${panelPrice.toLocaleString('en-ZA')}`;
+            document.getElementById('batteries-price').textContent = `R${batteryPrice.toLocaleString('en-ZA')}`;
         }
 
         // Calculate Total Price
@@ -1539,8 +1544,29 @@
                 return;
             }
             
-            // Get current quantities from the UI
+            // Validation: Always require battery selection
+            if (!currentBatteryId) {
+                alert('Please select a battery type before requesting a quote!');
+                return;
+            }
+            
+            // Validation: Check panel selection based on system requirements and user choice
+            const noPanelsCheckbox = document.getElementById('no-panels-checkbox');
             const panelQty = currentQuantities.panels;
+            
+            // Get system limits to check if 6+ panels are typically required
+            const limits = SolarConfigV2.getSystemLimits(currentSystemId);
+            
+            // Only validate panel selection if:
+            // 1. System requires 6+ panels (panelMin >= 6)
+            // 2. User has NOT checked "No solar panels required"
+            // 3. User has NOT selected a panel type
+            if (limits && limits.panelMin >= 6 && !noPanelsCheckbox.checked && !currentPanelId) {
+                alert('Please select a solar panel type before requesting a quote!');
+                return;
+            }
+            
+            // Get current quantities from the UI
             const batteryQty = currentQuantities.batteries;
             
             // Get selected components
@@ -1643,12 +1669,12 @@
             
             let messageIndex = 0;
             const messageInterval = setInterval(() => {
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[messageIndex]}`;
+                btn.innerHTML = `<div class="loading-content"><i class="fas fa-spinner fa-spin"></i><span>${loadingMessages[messageIndex]}</span></div>`;
                 messageIndex = (messageIndex + 1) % loadingMessages.length;
             }, 3000);
             
             // Show the first message immediately
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[0]}`;
+            btn.innerHTML = `<div class="loading-content"><i class="fas fa-spinner fa-spin"></i><span>${loadingMessages[0]}</span></div>`;
             
             try {
                 console.log('Sending quote to n8n:', quoteData);
@@ -1666,7 +1692,7 @@
                     const result = await response.json();
                     // Clear the interval and show success message
                     clearInterval(messageInterval);
-                    btn.innerHTML = '<i class="fas fa-check-circle"></i> Quote Sent! 🎉';
+                    btn.innerHTML = '<div class="loading-content"><i class="fas fa-check-circle"></i><span>Quote Sent! 🎉</span></div>';
                     
                     // Show success alert after a brief delay
                     setTimeout(() => {
@@ -1683,7 +1709,7 @@
             } catch (error) {
                 console.error('Error sending quote request:', error);
                 clearInterval(messageInterval);
-                btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Oops! Try Again';
+                btn.innerHTML = '<div class="loading-content"><i class="fas fa-exclamation-triangle"></i><span>Oops! Try Again</span></div>';
                 
                 // Show error alert after a brief delay
                 setTimeout(() => {
@@ -1697,6 +1723,229 @@
         }
 
         console.log('V2 System Builder initialized successfully');
+
+        // Gallery Functionality
+        let galleryData = [];
+        let currentFilter = 'all';
+
+        // Load gallery data
+        async function loadGalleryData() {
+            try {
+                const response = await fetch('gallery-data.json?v=' + Date.now());
+                if (response.ok) {
+                    const data = await response.json();
+                    galleryData = data.galleryItems;
+                    console.log('Gallery data loaded:', galleryData.length, 'items');
+                    renderGallery();
+                } else {
+                    console.error('Failed to load gallery data:', response.status);
+                    showGalleryError();
+                }
+            } catch (error) {
+                console.error('Error loading gallery data:', error);
+                showGalleryError();
+            }
+        }
+
+        // Render gallery items
+        function renderGallery() {
+            const galleryGrid = document.getElementById('gallery-grid');
+            if (!galleryGrid) {
+                console.error('Gallery grid element not found');
+                return;
+            }
+
+            // Filter items based on current filter
+            let filteredItems = galleryData;
+            if (currentFilter !== 'all') {
+                filteredItems = galleryData.filter(item => 
+                    item.categories.includes(currentFilter)
+                );
+            }
+
+            // Clear existing content
+            galleryGrid.innerHTML = '';
+
+            if (filteredItems.length === 0) {
+                galleryGrid.innerHTML = '<p class="no-items">No gallery items found for this category.</p>';
+                return;
+            }
+
+            // Render each gallery item
+            filteredItems.forEach(item => {
+                const galleryItem = createGalleryItem(item);
+                galleryGrid.appendChild(galleryItem);
+            });
+        }
+
+        // Create gallery item element
+        function createGalleryItem(item) {
+            const div = document.createElement('div');
+            div.className = 'gallery-item';
+            div.setAttribute('data-categories', item.categories.join(' '));
+            div.onclick = () => openGalleryModal(item);
+
+            div.innerHTML = `
+                <div class="gallery-image">
+                    <img src="${item.image}" alt="${item.title}" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h4>${item.title}</h4>
+                            <p>${item.location} • ${item.systemSize}</p>
+                            <div class="gallery-tags">
+                                ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // Gallery filtering
+        function initGalleryFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active button
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Update current filter
+                    currentFilter = btn.getAttribute('data-filter');
+                    console.log('Gallery filter changed to:', currentFilter);
+
+                    // Re-render gallery
+                    renderGallery();
+                });
+            });
+        }
+
+        // Gallery modal
+        function openGalleryModal(item) {
+            // Create modal if it doesn't exist
+            let modal = document.getElementById('gallery-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'gallery-modal';
+                modal.className = 'gallery-modal';
+                modal.innerHTML = `
+                    <div class="gallery-modal-content">
+                        <span class="gallery-modal-close">&times;</span>
+                        <div class="gallery-modal-body">
+                            <div class="gallery-modal-image">
+                                <img id="modal-image" src="" alt="">
+                            </div>
+                            <div class="gallery-modal-info">
+                                <h3 id="modal-title"></h3>
+                                <p id="modal-description"></p>
+                                <div class="modal-details">
+                                    <div class="detail-item">
+                                        <strong>Location:</strong>
+                                        <span id="modal-location"></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>System Size:</strong>
+                                        <span id="modal-system-size"></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Date:</strong>
+                                        <span id="modal-date"></span>
+                                    </div>
+                                </div>
+                                <div class="modal-components">
+                                    <h4>System Components:</h4>
+                                    <ul id="modal-components"></ul>
+                                </div>
+                                <div class="modal-quote">
+                                    <h4>Customer Quote:</h4>
+                                    <blockquote id="modal-quote"></blockquote>
+                                </div>
+                                <div class="modal-tags">
+                                    <h4>Tags:</h4>
+                                    <div id="modal-tags"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                // Close modal functionality
+                const closeBtn = modal.querySelector('.gallery-modal-close');
+                closeBtn.addEventListener('click', closeGalleryModal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeGalleryModal();
+                });
+            }
+
+            // Populate modal with item data
+            document.getElementById('modal-image').src = item.image;
+            document.getElementById('modal-image').alt = item.title;
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-description').textContent = item.description;
+            document.getElementById('modal-location').textContent = item.location;
+            document.getElementById('modal-system-size').textContent = item.systemSize;
+            document.getElementById('modal-date').textContent = new Date(item.date).toLocaleDateString();
+            
+            const componentsList = document.getElementById('modal-components');
+            componentsList.innerHTML = '';
+            item.components.forEach(component => {
+                const li = document.createElement('li');
+                li.textContent = component;
+                componentsList.appendChild(li);
+            });
+            
+            document.getElementById('modal-quote').textContent = item.customerQuote;
+            
+            const tagsContainer = document.getElementById('modal-tags');
+            tagsContainer.innerHTML = '';
+            item.tags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.textContent = tag;
+                tagsContainer.appendChild(span);
+            });
+
+            // Show modal
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGalleryModal() {
+            const modal = document.getElementById('gallery-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Show error message if gallery fails to load
+        function showGalleryError() {
+            const galleryGrid = document.getElementById('gallery-grid');
+            if (galleryGrid) {
+                galleryGrid.innerHTML = `
+                    <div class="gallery-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Gallery Unavailable</h3>
+                        <p>We're having trouble loading our gallery. Please refresh the page or contact us directly.</p>
+                        <button class="btn btn-primary" onclick="loadGalleryData()">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize gallery when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load gallery data
+            loadGalleryData();
+            
+            // Initialize gallery filters
+            initGalleryFilters();
+            
+            console.log('Gallery functionality initialized');
+        });
     </script>
     
     <script src="cache-buster.js?v=5.6"></script>
