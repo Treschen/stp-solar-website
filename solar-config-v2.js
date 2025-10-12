@@ -148,6 +148,28 @@ function getSystemTypes() {
     }));
 }
 
+// Get available phase types
+function getPhaseTypes() {
+    console.log('getPhaseTypes called, adminPortalData:', adminPortalData);
+    
+    if (!adminPortalData) {
+        console.error('adminPortalData is null or undefined');
+        return [];
+    }
+    
+    if (!adminPortalData.phases) {
+        console.error('adminPortalData.phases is missing');
+        return [];
+    }
+    
+    console.log('Found phases:', adminPortalData.phases);
+    
+    return adminPortalData.phases.map(phase => ({
+        id: phase.id,
+        name: phase.name
+    }));
+}
+
 // Get system configuration by ID
 function getSystemConfig(systemId) {
     if (!adminPortalData || !adminPortalData.systems) {
@@ -389,6 +411,7 @@ async function initializeDataBridge() {
 window.SolarConfigV2 = {
     loadAdminPortalData,
     getSystemTypes,
+    getPhaseTypes,
     getSystemConfig,
     getPhaseInfo,
     getComponent,

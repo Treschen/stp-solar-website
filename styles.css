@@ -1176,6 +1176,10 @@ section > * {
     border: 3px solid transparent;
 }
 
+.phase-option input[type="radio"] {
+    display: none;
+}
+
 .phase-option:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px var(--shadow-hover);
@@ -1186,6 +1190,16 @@ section > * {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: var(--white);
     border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(52, 152, 219, 0.3);
+}
+
+.phase-option.selected .phase-option-content {
+    color: var(--white);
+}
+
+.phase-option.selected i {
+    color: var(--white);
 }
 
 .phase-icon {
@@ -1584,6 +1598,40 @@ section > * {
     color: var(--primary-color);
 }
 
+#total-price-label {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Mobile-specific pricing fixes */
+@media (max-width: 768px) {
+    .pricing-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    
+    .pricing-item span {
+        display: block;
+        width: 100%;
+    }
+    
+    .pricing-item span:last-child {
+        text-align: right;
+        font-weight: 700;
+    }
+    
+    #total-price-label {
+        margin-bottom: 4px;
+    }
+    
+    #total-price {
+        text-align: right;
+        font-weight: 700;
+        font-size: 1.1em;
+    }
+}
+
 .system-cta {
     display: flex;
     gap: var(--spacing-lg);
@@ -1824,14 +1872,12 @@ section > * {
 .reviews-slider {
     display: flex;
     gap: var(--spacing-lg);
-    overflow-x: visible;
-    scroll-behavior: smooth;
+    overflow: visible;
     padding: var(--spacing-lg) 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
-    transition: transform 0.3s ease;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .reviews-slider::-webkit-scrollbar {
@@ -1970,6 +2016,26 @@ section > * {
     background: var(--primary-color);
     color: var(--white);
     transform: scale(1.1);
+}
+
+.review-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    pointer-events: none !important;
+}
+
+.review-btn:disabled:hover {
+    background: var(--white) !important;
+    color: var(--primary-color) !important;
+    transform: none !important;
+}
+
+/* Ensure buttons are always clickable when not disabled */
+.review-btn:not(:disabled) {
+    opacity: 1 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
 }
 
 .reviews-stats {
@@ -2822,9 +2888,10 @@ section > * {
 
     /* Quantity Controls Mobile */
     .quantity-controls {
-        flex-direction: column;
-        gap: var(--spacing-md);
+        flex-direction: row;
+        gap: var(--spacing-lg);
         align-items: center;
+        justify-content: center;
     }
 
     .quantity-btn {
@@ -2992,6 +3059,7 @@ section > * {
         padding: var(--spacing-md) 0;
         justify-content: center;
         align-items: center;
+        flex-wrap: nowrap;
     }
     
     .review-card {
@@ -3560,6 +3628,10 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .quote-request-section .btn {
@@ -3877,78 +3949,6 @@ body {
 
 /* Mobile System Builder Enhancements */
 @media (max-width: 768px) {
-    /* System Type Selection Mobile Styling */
-    .system-type-selection {
-        background: linear-gradient(135deg, #fff8f0, #fef5e7);
-        border: 4px solid var(--primary-color);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-xl);
-        margin-bottom: var(--spacing-xl);
-        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4), 0 0 0 2px rgba(243, 156, 18, 0.1);
-        position: relative;
-        animation: pulse 2s ease-in-out infinite;
-    }
-    
-    .system-type-selection::before {
-        content: "👆 SELECT BELOW";
-        position: absolute;
-        top: -15px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--primary-color);
-        color: var(--white);
-        padding: var(--spacing-sm) var(--spacing-lg);
-        border-radius: var(--radius-lg);
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
-        animation: bounce 1.5s ease-in-out infinite;
-    }
-    
-    .system-type-selection h3 {
-        color: var(--primary-color);
-        font-size: 1.4rem;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: var(--spacing-md);
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .system-type-description {
-        text-align: center;
-        color: var(--text-dark);
-        font-weight: 500;
-        margin-bottom: var(--spacing-lg);
-    }
-    
-    .system-type-dropdown select {
-        width: 100%;
-        padding: var(--spacing-lg);
-        font-size: 1.1rem;
-        font-weight: 600;
-        border: 2px solid var(--primary-color);
-        border-radius: var(--radius-md);
-        background: var(--white);
-        color: var(--text-dark);
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-    
-    .system-type-dropdown select:focus {
-        outline: none;
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
-        transform: translateY(-2px);
-    }
-    
-    .system-type-dropdown select option {
-        padding: var(--spacing-md);
-        font-weight: 500;
-    }
-    
     /* Phase Selection Mobile Styling */
     .phase-selection {
         background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
@@ -4060,6 +4060,78 @@ body {
     
     .phase-option i {
         font-size: 1.3rem;
+    }
+    
+    /* System Type Selection Mobile Styling */
+    .system-type-selection {
+        background: linear-gradient(135deg, #fff8f0, #fef5e7);
+        border: 4px solid var(--primary-color);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4), 0 0 0 2px rgba(243, 156, 18, 0.1);
+        position: relative;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .system-type-selection::before {
+        content: "👆 SELECT BELOW";
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary-color);
+        color: var(--white);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border-radius: var(--radius-lg);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+        animation: bounce 1.5s ease-in-out infinite;
+    }
+    
+    .system-type-selection h3 {
+        color: var(--primary-color);
+        font-size: 1.4rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: var(--spacing-md);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .system-type-description {
+        text-align: center;
+        color: var(--text-dark);
+        font-weight: 500;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .system-type-dropdown select {
+        width: 100%;
+        padding: var(--spacing-lg);
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: 2px solid var(--primary-color);
+        border-radius: var(--radius-md);
+        background: var(--white);
+        color: var(--text-dark);
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .system-type-dropdown select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .system-type-dropdown select option {
+        padding: var(--spacing-md);
+        font-weight: 500;
     }
 }
 

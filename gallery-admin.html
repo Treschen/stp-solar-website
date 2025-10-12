@@ -207,6 +207,12 @@
             grid-column: 1 / -1;
         }
 
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         .checkbox-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -596,9 +602,14 @@
                                 <input type="text" id="project-tags" placeholder="Residential, Sunsynk, Cape Town">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-plus"></i> Add Project
-                        </button>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Add Project
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="cancel-edit-btn" onclick="cancelEdit()" style="display: none;">
+                                <i class="fas fa-times"></i> Cancel Edit
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -636,8 +647,8 @@
 
         // Authentication credentials (in production, these should be hashed and stored securely)
         const ADMIN_CREDENTIALS = {
-            username: 'admin',
-            password: 'stp2024gallery' // Change this to your desired password
+            username: 'stpadmin',
+            password: 'Solar@2025!' // Same credentials as main admin portal
         };
 
         // Session management
@@ -839,8 +850,9 @@
                 return;
             }
 
-            const newProject = {
-                id: Date.now(), // Simple ID generation
+            const projectData = {
+                id: window.currentEditIndex !== undefined && window.currentEditIndex !== null ? 
+                    galleryData[window.currentEditIndex].id : Date.now(), // Keep existing ID when editing
                 title: document.getElementById('project-title').value,
                 description: document.getElementById('project-description').value,
                 image: document.getElementById('project-image').value,
@@ -853,18 +865,63 @@
                 customerQuote: document.getElementById('customer-quote').value || null
             };
 
-            galleryData.push(newProject);
-            saveData();
+            // Check if we're editing an existing project
+            if (window.currentEditIndex !== undefined && window.currentEditIndex !== null) {
+                // Update existing project
+                galleryData[window.currentEditIndex] = projectData;
+                saveData();
+                showAlert('Project updated successfully!', 'success');
+                
+                // Reset edit mode
+                window.currentEditIndex = null;
+                
+                // Switch to manage items tab to see the updated project
+                setTimeout(() => {
+                    switchTab('manage-items');
+                }, 1000);
+            } else {
+                // Add new project
+                galleryData.push(projectData);
+                saveData();
+                showAlert('Project added successfully!', 'success');
+                
+                // Switch to manage items tab to see the new project
+                setTimeout(() => {
+                    switchTab('manage-items');
+                }, 1000);
+            }
+            
+            // Reset form and UI
+            resetForm();
+        }
+        
+        // Reset form to add new project mode
+        function resetForm() {
+            const form = document.getElementById('add-project-form');
             form.reset();
             document.getElementById('project-date').value = new Date().toISOString().split('T')[0];
             
-            // Show success message
-            showAlert('Project added successfully!', 'success');
+            // Reset form title and button
+            const formTitle = document.querySelector('#add-item h3');
+            formTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Project';
             
-            // Switch to manage items tab to see the new project
-            setTimeout(() => {
-                switchTab('manage-items');
-            }, 1000);
+            const submitBtn = document.querySelector('#add-project-form button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Project';
+            
+            // Hide the cancel edit button
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            cancelBtn.style.display = 'none';
+            
+            // Clear edit mode
+            window.currentEditIndex = null;
+        }
+        
+        // Cancel edit and return to add mode
+        function cancelEdit() {
+            if (confirm('Are you sure you want to cancel editing? All changes will be lost.')) {
+                resetForm();
+                showAlert('Edit cancelled', 'info');
+            }
         }
 
         // Render gallery items in manage tab
@@ -910,13 +967,54 @@
             });
         }
 
-        // Edit project (simplified - you can enhance this)
+        // Edit project
         function editProject(index) {
             const item = galleryData[index];
-            if (confirm(`Edit "${item.title}"? This will open the project details for editing.`)) {
-                // For now, just show an alert. You can implement a full edit modal later
-                alert(`Editing functionality can be enhanced. For now, you can delete and re-add the project.`);
-            }
+            
+            // Store the current edit index
+            window.currentEditIndex = index;
+            
+            // Switch to the add item tab
+            switchTab('add-item');
+            
+            // Update the form title
+            const formTitle = document.querySelector('#add-item h3');
+            formTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Project';
+            
+            // Update the submit button
+            const submitBtn = document.querySelector('#add-project-form button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Project';
+            
+            // Show the cancel edit button
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            cancelBtn.style.display = 'inline-block';
+            
+            // Populate the form with existing data
+            document.getElementById('project-title').value = item.title;
+            document.getElementById('project-location').value = item.location;
+            document.getElementById('project-description').value = item.description;
+            document.getElementById('project-image').value = item.image;
+            document.getElementById('project-date').value = item.date;
+            document.getElementById('project-size').value = item.systemSize;
+            document.getElementById('customer-quote').value = item.customerQuote;
+            document.getElementById('project-components').value = item.components.join('\n');
+            document.getElementById('project-tags').value = item.tags.join(', ');
+            
+            // Clear all checkboxes first
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Check the appropriate category checkboxes
+            item.categories.forEach(category => {
+                const checkbox = document.querySelector(`input[value="${category}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+            
+            // Scroll to the form
+            document.getElementById('add-item').scrollIntoView({ behavior: 'smooth' });
         }
 
         // Delete project

@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>STP Solar - Premium Solar Solutions in South Africa</title>
     <meta name="description" content="STP Solar provides premium solar panel installation, maintenance, and energy solutions for homes and businesses across South Africa. Save money and go green with our expert solar services.">
     <meta name="keywords" content="solar panels, solar installation, renewable energy, South Africa, solar power, energy savings">
@@ -26,7 +29,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Styles with cache busting -->
-    <link rel="stylesheet" href="styles.css?v=2.2">
+    <link rel="stylesheet" href="styles.css?v=2.8">
 </head>
 <body>
     <!-- Navigation -->
@@ -192,8 +195,24 @@
             </div>
             
             <div class="system-builder-container">
+                <!-- Phase Selection -->
+                <div class="phase-selection" id="phase-selection">
+                    <h3>
+                        <i class="fas fa-bolt"></i>
+                        Select Your Power Type
+                    </h3>
+                    <p class="phase-description">
+                        <i class="fas fa-info-circle"></i>
+                        Please select the type of power you have. If you are not sure, please select Single Phase.
+                    </p>
+                    
+                    <div class="phase-options" id="phase-options">
+                        <!-- Will be populated by admin portal data -->
+                    </div>
+                </div>
+                
                 <!-- System Type Selection -->
-                <div class="system-type-selection">
+                <div class="system-type-selection" id="system-type-selection" style="display: none;">
                     <h3>
                         <i class="fas fa-list-ul"></i>
                         Select System Type
@@ -208,22 +227,6 @@
                             <option value="">Select System Type</option>
                             <!-- Will be populated by admin portal data -->
                         </select>
-                    </div>
-                </div>
-                
-                <!-- Phase Selection -->
-                <div class="phase-selection" id="phase-selection" style="display: none;">
-                    <h3>
-                        <i class="fas fa-bolt"></i>
-                        Select Your Power Type
-                    </h3>
-                    <p class="phase-description">
-                        <i class="fas fa-info-circle"></i>
-                        Please select the type of power you have. If you are not sure, please select Single Phase.
-                    </p>
-                    
-                    <div class="phase-options" id="phase-options">
-                        <!-- Will be populated by admin portal data -->
                     </div>
                 </div>
                 
@@ -323,7 +326,7 @@
                             <span id="installation-price">R0</span>
                         </div>
                         <div class="pricing-item">
-                            <span><strong>Total System Price (inc. VAT)</strong></span>
+                            <span><strong id="total-price-label">Total System Price (inc. VAT)</strong></span>
                             <span><strong id="total-price">R0</strong></span>
                         </div>
                     </div>
@@ -844,7 +847,7 @@
 
     <!-- Scripts -->
     <!-- Solar Admin Portal V2 Data Bridge -->
-    <script src="solar-config-v2.js?v=1.0"></script>
+    <script src="solar-config-v2.js?v=1.2"></script>
     
     <!-- V2 System Builder Script -->
     <script>
@@ -885,6 +888,9 @@
             console.log('getSystemTypes() returned:', systemTypes);
             console.log('System types length:', systemTypes ? systemTypes.length : 'undefined');
             
+            // Populate phase options first
+            populatePhaseOptions();
+            
             // Populate system type dropdown
             populateSystemTypeDropdown();
             
@@ -892,12 +898,38 @@
             updateQuantityDisplay();
         }
 
+        // Populate Phase Options
+        function populatePhaseOptions() {
+            const phaseOptions = document.getElementById('phase-options');
+            const phases = SolarConfigV2.getPhaseTypes();
+            
+            console.log('Available phases:', phases);
+            
+            if (!phases || phases.length === 0) {
+                console.log('No phases available');
+                return;
+            }
+            
+            phaseOptions.innerHTML = phases.map(phase => `
+                <div class="phase-option" data-phase="${phase.id}" onclick="selectPhase('${phase.id}')">
+                    <input type="radio" name="phase" value="${phase.id}" id="phase-${phase.id}">
+                    <label for="phase-${phase.id}">
+                        <div class="phase-option-content">
+                            <i class="fas fa-bolt"></i>
+                            <span>${phase.name}</span>
+                        </div>
+                    </label>
+                </div>
+            `).join('');
+        }
+        
         // Populate System Type Dropdown
         function populateSystemTypeDropdown() {
             const select = document.getElementById('system-type-select');
             const systemTypes = SolarConfigV2.getSystemTypes();
             
             console.log('Available system types:', systemTypes);
+            console.log('Current phase selection:', currentPhaseId);
             
             // Clear existing options (keep first empty option)
             select.innerHTML = '<option value="">Select System Type</option>';
@@ -912,13 +944,36 @@
                 return;
             }
             
-            // Add system types from admin portal
-            systemTypes.forEach(system => {
+            // Filter systems by selected phase
+            const filteredSystems = systemTypes.filter(system => {
+                return system.phase === currentPhaseId;
+            });
+            
+            console.log('Filtered systems for phase', currentPhaseId, ':', filteredSystems);
+            
+            if (filteredSystems.length === 0) {
+                console.log('No systems available for selected phase:', currentPhaseId);
+                
+                // Get the phase name for better error message
+                const phases = SolarConfigV2.getPhaseTypes();
+                const currentPhase = phases.find(phase => phase.id === currentPhaseId);
+                const phaseName = currentPhase ? currentPhase.name : 'Selected Phase';
+                
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = `No systems available for ${phaseName}`;
+                option.disabled = true;
+                select.appendChild(option);
+                return;
+            }
+            
+            // Add filtered system types from admin portal
+            filteredSystems.forEach(system => {
                 const option = document.createElement('option');
                 option.value = system.id;
                 option.textContent = system.name;
                 select.appendChild(option);
-                console.log('Added system option:', system.name);
+                console.log('Added system option:', system.name, 'for phase:', system.phase);
             });
         }
 
@@ -931,39 +986,18 @@
             console.log('System type selected:', currentSystemType);
             
             if (currentSystemType) {
-                // Show phase selection
-                showPhaseSelection();
+                // Show system selection
+                showSystemSelection();
             } else {
-                hideAllSections();
+                // Hide system selection and customization
+                document.getElementById('system-selection').style.display = 'none';
+                document.getElementById('customization-section').style.display = 'none';
             }
         }
 
-        // Show Phase Selection
-        function showPhaseSelection() {
-            const system = SolarConfigV2.getSystemConfig(currentSystemId);
-            if (!system) return;
-            
-            const phase = SolarConfigV2.getPhaseInfo(system.phase);
-            if (!phase) return;
-            
-            const phaseOptions = document.getElementById('phase-options');
-            phaseOptions.innerHTML = `
-                <div class="phase-option" data-phase="${phase.id}" onclick="selectPhase('${phase.id}')">
-                    <div class="phase-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h4>${phase.name}</h4>
-                    <p>${phase.name === 'Single Phase' ? 'Most residential homes' : 'Large homes and businesses'}</p>
-                </div>
-            `;
-            
-            document.getElementById('phase-selection').style.display = 'block';
-            currentPhaseId = phase.id;
-            
-            // Auto-select the phase and show system selection
-            setTimeout(() => {
-                selectPhase(phase.id);
-            }, 100);
+        // Show System Type Selection
+        function showSystemTypeSelection() {
+            document.getElementById('system-type-selection').style.display = 'block';
         }
 
         // Phase Selection
@@ -971,8 +1005,24 @@
             currentPhaseId = phaseId;
             console.log('Phase selected:', phaseId);
             
-            // Show system selection
-            showSystemSelection();
+            // Update radio button checked state
+            document.querySelectorAll('input[name="phase"]').forEach(radio => {
+                radio.checked = radio.value === phaseId;
+            });
+            
+            // Update visual selection state
+            document.querySelectorAll('.phase-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.phase === phaseId) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            // Repopulate system type dropdown with filtered systems
+            populateSystemTypeDropdown();
+            
+            // Show system type selection
+            showSystemTypeSelection();
         }
 
         // Show System Selection
@@ -1580,15 +1630,20 @@
             // Calculate total price
             const totalPrice = calculateTotalPrice(system);
             
-            // Calculate VAT-exclusive amounts (divide by 1.15)
-            // Since our prices include VAT, we need to send exclusive amounts to QuickBooks
+            // Calculate VAT-exclusive amounts for each line (total amounts, not unit prices)
             const vatRate = 1.15;
             const inverterAmountExclVAT = inverter ? Math.round(parseFloat(inverter.price) / vatRate) : 0;
-            const batteryAmountExclVAT = battery ? Math.round((parseFloat(battery.price) * batteryQty) / vatRate) : 0;
-            const panelAmountExclVAT = panel ? Math.round((parseFloat(panel.price) * panelQty) / vatRate) : 0;
-            const roofAmountExclVAT = roofType && panelQty > 0 ? Math.round((parseFloat(roofType.price) * panelQty) / vatRate) : 0;
+            const batteryTotalExclVAT = battery ? Math.round((parseFloat(battery.price) * batteryQty) / vatRate) : 0;
+            const panelTotalExclVAT = panel ? Math.round((parseFloat(panel.price) * panelQty) / vatRate) : 0;
+            const roofTotalExclVAT = roofType && panelQty > 0 ? Math.round((parseFloat(roofType.price) * panelQty) / vatRate) : 0;
             const accessoriesAmountExclVAT = accessories ? Math.round(parseFloat(accessories.price) / vatRate) : 0;
             const installationAmountExclVAT = installation ? Math.round(parseFloat(installation.price) / vatRate) : 0;
+            
+            // Debug logging
+            console.log('=== WEBHOOK CALCULATION DEBUG ===');
+            console.log('Battery:', battery?.name, 'Unit Price:', battery?.price, 'Quantity:', batteryQty, 'Total Excl VAT:', batteryTotalExclVAT);
+            console.log('Panel:', panel?.name, 'Unit Price:', panel?.price, 'Quantity:', panelQty, 'Total Excl VAT:', panelTotalExclVAT);
+            console.log('Roof Type:', roofType?.name, 'Unit Price:', roofType?.price, 'Quantity:', panelQty, 'Total Excl VAT:', roofTotalExclVAT);
             
             // Build the webhook payload (compatible with n8n workflow and QuickBooks API)
             // Using proper QuickBooks API Line array structure with VAT-exclusive amounts
@@ -1607,26 +1662,26 @@
                 // Line 1: Inverter (using "Solar Product" as item name)
                 line1_item_name: 'Solar Product',
                 line1_description: inverter ? inverter.name : 'Inverter - Not selected',
-                line1_amount: inverterAmountExclVAT,
+                line1_amount: inverter ? Math.round(parseFloat(inverter.price) / vatRate) : 0,
                 line1_quantity: 1,
                 
                 // Line 2: Battery (using "Solar Product" as item name)
                 line2_item_name: 'Solar Product',
-                line2_description: battery ? battery.name : 'Battery - Not selected',
-                line2_amount: batteryAmountExclVAT,
-                line2_quantity: 1,
+                line2_description: battery ? `${battery.name} (${batteryQty}x)` : 'Battery - Not selected',
+                line2_amount: batteryTotalExclVAT,
+                line2_quantity: batteryQty,
                 
                 // Line 3: Panels (using "Solar Product" as item name)
                 line3_item_name: 'Solar Product',
-                line3_description: panel && panelQty > 0 ? panel.name : 'Solar Panels - Not selected',
-                line3_amount: panelAmountExclVAT,
-                line3_quantity: 1,
+                line3_description: panel && panelQty > 0 ? `${panel.name} (${panelQty}x)` : 'Solar Panels - Not selected',
+                line3_amount: panelTotalExclVAT,
+                line3_quantity: panelQty,
                 
                 // Line 4: Roof Mounting Kit (using "Solar Product" as item name)
                 line4_item_name: 'Solar Product',
-                line4_description: roofType && panelQty > 0 ? `${roofType.name} Mounting Kit` : 'Panel Mounting Kit - Not required',
-                line4_amount: roofAmountExclVAT,
-                line4_quantity: 1,
+                line4_description: roofType && panelQty > 0 ? `${roofType.name} Mounting Kit (${panelQty}x)` : 'Panel Mounting Kit - Not required',
+                line4_amount: roofTotalExclVAT,
+                line4_quantity: panelQty,
                 
                 // Line 5: Accessories (using "Solar Product" as item name)
                 line5_item_name: 'Solar Product',
@@ -1676,8 +1731,12 @@
             // Show the first message immediately
             btn.innerHTML = `<div class="loading-content"><i class="fas fa-spinner fa-spin"></i><span>${loadingMessages[0]}</span></div>`;
             
-            try {
-                console.log('Sending quote to n8n:', quoteData);
+                try {
+                    console.log('=== FINAL WEBHOOK PAYLOAD DEBUG ===');
+                    console.log('line2_amount (Battery):', quoteData.line2_amount, 'line2_quantity:', quoteData.line2_quantity);
+                    console.log('line3_amount (Panel):', quoteData.line3_amount, 'line3_quantity:', quoteData.line3_quantity);
+                    console.log('line4_amount (Roof):', quoteData.line4_amount, 'line4_quantity:', quoteData.line4_quantity);
+                    console.log('Sending quote to n8n:', quoteData);
                 
                 // Send to n8n webhook
                 const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
@@ -1936,6 +1995,136 @@
             }
         }
 
+        // Reviews Carousel Functionality
+        let currentReviewIndex = 0;
+        let reviewsSlider, reviewCards, totalReviews;
+        
+        function initializeCarouselElements() {
+            reviewsSlider = document.getElementById('reviews-slider');
+            reviewCards = document.querySelectorAll('.review-card');
+            totalReviews = reviewCards.length;
+            console.log('Carousel initialized with', totalReviews, 'reviews');
+            console.log('Review names:', Array.from(reviewCards).map(card => card.querySelector('h4')?.textContent));
+        }
+        
+        function updateReviewsDisplay() {
+            if (!reviewsSlider || !reviewCards || totalReviews === 0) {
+                console.log('Carousel elements not found or no reviews');
+                return;
+            }
+            
+            console.log('Updating display - current index:', currentReviewIndex);
+            
+            // Calculate how many reviews to show based on screen width
+            const isMobile = window.innerWidth <= 768;
+            const reviewsToShow = isMobile ? 1 : 3;
+            
+            // Simple approach: hide all cards, show only the ones we want
+            reviewCards.forEach((card, index) => {
+                card.style.display = 'none';
+            });
+            
+            // Show the cards we want to display
+            for (let i = 0; i < reviewsToShow; i++) {
+                const cardIndex = currentReviewIndex + i;
+                if (cardIndex < totalReviews) {
+                    reviewCards[cardIndex].style.display = 'block';
+                    console.log('Showing card', cardIndex, ':', reviewCards[cardIndex].querySelector('h4')?.textContent);
+                }
+            }
+            
+            // Update button states
+            const prevBtn = document.getElementById('prev-review');
+            const nextBtn = document.getElementById('next-review');
+            
+            // Calculate maximum index based on visible cards
+            const maxIndex = Math.max(0, totalReviews - reviewsToShow);
+            
+            if (prevBtn) {
+                const isAtStart = currentReviewIndex === 0;
+                prevBtn.disabled = isAtStart;
+                prevBtn.style.opacity = isAtStart ? '0.5' : '1';
+                prevBtn.style.cursor = isAtStart ? 'not-allowed' : 'pointer';
+                console.log('Prev button - disabled:', isAtStart);
+            }
+            
+            if (nextBtn) {
+                const isAtEnd = currentReviewIndex >= maxIndex;
+                nextBtn.disabled = isAtEnd;
+                nextBtn.style.opacity = isAtEnd ? '0.5' : '1';
+                nextBtn.style.cursor = isAtEnd ? 'not-allowed' : 'pointer';
+                console.log('Next button - disabled:', isAtEnd, 'maxIndex:', maxIndex);
+            }
+            
+            console.log(`Showing reviews ${currentReviewIndex + 1} to ${Math.min(currentReviewIndex + reviewsToShow, totalReviews)} of ${totalReviews}`);
+        }
+        
+        function nextReview() {
+            const isMobile = window.innerWidth <= 768;
+            const reviewsToShow = isMobile ? 1 : 3;
+            const maxIndex = Math.max(0, totalReviews - reviewsToShow);
+            
+            console.log('Next clicked - current:', currentReviewIndex, 'max:', maxIndex);
+            
+            if (currentReviewIndex < maxIndex) {
+                currentReviewIndex++;
+                updateReviewsDisplay();
+            } else {
+                console.log('Already at max index');
+            }
+        }
+        
+        function prevReview() {
+            console.log('Prev clicked - current:', currentReviewIndex);
+            
+            if (currentReviewIndex > 0) {
+                currentReviewIndex--;
+                updateReviewsDisplay();
+            } else {
+                console.log('Already at first review');
+            }
+        }
+        
+        // Initialize reviews carousel
+        function initReviewsCarousel() {
+            // Initialize carousel elements
+            initializeCarouselElements();
+            
+            const prevBtn = document.getElementById('prev-review');
+            const nextBtn = document.getElementById('next-review');
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', prevReview);
+                console.log('Prev button event listener added');
+            } else {
+                console.log('Prev button not found');
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', nextReview);
+                console.log('Next button event listener added');
+            } else {
+                console.log('Next button not found');
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                console.log('Window resized, reinitializing carousel');
+                initializeCarouselElements();
+                currentReviewIndex = 0; // Reset to first review on resize
+                updateReviewsDisplay();
+            });
+            
+            // Initialize display after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                console.log('Initializing carousel display...');
+                initializeCarouselElements(); // Re-initialize to ensure elements are found
+                updateReviewsDisplay();
+            }, 200);
+            
+            console.log('Reviews carousel initialized');
+        }
+
         // Initialize gallery when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             // Load gallery data
@@ -1944,10 +2133,36 @@
             // Initialize gallery filters
             initGalleryFilters();
             
+            // Initialize reviews carousel
+            initReviewsCarousel();
+            
             console.log('Gallery functionality initialized');
         });
     </script>
     
-    <script src="cache-buster.js?v=5.6"></script>
+    <script src="cache-buster.js?v=5.8"></script>
+    
+    <!-- Mobile Cache Buster -->
+    <script>
+        // Force cache refresh for mobile browsers
+        if (window.innerWidth <= 768) {
+            console.log('Mobile detected - forcing cache refresh');
+            
+            // Add timestamp to all stylesheets
+            const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+            stylesheets.forEach(link => {
+                const href = link.href;
+                if (href.includes('styles.css')) {
+                    link.href = href.split('?')[0] + '?v=' + Date.now();
+                }
+            });
+            
+            // Force reload if this is a cached version
+            if (performance.navigation.type === 2) { // Back/forward cache
+                console.log('Back/forward cache detected - reloading');
+                window.location.reload(true);
+            }
+        }
+    </script>
 </body>
 </html>
