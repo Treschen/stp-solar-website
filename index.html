@@ -1580,37 +1580,37 @@
                 
                 // Line 1: Inverter (using "Solar Product" as item name)
                 line1_item_name: 'Solar Product',
-                line1_description: inverter ? `${inverter.name} - 1x Inverter` : 'Inverter - Not selected',
+                line1_description: inverter ? inverter.name : 'Inverter - Not selected',
                 line1_amount: inverterAmountExclVAT,
                 line1_quantity: 1,
                 
                 // Line 2: Battery (using "Solar Product" as item name)
                 line2_item_name: 'Solar Product',
-                line2_description: battery ? `${battery.name} - ${batteryQty}x Battery${batteryQty > 1 ? 's' : ''}` : 'Battery - Not selected',
+                line2_description: battery ? battery.name : 'Battery - Not selected',
                 line2_amount: batteryAmountExclVAT,
                 line2_quantity: 1,
                 
                 // Line 3: Panels (using "Solar Product" as item name)
                 line3_item_name: 'Solar Product',
-                line3_description: panel && panelQty > 0 ? `${panel.name} - ${panelQty}x Solar Panel${panelQty > 1 ? 's' : ''}` : 'Solar Panels - Not selected',
+                line3_description: panel && panelQty > 0 ? panel.name : 'Solar Panels - Not selected',
                 line3_amount: panelAmountExclVAT,
                 line3_quantity: 1,
                 
                 // Line 4: Roof Mounting Kit (using "Solar Product" as item name)
                 line4_item_name: 'Solar Product',
-                line4_description: roofType && panelQty > 0 ? `${roofType.name} Mounting Kit - ${panelQty}x Panel Mounting Kit` : 'Panel Mounting Kit - Not required',
+                line4_description: roofType && panelQty > 0 ? `${roofType.name} Mounting Kit` : 'Panel Mounting Kit - Not required',
                 line4_amount: roofAmountExclVAT,
                 line4_quantity: 1,
                 
                 // Line 5: Accessories (using "Solar Product" as item name)
                 line5_item_name: 'Solar Product',
-                line5_description: accessories ? `${accessories.name} - Installation Accessories & Hardware` : 'Accessories - Installation hardware',
+                line5_description: accessories ? accessories.name : 'Accessories',
                 line5_amount: accessoriesAmountExclVAT,
                 line5_quantity: 1,
                 
                 // Line 6: Installation (using "Solar Product" as item name)
                 line6_item_name: 'Solar Product',
-                line6_description: installation ? `${installation.name} - Professional Installation & Commissioning` : 'Installation - Professional setup',
+                line6_description: installation ? installation.name : 'Installation',
                 line6_amount: installationAmountExclVAT,
                 line6_quantity: 1,
                 
@@ -1645,7 +1645,7 @@
             const messageInterval = setInterval(() => {
                 btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[messageIndex]}`;
                 messageIndex = (messageIndex + 1) % loadingMessages.length;
-            }, 1500);
+            }, 3000);
             
             // Show the first message immediately
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[0]}`;
