@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STP Solar - Premium Solar Solutions in South Africa (V2 Test)</title>
+    <title>STP Solar - Premium Solar Solutions in South Africa</title>
     <meta name="description" content="STP Solar provides premium solar panel installation, maintenance, and energy solutions for homes and businesses across South Africa. Save money and go green with our expert solar services.">
     <meta name="keywords" content="solar panels, solar installation, renewable energy, South Africa, solar power, energy savings">
     
@@ -15,7 +15,7 @@
     <!-- Cache Control Meta Tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta name="version" content="4.0-v2-test">
+    <meta name="version" content="4.0">
     <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
@@ -1321,7 +1321,8 @@
             const quantities = {
                 panelCount: currentQuantities.panels,
                 batteryCount: currentQuantities.batteries,
-                roofType: currentRoofTypeId
+                roofType: currentRoofTypeId,
+                panelId: currentPanelId
             };
             
             return SolarConfigV2.calculateDynamicSystemPrice(system, quantities);
@@ -1536,8 +1537,8 @@
             // Calculate total price
             const totalPrice = calculateTotalPrice(system);
             
-            // Build the webhook payload (compatible with n8n workflow)
-            // All line items use "Solar Product" as item name, with detailed descriptions
+            // Build the webhook payload (compatible with n8n workflow and QuickBooks API)
+            // Using proper QuickBooks API Line array structure
             const quoteData = {
                 // Customer Info
                 customer_name: customerName,
@@ -1553,37 +1554,37 @@
                 // Line 1: Inverter (using "Solar Product" as item name)
                 line1_item_name: 'Solar Product',
                 line1_description: inverter ? `${inverter.name} - 1x Inverter` : 'Inverter - Not selected',
-                line1_amount: inverter ? inverter.price : 0,
+                line1_amount: inverter ? parseFloat(inverter.price) : 0,
                 line1_quantity: 1,
                 
                 // Line 2: Battery (using "Solar Product" as item name)
                 line2_item_name: 'Solar Product',
                 line2_description: battery ? `${battery.name} - ${batteryQty}x Battery${batteryQty > 1 ? 's' : ''}` : 'Battery - Not selected',
-                line2_amount: battery ? battery.price * batteryQty : 0,
+                line2_amount: battery ? parseFloat(battery.price) * batteryQty : 0,
                 line2_quantity: batteryQty,
                 
                 // Line 3: Panels (using "Solar Product" as item name)
                 line3_item_name: 'Solar Product',
                 line3_description: panel && panelQty > 0 ? `${panel.name} - ${panelQty}x Solar Panel${panelQty > 1 ? 's' : ''}` : 'Solar Panels - Not selected',
-                line3_amount: panel ? panel.price * panelQty : 0,
+                line3_amount: panel ? parseFloat(panel.price) * panelQty : 0,
                 line3_quantity: panelQty,
                 
                 // Line 4: Roof Mounting Kit (using "Solar Product" as item name)
                 line4_item_name: 'Solar Product',
                 line4_description: roofType && panelQty > 0 ? `${roofType.name} Mounting Kit - ${panelQty}x Panel Mounting Kit` : 'Panel Mounting Kit - Not required',
-                line4_amount: roofType && panelQty > 0 ? roofType.price * panelQty : 0,
+                line4_amount: roofType && panelQty > 0 ? parseFloat(roofType.price) * panelQty : 0,
                 line4_quantity: panelQty,
                 
                 // Line 5: Accessories (using "Solar Product" as item name)
                 line5_item_name: 'Solar Product',
                 line5_description: accessories ? `${accessories.name} - Installation Accessories & Hardware` : 'Accessories - Installation hardware',
-                line5_amount: accessories ? accessories.price : 0,
+                line5_amount: accessories ? parseFloat(accessories.price) : 0,
                 line5_quantity: 1,
                 
                 // Line 6: Installation (using "Solar Product" as item name)
                 line6_item_name: 'Solar Product',
                 line6_description: installation ? `${installation.name} - Professional Installation & Commissioning` : 'Installation - Professional setup',
-                line6_amount: installation ? installation.price : 0,
+                line6_amount: installation ? parseFloat(installation.price) : 0,
                 line6_quantity: 1,
                 
                 // Total

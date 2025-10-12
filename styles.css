@@ -1392,6 +1392,53 @@ section > * {
     font-weight: 500;
 }
 
+/* Enhanced Section Headers with Icons */
+.section-header h2 i {
+    color: var(--primary-color);
+    margin-right: var(--spacing-sm);
+    font-size: 1.1em;
+}
+
+.section-header p i {
+    color: var(--secondary-color);
+    margin-right: var(--spacing-xs);
+    font-size: 0.9em;
+}
+
+/* System Builder Section Headers */
+.system-type-selection h3 i,
+.phase-selection h3 i {
+    color: var(--primary-color);
+    margin-right: var(--spacing-sm);
+    font-size: 1.2em;
+}
+
+.system-type-description i,
+.phase-description i {
+    color: var(--secondary-color);
+    margin-right: var(--spacing-xs);
+    font-size: 0.9em;
+}
+
+/* Icon animations */
+.section-header h2 i:first-child {
+    animation: pulse 2s infinite;
+}
+
+.section-header h2 i:last-child {
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 /* No Panels Checkbox Styling */
 .no-panels-option {
     margin: var(--spacing-md) 0;

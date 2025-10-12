@@ -488,6 +488,9 @@
                 <button class="btn" onclick="exportConfig()">
                     <i class="fas fa-file-export"></i> Export Config
                 </button>
+                <button class="btn btn-success" onclick="exportForLiveServer()">
+                    <i class="fas fa-server"></i> Export for Live Server
+                </button>
                 <button class="btn btn-secondary" onclick="importConfig()">
                     <i class="fas fa-file-import"></i> Import Config
                 </button>
@@ -717,6 +720,16 @@
                             <i class="fas fa-home"></i> Select Roof Types (Choose Multiple)
                         </label>
                         <div id="system-rooftypes" class="selection-list"></div>
+                    </div>
+                    
+                    <div class="config-field">
+                        <label class="config-field-label">
+                            <i class="fas fa-star"></i> Default Roof Type (Optional)
+                        </label>
+                        <select id="system-default-rooftype" class="form-control">
+                            <option value="">No default roof type</option>
+                        </select>
+                        <small class="form-text">This roof type will be pre-selected on the website</small>
                     </div>
                     
                     <div class="config-field">
@@ -1105,7 +1118,7 @@
                             <div><strong>Inverter:</strong> ${inverter ? inverter.name : 'Not selected'}</div>
                             <div><strong>Batteries:</strong> ${system.batteries.length} types, ${system.batteryMin}-${system.batteryMax} units</div>
                             <div><strong>Panels:</strong> ${system.panels.length} types, ${system.panelMin}-${system.panelMax} units</div>
-                            <div><strong>Roof Types:</strong> ${system.rooftypes.length} options</div>
+                            <div><strong>Roof Types:</strong> ${system.rooftypes.length} options${system.defaultRoofType ? ` (Default: ${appData.rooftypes.find(r => r.id === system.defaultRoofType)?.name || 'Unknown'})` : ''}</div>
                             <div><strong>Phase:</strong> ${phase ? phase.name : 'Not selected'}</div>
                             <div><strong>Accessories:</strong> ${system.accessories ? 'Selected' : 'Not selected'}</div>
                             <div><strong>Installation:</strong> ${system.installation ? 'Selected' : 'Not selected'}</div>
@@ -1354,6 +1367,20 @@
             `).join('');
             document.getElementById('system-rooftypes').innerHTML = rooftypesHtml || '<p style="color: #7f8c8d;">No roof types defined yet</p>';
             
+            // Default Roof Type dropdown
+            const defaultRoofTypeSelect = document.getElementById('system-default-rooftype');
+            defaultRoofTypeSelect.innerHTML = '<option value="">No default roof type</option>';
+            
+            appData.rooftypes.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.name} - R${parseFloat(item.price).toLocaleString('en-ZA')} per panel`;
+                if (existingSystem && existingSystem.defaultRoofType === item.id) {
+                    option.selected = true;
+                }
+                defaultRoofTypeSelect.appendChild(option);
+            });
+            
             // Phases (radio) - no pricing
             const phasesHtml = appData.phases.map(item => `
                 <label class="selection-item ${existingSystem && existingSystem.phase === item.id ? 'selected' : ''}">
@@ -1446,6 +1473,13 @@
             const rooftypes = Array.from(document.querySelectorAll('input[name="system-rooftype"]:checked'))
                 .map(cb => cb.value);
             
+            // Get default roof type
+            const defaultRoofType = document.getElementById('system-default-rooftype').value;
+            if (defaultRoofType && !rooftypes.includes(defaultRoofType)) {
+                showToast('Default roof type must be one of the selected roof types', 'error');
+                return;
+            }
+            
             // Get selected accessory
             const accessoryRadio = document.querySelector('input[name="system-accessory"]:checked');
             
@@ -1463,6 +1497,7 @@
                 panelMin: parseInt(document.getElementById('panel-min').value),
                 panelMax: parseInt(document.getElementById('panel-max').value),
                 rooftypes: rooftypes,
+                defaultRoofType: defaultRoofType || null,
                 phase: phaseRadio.value,
                 accessories: accessoryRadio ? accessoryRadio.value : null,
                 installation: installationRadio ? installationRadio.value : null
@@ -1491,6 +1526,19 @@
             link.click();
             URL.revokeObjectURL(url);
             showToast('Configuration exported successfully', 'success');
+        }
+        
+        // Export for Live Server (solar-config-live.json)
+        function exportForLiveServer() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'solar-config-live.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('Live server config exported as solar-config-live.json', 'success');
         }
         
         // Import Configuration

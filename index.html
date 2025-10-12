@@ -15,7 +15,7 @@
     <!-- Cache Control Meta Tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta name="version" content="3.7">
+    <meta name="version" content="4.0">
     <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
@@ -180,79 +180,50 @@
     <section id="calculator" class="calculator">
         <div class="container">
             <div class="section-header">
-                <h2>Solar System Builder</h2>
-                <p>Choose the perfect solar system for your home or business</p>
+                <h2>
+                    <i class="fas fa-solar-panel"></i>
+                    <i class="fas fa-cogs"></i>
+                    Solar System Builder
+                </h2>
+                <p>
+                    <i class="fas fa-home"></i>
+                    Choose the perfect solar system for your home or business
+                </p>
             </div>
             
             <div class="system-builder-container">
                 <!-- System Type Selection -->
                 <div class="system-type-selection">
-                    <h3>Select System Type</h3>
-                    <p class="system-type-description">Choose between traditional Sunsynk systems or Tesla Powerwall solutions</p>
+                    <h3>
+                        <i class="fas fa-list-ul"></i>
+                        Select System Type
+                    </h3>
+                    <p class="system-type-description">
+                        <i class="fas fa-check-circle"></i>
+                        Choose from our available solar systems
+                    </p>
                     
                     <div class="system-type-dropdown">
                         <select id="system-type-select" onchange="selectSystemType()">
                             <option value="">Select System Type</option>
+                            <!-- Will be populated by admin portal data -->
                         </select>
                     </div>
                 </div>
                 
-                <!-- Sunsynk Phase Selection -->
+                <!-- Phase Selection -->
                 <div class="phase-selection" id="phase-selection" style="display: none;">
-                    <h3>Select Your Power Type</h3>
-                    <p class="phase-description">Please select the type of power you have. If you are not sure, please select Single Phase.</p>
+                    <h3>
+                        <i class="fas fa-bolt"></i>
+                        Select Your Power Type
+                    </h3>
+                    <p class="phase-description">
+                        <i class="fas fa-info-circle"></i>
+                        Please select the type of power you have. If you are not sure, please select Single Phase.
+                    </p>
                     
-                    <div class="phase-options">
-                        <div class="phase-option" data-phase="single">
-                            <div class="phase-icon">
-                                <i class="fas fa-bolt"></i>
-                            </div>
-                            <h4>Single Phase</h4>
-                            <p>Most residential homes</p>
-                        </div>
-                        
-                        <div class="phase-option" data-phase="three">
-                            <div class="phase-icon">
-                                <i class="fas fa-bolt"></i>
-                                <i class="fas fa-bolt"></i>
-                                <i class="fas fa-bolt"></i>
-                            </div>
-                            <h4>Three Phase</h4>
-                            <p>Large homes and businesses</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tesla Configuration -->
-                <div class="tesla-configuration" id="tesla-configuration" style="display: none;">
-                    <h3>Configure Your Tesla Powerwall 3 System</h3>
-                    <div class="tesla-options">
-                        <div class="tesla-unit-selection">
-                            <h4>Number of Tesla Units</h4>
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="adjustTeslaUnits(-1)">-</button>
-                                <span class="quantity-display" id="tesla-units-quantity">1</span>
-                                <button class="quantity-btn" onclick="adjustTeslaUnits(1)">+</button>
-                            </div>
-                            <p class="tesla-description">Each unit provides 13.5kWh capacity. Add up to 4 units for maximum capacity.</p>
-                        </div>
-                        
-                        <div class="tesla-panels-option">
-                            <h4>Solar Panels (Optional)</h4>
-                            <div class="panel-selection">
-                                <label>
-                                    <input type="checkbox" id="include-panels" onchange="toggleTeslaPanels()">
-                                    Include Solar Panels
-                                </label>
-                                <div class="panel-quantity" id="tesla-panel-quantity" style="display: none;">
-                                    <div class="quantity-controls">
-                                        <button class="quantity-btn" onclick="adjustTeslaPanels(-1)">-</button>
-                                        <span class="quantity-display" id="tesla-panels-count">6</span>
-                                        <button class="quantity-btn" onclick="adjustTeslaPanels(1)">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="phase-options" id="phase-options">
+                        <!-- Will be populated by admin portal data -->
                     </div>
                 </div>
                 
@@ -260,7 +231,7 @@
                 <div class="system-selection" id="system-selection" style="display: none;">
                     <h3>Choose Your System</h3>
                     <div class="systems-grid" id="systems-grid">
-                        <!-- Systems will be populated by JavaScript -->
+                        <!-- Systems will be populated by admin portal data -->
                     </div>
                 </div>
                 
@@ -273,6 +244,7 @@
                             <div class="selection-controls">
                                 <select id="panel-selection" onchange="selectPanel()" class="component-select">
                                     <option value="">Select Panel Type</option>
+                                    <!-- Will be populated by admin portal data -->
                                 </select>
                             </div>
                             <div class="quantity-controls">
@@ -281,25 +253,27 @@
                                 <button class="quantity-btn" onclick="adjustPanels(1)">+</button>
                             </div>
                             <div class="quantity-limits">
-                                <small>Range: <span id="panels-min">6</span> - <span id="panels-max">50</span> panels (0 = no panels)</small>
+                                <small>Range: 0 - <span id="panels-max">50</span> panels (0 = no panels, <span id="panels-min">6</span>+ recommended)</small>
+                            </div>
+                            
+                            <!-- No Solar Panels Option -->
+                            <div class="no-panels-option">
+                                <label class="no-panels-checkbox">
+                                    <input type="checkbox" id="no-panels-checkbox" onchange="toggleNoPanels(this)">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">No solar panels required</span>
+                                </label>
                             </div>
                             
                             <!-- Roof Type Selection -->
                             <div class="roof-type-selection">
                                 <h6>Roof Type</h6>
-                                <div class="roof-options">
-                                    <label class="roof-option">
-                                        <input type="checkbox" id="roof-ibr-tile" checked onchange="updateRoofType(this)">
-                                        <span class="roof-label">IBR/Tile Roof</span>
-                                    </label>
-                                    <label class="roof-option">
-                                        <input type="checkbox" id="roof-concrete" onchange="updateRoofType(this)">
-                                        <span class="roof-label">Concrete Roof</span>
-                                    </label>
+                                <div class="roof-options" id="roof-options">
+                                    <!-- Will be populated by admin portal data -->
                                 </div>
                             </div>
                             
-                            <p class="customization-price" id="panels-price">R15,000</p>
+                            <p class="customization-price" id="panels-price">R0</p>
                         </div>
                         
                         <div class="customization-item">
@@ -307,6 +281,7 @@
                             <div class="selection-controls">
                                 <select id="battery-selection" onchange="selectBattery()" class="component-select">
                                     <option value="">Select Battery Type</option>
+                                    <!-- Will be populated by admin portal data -->
                                 </select>
                             </div>
                             <div class="quantity-controls">
@@ -317,7 +292,7 @@
                             <div class="quantity-limits">
                                 <small>Range: <span id="batteries-min">1</span> - <span id="batteries-max">10</span> batteries (required)</small>
                             </div>
-                            <p class="customization-price" id="batteries-price">R45,000</p>
+                            <p class="customization-price" id="batteries-price">R0</p>
                         </div>
                     </div>
                     
@@ -325,27 +300,31 @@
                         <h4>System Pricing</h4>
                         <div class="pricing-item">
                             <span id="inverter-label">Inverter</span>
-                            <span id="inverter-price">R25,000</span>
+                            <span id="inverter-price">R0</span>
                         </div>
                         <div class="pricing-item">
                             <span id="battery-label">Batteries</span>
-                            <span id="battery-price">R45,000</span>
+                            <span id="battery-price">R0</span>
                         </div>
                         <div class="pricing-item">
                             <span id="panel-label">Solar Panels</span>
-                            <span id="panel-price">R15,000</span>
+                            <span id="panel-price">R0</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span id="roof-mounting-label">Solar Panel Mounting Kit</span>
+                            <span id="roof-mounting-price">R0</span>
                         </div>
                         <div class="pricing-item">
                             <span id="accessories-label">Accessories</span>
-                            <span id="accessories-price">R15,000</span>
+                            <span id="accessories-price">R0</span>
                         </div>
                         <div class="pricing-item">
                             <span id="installation-label">Installation</span>
-                            <span id="installation-price">R8,500</span>
+                            <span id="installation-price">R0</span>
                         </div>
                         <div class="pricing-item">
                             <span><strong>Total System Price</strong></span>
-                            <span><strong id="total-price">R180,000</strong></span>
+                            <span><strong id="total-price">R0</strong></span>
                         </div>
                     </div>
                     
@@ -459,130 +438,6 @@
                         </div>
                         <div class="review-content">
                             <p>"Excellent service, very professional and attention to detail. Competitive pricing with an experienced team. I would highly recommend them. Thanks Sean, Indres and team."</p>
-                        </div>
-                        <div class="review-source">
-                            <i class="fab fa-google"></i>
-                            <span>Google Review</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Review 4 -->
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="reviewer-info">
-                                <div class="reviewer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="reviewer-details">
-                                    <h4>Naeem K.</h4>
-                                </div>
-                            </div>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="rating-text">5.0</span>
-                            </div>
-                        </div>
-                        <div class="review-content">
-                            <p>"The team is extremely knowledgeable, efficient and willing to go the extra mile. I had a great experience from designing my solar solution to implementation and sign-off."</p>
-                        </div>
-                        <div class="review-source">
-                            <i class="fab fa-google"></i>
-                            <span>Google Review</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Review 5 -->
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="reviewer-info">
-                                <div class="reviewer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="reviewer-details">
-                                    <h4>Percy M.</h4>
-                                </div>
-                            </div>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="rating-text">5.0</span>
-                            </div>
-                        </div>
-                        <div class="review-content">
-                            <p>"Excellent Service! Professional, Neat and Timely! Would highly recommend STP Solar for any electrical work!"</p>
-                        </div>
-                        <div class="review-source">
-                            <i class="fab fa-google"></i>
-                            <span>Google Review</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Review 6 -->
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="reviewer-info">
-                                <div class="reviewer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="reviewer-details">
-                                    <h4>Devan G.</h4>
-                                </div>
-                            </div>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="rating-text">5.0</span>
-                            </div>
-                        </div>
-                        <div class="review-content">
-                            <p>"Excellent service and highly professional. My go to for all things solar and home automation."</p>
-                        </div>
-                        <div class="review-source">
-                            <i class="fab fa-google"></i>
-                            <span>Google Review</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Review 7 -->
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="reviewer-info">
-                                <div class="reviewer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="reviewer-details">
-                                    <h4>Mahesh D.</h4>
-                                </div>
-                            </div>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="rating-text">5.0</span>
-                            </div>
-                        </div>
-                        <div class="review-content">
-                            <p>"Sean and Indres are very helpful. They have installed a backup inverter setup at my house. The workmanship is very neat and professional."</p>
                         </div>
                         <div class="review-source">
                             <i class="fab fa-google"></i>
@@ -988,21 +843,824 @@
     </div>
 
     <!-- Scripts -->
-    <script src="pricing-config.js?v=3.7"></script>
+    <!-- Solar Admin Portal V2 Data Bridge -->
+    <script src="solar-config-v2.js?v=1.0"></script>
+    
+    <!-- V2 System Builder Script -->
     <script>
-        // Essential pricing loading only - all system builder functions are in script.js
-        console.log('Essential pricing script loaded');
-        
-        // Listen for pricing updates
-        window.addEventListener('pricingUpdated', function(event) {
-            console.log('Pricing updated on main page:', event.detail);
-            // Refresh the page to show new prices
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+        // V2 System Builder - Integrated with Admin Portal
+        console.log('V2 System Builder initializing...');
+
+        // Global variables for current selection
+        let currentSystemType = null;
+        let currentSystemId = null;
+        let currentPhaseId = null;
+        let currentPanelId = null;
+        let currentBatteryId = null;
+        let currentRoofTypeId = null;
+        let currentQuantities = {
+            panels: 6,
+            batteries: 1
+        };
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM loaded, initializing V2 System Builder...');
+            
+            // Wait for data bridge to initialize
+            await SolarConfigV2.initializeDataBridge();
+            
+            // Initialize system builder
+            initializeSystemBuilder();
+            initializeNavigation();
+            initializeQuoteForm();
         });
+
+        // Initialize System Builder
+        function initializeSystemBuilder() {
+            console.log('Initializing system builder...');
+            console.log('Checking if data is loaded via getSystemTypes()...');
+            
+            const systemTypes = SolarConfigV2.getSystemTypes();
+            console.log('getSystemTypes() returned:', systemTypes);
+            
+            // Populate system type dropdown
+            populateSystemTypeDropdown();
+            
+            // Initialize quantities
+            updateQuantityDisplay();
+        }
+
+        // Populate System Type Dropdown
+        function populateSystemTypeDropdown() {
+            const select = document.getElementById('system-type-select');
+            const systemTypes = SolarConfigV2.getSystemTypes();
+            
+            console.log('Available system types:', systemTypes);
+            
+            // Clear existing options (keep first empty option)
+            select.innerHTML = '<option value="">Select System Type</option>';
+            
+            if (systemTypes.length === 0) {
+                console.error('No system types available!');
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No systems available - please refresh';
+                option.disabled = true;
+                select.appendChild(option);
+                return;
+            }
+            
+            // Add system types from admin portal
+            systemTypes.forEach(system => {
+                const option = document.createElement('option');
+                option.value = system.id;
+                option.textContent = system.name;
+                select.appendChild(option);
+                console.log('Added system option:', system.name);
+            });
+        }
+
+        // System Type Selection
+        function selectSystemType() {
+            const select = document.getElementById('system-type-select');
+            currentSystemType = select.value;
+            currentSystemId = select.value;
+            
+            console.log('System type selected:', currentSystemType);
+            
+            if (currentSystemType) {
+                // Show phase selection
+                showPhaseSelection();
+            } else {
+                hideAllSections();
+            }
+        }
+
+        // Show Phase Selection
+        function showPhaseSelection() {
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) return;
+            
+            const phase = SolarConfigV2.getPhaseInfo(system.phase);
+            if (!phase) return;
+            
+            const phaseOptions = document.getElementById('phase-options');
+            phaseOptions.innerHTML = `
+                <div class="phase-option" data-phase="${phase.id}" onclick="selectPhase('${phase.id}')">
+                    <div class="phase-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>${phase.name}</h4>
+                    <p>${phase.name === 'Single Phase' ? 'Most residential homes' : 'Large homes and businesses'}</p>
+                </div>
+            `;
+            
+            document.getElementById('phase-selection').style.display = 'block';
+            currentPhaseId = phase.id;
+            
+            // Auto-select the phase and show system selection
+            setTimeout(() => {
+                selectPhase(phase.id);
+            }, 100);
+        }
+
+        // Phase Selection
+        function selectPhase(phaseId) {
+            currentPhaseId = phaseId;
+            console.log('Phase selected:', phaseId);
+            
+            // Show system selection
+            showSystemSelection();
+        }
+
+        // Show System Selection
+        function showSystemSelection() {
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) return;
+            
+            const systemsGrid = document.getElementById('systems-grid');
+            
+            // Create system card
+            const systemCard = document.createElement('div');
+            systemCard.className = 'system-card';
+            systemCard.innerHTML = `
+                <div class="system-card-header">
+                    <h4 class="system-title">${system.name}</h4>
+                </div>
+                <div class="system-card-content">
+                    <div class="system-features">
+                        <div class="feature">
+                            <i class="fas fa-bolt"></i>
+                            <span>Inverter Included</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-battery-full"></i>
+                            <span>Battery Backup</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-solar-panel"></i>
+                            <span>Solar Panels</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-home"></i>
+                            <span>Installation Included</span>
+                        </div>
+                    </div>
+                    <div class="system-price">
+                        <span class="price-label">Starting from</span>
+                        <span class="price-amount" id="system-starting-price">R0</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="selectSystem('${system.id}')">
+                        Select This System
+                    </button>
+                </div>
+            `;
+            
+            systemsGrid.innerHTML = '';
+            systemsGrid.appendChild(systemCard);
+            
+            // Calculate and show starting price
+            updateStartingPrice();
+            
+            document.getElementById('system-selection').style.display = 'block';
+        }
+
+        // Select System
+        function selectSystem(systemId) {
+            currentSystemId = systemId;
+            console.log('System selected:', systemId);
+            
+            // Show customization section
+            showCustomizationSection();
+        }
+
+        // Show Customization Section
+        function showCustomizationSection() {
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) return;
+            
+            // Update quantity limits
+            const limits = SolarConfigV2.getSystemLimits(currentSystemId);
+            if (limits) {
+                console.log('System limits:', limits);
+                document.getElementById('panels-min').textContent = limits.panelMin;
+                document.getElementById('panels-max').textContent = limits.panelMax;
+                document.getElementById('batteries-min').textContent = limits.batteryMin;
+                document.getElementById('batteries-max').textContent = limits.batteryMax;
+                
+                // Reset quantities to system minimums
+                currentQuantities.panels = limits.panelMin;
+                currentQuantities.batteries = limits.batteryMin;
+                updateQuantityDisplay();
+            }
+            
+            // Populate panels dropdown
+            populatePanelsDropdown();
+            
+            // Populate batteries dropdown
+            populateBatteriesDropdown();
+            
+            // Populate roof types
+            populateRoofTypes();
+            
+            // Auto-select default roof type if available
+            const defaultRoofType = SolarConfigV2.getSystemDefaultRoofType(currentSystemId);
+            if (defaultRoofType) {
+                // Set the default roof type selection
+                const roofTypeRadio = document.querySelector(`input[name="roof-type"][value="${defaultRoofType}"]`);
+                if (roofTypeRadio) {
+                    roofTypeRadio.checked = true;
+                    currentRoofTypeId = defaultRoofType;
+                    console.log('Auto-selected default roof type:', defaultRoofType);
+                }
+            }
+            
+            // Show section
+            document.getElementById('customization-section').style.display = 'block';
+            
+            // Initialize pricing
+            updateAllPricing();
+        }
+
+        // Populate Panels Dropdown
+        function populatePanelsDropdown() {
+            const select = document.getElementById('panel-selection');
+            const panels = SolarConfigV2.getSystemPanels(currentSystemId);
+            
+            select.innerHTML = '<option value="">Select Panel Type</option>';
+            
+            panels.forEach(panel => {
+                const option = document.createElement('option');
+                option.value = panel.id;
+                option.textContent = `${panel.name} - R${parseFloat(panel.price).toLocaleString('en-ZA')}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Populate Batteries Dropdown
+        function populateBatteriesDropdown() {
+            const select = document.getElementById('battery-selection');
+            const batteries = SolarConfigV2.getSystemBatteries(currentSystemId);
+            
+            select.innerHTML = '<option value="">Select Battery Type</option>';
+            
+            batteries.forEach(battery => {
+                const option = document.createElement('option');
+                option.value = battery.id;
+                option.textContent = `${battery.name} - R${parseFloat(battery.price).toLocaleString('en-ZA')}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Populate Roof Types
+        function populateRoofTypes() {
+            const container = document.getElementById('roof-options');
+            const roofTypes = SolarConfigV2.getSystemRoofTypes(currentSystemId);
+            
+            container.innerHTML = '';
+            
+            roofTypes.forEach(roofType => {
+                const label = document.createElement('label');
+                label.className = 'roof-option';
+                label.innerHTML = `
+                    <input type="radio" name="roof-type" value="${roofType.id}" onchange="updateRoofType('${roofType.id}')">
+                    <span class="roof-label">${roofType.name} - R${parseFloat(roofType.price).toLocaleString('en-ZA')} per panel</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        // Panel Selection
+        function selectPanel() {
+            const select = document.getElementById('panel-selection');
+            currentPanelId = select.value;
+            console.log('Panel selected:', currentPanelId);
+            updateAllPricing();
+        }
+
+        // Battery Selection
+        function selectBattery() {
+            const select = document.getElementById('battery-selection');
+            currentBatteryId = select.value;
+            console.log('Battery selected:', currentBatteryId);
+            updateAllPricing();
+        }
+
+        // Roof Type Selection
+        function updateRoofType(roofTypeId) {
+            currentRoofTypeId = roofTypeId;
+            console.log('Roof type selected:', roofTypeId);
+            updateAllPricing();
+        }
+
+        // Adjust Panels
+        function adjustPanels(delta) {
+            const limits = SolarConfigV2.getSystemLimits(currentSystemId);
+            if (!limits) {
+                console.log('No limits found, allowing any quantity');
+                const newQuantity = currentQuantities.panels + delta;
+                if (newQuantity >= 0) {
+                    currentQuantities.panels = newQuantity;
+                    updateQuantityDisplay();
+                    updateAllPricing();
+                }
+                return;
+            }
+            
+            let newQuantity = currentQuantities.panels + delta;
+            
+            // Special case: if going up from 0, jump directly to minimum
+            if (currentQuantities.panels === 0 && delta > 0) {
+                newQuantity = limits.panelMin;
+                console.log('Jumping from 0 to minimum:', newQuantity);
+            }
+            
+            console.log('Panel adjustment:', {
+                current: currentQuantities.panels,
+                delta: delta,
+                newQuantity: newQuantity,
+                limits: limits
+            });
+            
+            // Allow 0 panels (customer choice), or within the defined range
+            if (newQuantity === 0 || 
+                (newQuantity >= limits.panelMin && newQuantity <= limits.panelMax)) {
+                currentQuantities.panels = newQuantity;
+                console.log('Panel quantity updated to:', currentQuantities.panels);
+                updateQuantityDisplay();
+                updateAllPricing();
+                
+                // Sync checkbox state
+                const checkbox = document.getElementById('no-panels-checkbox');
+                if (checkbox) {
+                    checkbox.checked = (newQuantity === 0);
+                }
+            } else {
+                console.log('Panel quantity change blocked:', {
+                    newQuantity: newQuantity,
+                    panelMin: limits.panelMin,
+                    panelMax: limits.panelMax,
+                    current: currentQuantities.panels
+                });
+            }
+        }
+
+        // Toggle No Panels Checkbox
+        function toggleNoPanels(checkbox) {
+            console.log('No panels checkbox toggled:', checkbox.checked);
+            
+            if (checkbox.checked) {
+                // Set panels to 0
+                currentQuantities.panels = 0;
+                updateQuantityDisplay();
+                updateAllPricing();
+                console.log('Panels set to 0 via checkbox');
+            } else {
+                // Set panels to minimum
+                const limits = SolarConfigV2.getSystemLimits(currentSystemId);
+                if (limits) {
+                    currentQuantities.panels = limits.panelMin;
+                    updateQuantityDisplay();
+                    updateAllPricing();
+                    console.log('Panels set to minimum:', limits.panelMin);
+                }
+            }
+        }
+
+        // Set Panels to Zero (for testing)
+        function setPanelsToZero() {
+            console.log('Setting panels to zero...');
+            currentQuantities.panels = 0;
+            updateQuantityDisplay();
+            updateAllPricing();
+            console.log('Panels set to:', currentQuantities.panels);
+        }
+
+        // Adjust Batteries
+        function adjustBatteries(delta) {
+            const limits = SolarConfigV2.getSystemLimits(currentSystemId);
+            if (!limits) return;
+            
+            const newQuantity = currentQuantities.batteries + delta;
+            
+            if (newQuantity >= limits.batteryMin && newQuantity <= limits.batteryMax) {
+                currentQuantities.batteries = newQuantity;
+                updateQuantityDisplay();
+                updateAllPricing();
+            }
+        }
+
+        // Update Quantity Display
+        function updateQuantityDisplay() {
+            document.getElementById('panels-quantity').textContent = currentQuantities.panels;
+            document.getElementById('batteries-quantity').textContent = currentQuantities.batteries;
+        }
+
+        // Update All Pricing
+        function updateAllPricing() {
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) return;
+            
+            // Calculate individual component prices
+            updateComponentPricing(system);
+            
+            // Calculate total price
+            const totalPrice = calculateTotalPrice(system);
+            
+            // Update display
+            document.getElementById('total-price').textContent = `R${totalPrice.toLocaleString('en-ZA')}`;
+            
+            // Update starting price in system selection
+            updateStartingPrice();
+        }
+
+        // Update Component Pricing
+        function updateComponentPricing(system) {
+            // Inverter price
+            const inverter = SolarConfigV2.getComponent(system.inverter, 'inverters');
+            const inverterPrice = inverter ? parseFloat(inverter.price) : 0;
+            document.getElementById('inverter-price').textContent = `R${inverterPrice.toLocaleString('en-ZA')}`;
+            document.getElementById('inverter-label').textContent = inverter ? inverter.name : 'Inverter';
+            
+            // Battery price
+            let batteryPrice = 0;
+            let batteryLabel = 'Batteries';
+            if (currentBatteryId) {
+                const battery = SolarConfigV2.getComponent(currentBatteryId, 'batteries');
+                if (battery) {
+                    batteryPrice = parseFloat(battery.price) * currentQuantities.batteries;
+                    batteryLabel = `${battery.name} (${currentQuantities.batteries}x)`;
+                }
+            }
+            document.getElementById('battery-price').textContent = `R${batteryPrice.toLocaleString('en-ZA')}`;
+            document.getElementById('battery-label').textContent = batteryLabel;
+            
+            // Panel price
+            let panelPrice = 0;
+            let panelLabel = 'Solar Panels';
+            if (currentPanelId && currentQuantities.panels > 0) {
+                const panel = SolarConfigV2.getComponent(currentPanelId, 'panels');
+                if (panel) {
+                    panelPrice = parseFloat(panel.price) * currentQuantities.panels;
+                    panelLabel = `${panel.name} (${currentQuantities.panels}x)`;
+                }
+            } else if (currentQuantities.panels === 0) {
+                panelLabel = 'Solar Panels (0x - No panels selected)';
+            }
+            document.getElementById('panel-price').textContent = `R${panelPrice.toLocaleString('en-ZA')}`;
+            document.getElementById('panel-label').textContent = panelLabel;
+            
+            // Roof mounting kit price
+            let roofMountingPrice = 0;
+            if (currentRoofTypeId && currentQuantities.panels > 0) {
+                const roofType = SolarConfigV2.getComponent(currentRoofTypeId, 'rooftypes');
+                if (roofType) {
+                    roofMountingPrice = parseFloat(roofType.price) * currentQuantities.panels;
+                }
+            }
+            document.getElementById('roof-mounting-price').textContent = `R${roofMountingPrice.toLocaleString('en-ZA')}`;
+            
+            // Accessories price
+            const accessories = SolarConfigV2.getComponent(system.accessories, 'accessories');
+            const accessoriesPrice = accessories ? parseFloat(accessories.price) : 0;
+            document.getElementById('accessories-price').textContent = `R${accessoriesPrice.toLocaleString('en-ZA')}`;
+            
+            // Installation price
+            const installation = SolarConfigV2.getComponent(system.installation, 'installation');
+            const installationPrice = installation ? parseFloat(installation.price) : 0;
+            document.getElementById('installation-price').textContent = `R${installationPrice.toLocaleString('en-ZA')}`;
+        }
+
+        // Calculate Total Price
+        function calculateTotalPrice(system) {
+            const quantities = {
+                panelCount: currentQuantities.panels,
+                batteryCount: currentQuantities.batteries,
+                roofType: currentRoofTypeId,
+                panelId: currentPanelId,
+                batteryId: currentBatteryId
+            };
+            
+            return SolarConfigV2.calculateDynamicSystemPrice(system, quantities);
+        }
+
+        // Update Starting Price
+        function updateStartingPrice() {
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) return;
+            
+            // Calculate starting price with minimum quantities
+            const limits = SolarConfigV2.getSystemLimits(currentSystemId);
+            if (limits) {
+                const startingQuantities = {
+                    panelCount: limits.panelMin,
+                    batteryCount: limits.batteryMin,
+                    roofType: null // No roof type selected initially
+                };
+                
+                const startingPrice = SolarConfigV2.calculateDynamicSystemPrice(system, startingQuantities);
+                document.getElementById('system-starting-price').textContent = `R${startingPrice.toLocaleString('en-ZA')}`;
+            }
+        }
+
+        // Hide All Sections
+        function hideAllSections() {
+            document.getElementById('phase-selection').style.display = 'none';
+            document.getElementById('system-selection').style.display = 'none';
+            document.getElementById('customization-section').style.display = 'none';
+        }
+
+        // Navigation Functions (simplified)
+        function initializeNavigation() {
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    navToggle.classList.toggle('active');
+                });
+            }
+        }
+
+        // Quote Form Functions
+        function initializeQuoteForm() {
+            const form = document.getElementById('quote-form');
+            if (form) {
+                form.addEventListener('submit', handleQuoteSubmission);
+            }
+        }
+
+        // Handle Quote Submission
+        function handleQuoteSubmission(event) {
+            event.preventDefault();
+            
+            // Prepare system configuration data
+            const systemConfig = prepareSystemConfig();
+            
+            // Set hidden field
+            document.getElementById('system-config').value = JSON.stringify(systemConfig);
+            
+            // Submit form (this will trigger the webhook)
+            console.log('Submitting quote with system config:', systemConfig);
+            
+            // For testing, show the data that would be sent
+            alert('Quote request prepared! System config: ' + JSON.stringify(systemConfig, null, 2));
+        }
+
+        // Prepare System Configuration
+        function prepareSystemConfig() {
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) return null;
+            
+            return {
+                systemId: currentSystemId,
+                systemName: system.name,
+                phase: currentPhaseId,
+                inverter: system.inverter,
+                batteries: currentBatteryId ? [currentBatteryId] : [],
+                batteryQuantity: currentQuantities.batteries,
+                panels: currentPanelId ? [currentPanelId] : [],
+                panelQuantity: currentQuantities.panels,
+                roofType: currentRoofTypeId,
+                accessories: system.accessories,
+                installation: system.installation,
+                totalPrice: calculateTotalPrice(system)
+            };
+        }
+
+        // Quote Modal Functions
+        function showQuoteModal() {
+            console.log('showQuoteModal called');
+            const modal = document.getElementById('quoteModal');
+            const systemDetails = document.getElementById('modal-system-details');
+            
+            console.log('Modal element:', modal);
+            console.log('System details element:', systemDetails);
+            console.log('Current system ID:', currentSystemId);
+            
+            if (!modal) {
+                console.error('Modal element not found!');
+                alert('Modal not found - check console for details');
+                return;
+            }
+            
+            // Populate system details
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            console.log('System config:', system);
+            
+            if (system) {
+                const totalPrice = calculateTotalPrice(system);
+                console.log('Total price:', totalPrice);
+                
+                if (systemDetails) {
+                    systemDetails.innerHTML = `
+                        <div class="system-detail">
+                            <strong>System:</strong> ${system.name}
+                        </div>
+                        <div class="system-detail">
+                            <strong>Total Price:</strong> R${totalPrice.toLocaleString('en-ZA')}
+                        </div>
+                        <div class="system-detail">
+                            <strong>Panels:</strong> ${currentQuantities.panels} panels
+                        </div>
+                        <div class="system-detail">
+                            <strong>Batteries:</strong> ${currentQuantities.batteries} batteries
+                        </div>
+                    `;
+                }
+            } else {
+                console.warn('No system configuration found');
+                if (systemDetails) {
+                    systemDetails.innerHTML = '<div class="system-detail">No system selected</div>';
+                }
+            }
+            
+            console.log('Setting modal display to block');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            console.log('Modal display style after setting:', modal.style.display);
+            console.log('Modal classes:', modal.className);
+        }
+
+        function closeQuoteModal() {
+            const modal = document.getElementById('quoteModal');
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+        }
+
+        // Modal Quote Form
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalForm = document.getElementById('modal-quote-form');
+            if (modalForm) {
+                modalForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    
+                    // Get form data
+                    const formData = new FormData(modalForm);
+                    const customerName = formData.get('name');
+                    const customerEmail = formData.get('email');
+                    const customerPhone = formData.get('phone');
+                    const customerLocation = 'South Africa'; // Default location
+                    const customerMessage = formData.get('message') || '';
+                    
+                    // Validate email
+                    if (!isValidEmail(customerEmail)) {
+                        alert('Please enter a valid email address');
+                        return;
+                    }
+                    
+                    // Close modal
+                    closeQuoteModal();
+                    
+                    // Send quote request
+                    await sendQuoteRequest(customerName, customerEmail, customerPhone, customerLocation, customerMessage);
+                });
+            }
+        });
+
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Send quote request function
+        async function sendQuoteRequest(customerName, customerEmail, customerPhone, customerLocation, customerMessage) {
+            if (!currentSystemId) {
+                alert('Please select a system first!');
+                return;
+            }
+            
+            const system = SolarConfigV2.getSystemConfig(currentSystemId);
+            if (!system) {
+                alert('System configuration not found!');
+                return;
+            }
+            
+            // Get current quantities from the UI
+            const panelQty = currentQuantities.panels;
+            const batteryQty = currentQuantities.batteries;
+            
+            // Get selected components
+            const inverter = SolarConfigV2.getComponent(system.inverter, 'inverters');
+            const battery = SolarConfigV2.getComponent(currentBatteryId, 'batteries');
+            const panel = SolarConfigV2.getComponent(currentPanelId, 'panels');
+            const roofType = SolarConfigV2.getComponent(currentRoofTypeId, 'rooftypes');
+            const accessories = SolarConfigV2.getComponent(system.accessories, 'accessories');
+            const installation = SolarConfigV2.getComponent(system.installation, 'installation');
+            
+            // Calculate total price
+            const totalPrice = calculateTotalPrice(system);
+            
+            // Calculate VAT-exclusive amounts (divide by 1.15)
+            // Since our prices include VAT, we need to send exclusive amounts to QuickBooks
+            const vatRate = 1.15;
+            const inverterAmountExclVAT = inverter ? Math.round(parseFloat(inverter.price) / vatRate) : 0;
+            const batteryAmountExclVAT = battery ? Math.round((parseFloat(battery.price) * batteryQty) / vatRate) : 0;
+            const panelAmountExclVAT = panel ? Math.round((parseFloat(panel.price) * panelQty) / vatRate) : 0;
+            const roofAmountExclVAT = roofType && panelQty > 0 ? Math.round((parseFloat(roofType.price) * panelQty) / vatRate) : 0;
+            const accessoriesAmountExclVAT = accessories ? Math.round(parseFloat(accessories.price) / vatRate) : 0;
+            const installationAmountExclVAT = installation ? Math.round(parseFloat(installation.price) / vatRate) : 0;
+            
+            // Build the webhook payload (compatible with n8n workflow and QuickBooks API)
+            // Using proper QuickBooks API Line array structure with VAT-exclusive amounts
+            const quoteData = {
+                // Customer Info
+                customer_name: customerName,
+                customer_email: customerEmail,
+                customer_phone: customerPhone,
+                customer_location: customerLocation,
+                customer_message: customerMessage,
+                
+                // System Info
+                system_name: system.name,
+                phase: currentPhaseId,
+                
+                // Line 1: Inverter (using "Solar Product" as item name)
+                line1_item_name: 'Solar Product',
+                line1_description: inverter ? `${inverter.name} - 1x Inverter` : 'Inverter - Not selected',
+                line1_amount: inverterAmountExclVAT,
+                line1_quantity: 1,
+                
+                // Line 2: Battery (using "Solar Product" as item name)
+                line2_item_name: 'Solar Product',
+                line2_description: battery ? `${battery.name} - ${batteryQty}x Battery${batteryQty > 1 ? 's' : ''}` : 'Battery - Not selected',
+                line2_amount: batteryAmountExclVAT,
+                line2_quantity: 1,
+                
+                // Line 3: Panels (using "Solar Product" as item name)
+                line3_item_name: 'Solar Product',
+                line3_description: panel && panelQty > 0 ? `${panel.name} - ${panelQty}x Solar Panel${panelQty > 1 ? 's' : ''}` : 'Solar Panels - Not selected',
+                line3_amount: panelAmountExclVAT,
+                line3_quantity: 1,
+                
+                // Line 4: Roof Mounting Kit (using "Solar Product" as item name)
+                line4_item_name: 'Solar Product',
+                line4_description: roofType && panelQty > 0 ? `${roofType.name} Mounting Kit - ${panelQty}x Panel Mounting Kit` : 'Panel Mounting Kit - Not required',
+                line4_amount: roofAmountExclVAT,
+                line4_quantity: 1,
+                
+                // Line 5: Accessories (using "Solar Product" as item name)
+                line5_item_name: 'Solar Product',
+                line5_description: accessories ? `${accessories.name} - Installation Accessories & Hardware` : 'Accessories - Installation hardware',
+                line5_amount: accessoriesAmountExclVAT,
+                line5_quantity: 1,
+                
+                // Line 6: Installation (using "Solar Product" as item name)
+                line6_item_name: 'Solar Product',
+                line6_description: installation ? `${installation.name} - Professional Installation & Commissioning` : 'Installation - Professional setup',
+                line6_amount: installationAmountExclVAT,
+                line6_quantity: 1,
+                
+                // Total
+                total_price: totalPrice
+            };
+            
+            // Show loading state
+            const btn = document.getElementById('request-quote-btn');
+            if (!btn) {
+                console.error('Request Quote button not found!');
+                return;
+            }
+            
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+            
+            try {
+                console.log('Sending quote to n8n:', quoteData);
+                
+                // Send to n8n webhook
+                const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(quoteData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('✅ Quote request sent successfully! We will contact you within 24 hours with your formal estimate.');
+                    console.log('n8n response:', result);
+                } else {
+                    throw new Error('Failed to send quote request');
+                }
+            } catch (error) {
+                console.error('Error sending quote request:', error);
+                alert('❌ Failed to send quote request. Please try again or contact us directly.');
+            } finally {
+                // Restore button state
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        console.log('V2 System Builder initialized successfully');
     </script>
-    <script src="script.js?v=5.6"></script>
+    
     <script src="cache-buster.js?v=5.6"></script>
 </body>
 </html>

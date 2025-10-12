@@ -17,129 +17,41 @@ async function loadAdminPortalData() {
         console.error('Error loading admin portal data:', error);
     }
     
-    return false;
+    // Fallback: try to load from the exported JSON file
+    return await loadFromJSONFile();
 }
 
-// Fallback hardcoded configuration (in case JSON loading fails)
-function loadHardcodedFallback() {
-    console.log('Loading hardcoded fallback configuration...');
-    
-    adminPortalData = {
-        "inverters": [
-            {"id": "1760086985630", "name": "Sunsynk 5kw Inverter", "price": 18501},
-            {"id": "1760094530867", "name": "Sunsynk 8kw Inverter", "price": 29850}
-        ],
-        "batteries": [
-            {"id": "1760086997776", "name": "Sunsynk 5kwh Battery", "price": 18500},
-            {"id": "1760088163979", "name": "Sunsynk 10kwh Battery", "price": 49000}
-        ],
-        "panels": [
-            {"id": "JA-Solar-565W", "name": "JA-Solar-565W", "price": 668},
-            {"id": "Canadian-Solar-565W", "name": "Canadian-Solar-565W", "price": 898}
-        ],
-        "rooftypes": [
-            {"id": "1760087030225", "name": "IBR/Tile", "price": 1200},
-            {"id": "1760087725944", "name": "Concrete", "price": 2200}
-        ],
-        "phases": [
-            {"id": "1760087039882", "name": "Three Phase"},
-            {"id": "1760087693534", "name": "Single Phase"}
-        ],
-        "accessories": [
-            {"id": "1760087048300", "name": "Accessories", "price": 12500}
-        ],
-        "installation": [
-            {"id": "1760087063540", "name": "Installation", "price": 12500}
-        ],
-        "systems": [
-            {
-                "id": "1760087099409",
-                "name": "Sunsynk 5kw System",
-                "inverter": "1760086985630",
-                "batteries": ["1760086997776", "1760088163979"],
-                "batteryMin": 1,
-                "batteryMax": 10,
-                "panels": ["JA-Solar-565W", "Canadian-Solar-565W"],
-                "panelMin": 6,
-                "panelMax": 50,
-                "rooftypes": ["1760087030225", "1760087725944"],
-                "defaultRoofType": "1760087030225",
-                "phase": "1760087693534",
-                "accessories": "1760087048300",
-                "installation": "1760087063540"
-            },
-            {
-                "id": "1760094621418",
-                "name": "Sunsynk 8kw System",
-                "inverter": "1760094530867",
-                "batteries": ["1760086997776", "1760088163979"],
-                "batteryMin": 1,
-                "batteryMax": 10,
-                "panels": ["JA-Solar-565W", "Canadian-Solar-565W"],
-                "panelMin": 6,
-                "panelMax": 50,
-                "rooftypes": ["1760087030225", "1760087725944"],
-                "defaultRoofType": "1760087725944",
-                "phase": "1760087693534",
-                "accessories": "1760087048300",
-                "installation": "1760087063540"
-            }
-        ]
-    };
-    
-    console.log('Hardcoded fallback loaded successfully');
-    console.log('Number of systems:', adminPortalData.systems.length);
-    return true;
-}
-
-// Fallback function to load from exported JSON (for testing)
+// Fallback function to load from exported JSON (for live server)
 async function loadFromJSONFile() {
     try {
-        console.log('Fetching solar-config-live.json...');
-        const response = await fetch('solar-config-live.json?v=' + Date.now());
-        console.log('Fetch response status:', response.status, response.statusText);
-        
+        console.log('Attempting to load from solar-config-live.json...');
+        const response = await fetch('solar-config-live.json');
         if (response.ok) {
-            const data = await response.json();
-            console.log('JSON data received:', data);
+            const jsonData = await response.json();
+            console.log('Admin portal data loaded from solar-config-live.json');
             
-            // Validate the data structure
-            if (data && data.systems && Array.isArray(data.systems)) {
-                adminPortalData = data;
-                console.log('Admin portal data loaded from JSON file successfully');
-                console.log('Number of systems:', data.systems.length);
-                return true;
-            } else {
-                console.error('Invalid data structure in JSON file:', data);
-                return false;
-            }
+            // Save to localStorage for future use
+            localStorage.setItem('stp-solar-pricing', JSON.stringify(jsonData));
+            console.log('Data saved to localStorage for future use');
+            
+            adminPortalData = jsonData;
+            return true;
         } else {
-            console.error('Failed to fetch JSON file:', response.status, response.statusText);
+            console.warn('Failed to load solar-config-live.json:', response.status);
         }
     } catch (error) {
-        console.error('Error loading from JSON file:', error);
-        console.error('Error details:', error.message, error.stack);
+        console.error('Error loading solar-config-live.json:', error);
     }
     
-    console.error('Failed to load admin portal data from JSON');
+    console.log('No admin portal data found - using fallback configuration');
     return false;
 }
 
 // Get available system types
 function getSystemTypes() {
-    console.log('getSystemTypes called, adminPortalData:', adminPortalData);
-    
-    if (!adminPortalData) {
-        console.error('adminPortalData is null or undefined');
+    if (!adminPortalData || !adminPortalData.systems) {
         return [];
     }
-    
-    if (!adminPortalData.systems) {
-        console.error('adminPortalData.systems is missing');
-        return [];
-    }
-    
-    console.log('Found systems:', adminPortalData.systems);
     
     return adminPortalData.systems.map(system => ({
         id: system.id,
@@ -155,6 +67,16 @@ function getSystemConfig(systemId) {
     }
     
     return adminPortalData.systems.find(system => system.id === systemId);
+}
+
+// Get default roof type for a system
+function getSystemDefaultRoofType(systemId) {
+    const system = getSystemConfig(systemId);
+    if (!system || !system.defaultRoofType) {
+        return null;
+    }
+    
+    return system.defaultRoofType;
 }
 
 // Get phase information by ID
@@ -216,16 +138,6 @@ function getSystemRoofTypes(systemId) {
     return system.rooftypes.map(roofId => getComponent(roofId, 'rooftypes')).filter(Boolean);
 }
 
-// Get system default roof type
-function getSystemDefaultRoofType(systemId) {
-    const system = getSystemConfig(systemId);
-    if (!system) {
-        return null;
-    }
-    
-    return system.defaultRoofType || null;
-}
-
 // Get system quantity limits
 function getSystemLimits(systemId) {
     const system = getSystemConfig(systemId);
@@ -257,12 +169,14 @@ function calculateDynamicSystemPrice(systemConfig, quantities = {}) {
         }
     }
     
-    // Battery prices - only calculate for the currently selected battery
-    if (quantities.batteryId && quantities.batteryCount) {
-        const battery = getComponent(quantities.batteryId, 'batteries');
-        if (battery) {
-            totalPrice += (parseFloat(battery.price) || 0) * quantities.batteryCount;
-        }
+    // Battery prices
+    if (systemConfig.batteries && quantities.batteryCount) {
+        systemConfig.batteries.forEach(batteryId => {
+            const battery = getComponent(batteryId, 'batteries');
+            if (battery) {
+                totalPrice += (parseFloat(battery.price) || 0) * quantities.batteryCount;
+            }
+        });
     }
     
     // Panel prices - only calculate for the currently selected panel
@@ -344,42 +258,14 @@ function getPhaseDisplayName(phaseId) {
 
 // Initialize the data bridge
 async function initializeDataBridge() {
-    console.log('=== Initializing Solar Admin Portal V2 data bridge ===');
+    console.log('Initializing Solar Admin Portal V2 data bridge...');
     
-    // First try localStorage
-    console.log('Step 1: Trying localStorage...');
-    let dataLoaded = await loadAdminPortalData();
-    console.log('localStorage result:', dataLoaded);
-    
-    // If localStorage is empty, try loading from JSON file
-    if (!dataLoaded) {
-        console.log('Step 2: localStorage empty, trying JSON file...');
-        dataLoaded = await loadFromJSONFile();
-        console.log('JSON file result:', dataLoaded);
-        console.log('adminPortalData after JSON attempt:', adminPortalData);
-    }
-    
-    // If JSON loading failed, use hardcoded fallback
-    if (!dataLoaded) {
-        console.log('Step 3: JSON failed, using hardcoded fallback...');
-        dataLoaded = loadHardcodedFallback();
-        console.log('Hardcoded fallback result:', dataLoaded);
-        console.log('adminPortalData after fallback:', adminPortalData);
-    }
-    
-    // Final verification
-    console.log('=== Data loading complete ===');
-    console.log('Final dataLoaded status:', dataLoaded);
-    console.log('Final adminPortalData:', adminPortalData);
-    
-    if (dataLoaded && adminPortalData) {
-        console.log('✓ Admin portal data bridge initialized successfully');
-        const systemTypes = getSystemTypes();
-        console.log('✓ Available system types:', systemTypes);
-        console.log('✓ Number of systems:', systemTypes.length);
+    const dataLoaded = await loadAdminPortalData();
+    if (dataLoaded) {
+        console.log('Admin portal data bridge initialized successfully');
+        console.log('Available systems:', getSystemTypes());
     } else {
-        console.error('✗ CRITICAL: Failed to load any configuration data!');
-        console.error('✗ dataLoaded:', dataLoaded, 'adminPortalData:', adminPortalData);
+        console.log('No admin portal data found - using fallback configuration');
     }
     
     return dataLoaded;
@@ -396,8 +282,8 @@ window.SolarConfigV2 = {
     getSystemBatteries,
     getSystemPanels,
     getSystemRoofTypes,
-    getSystemDefaultRoofType,
     getSystemLimits,
+    getSystemDefaultRoofType,
     calculateDynamicSystemPrice,
     validateSystemLimits,
     getSystemDisplayName,
@@ -405,6 +291,9 @@ window.SolarConfigV2 = {
     initializeDataBridge
 };
 
-// Note: Auto-initialization is now handled in index.html to properly await the async operation
+// Auto-initialize when script loads
+document.addEventListener('DOMContentLoaded', async function() {
+    await initializeDataBridge();
+});
 
 console.log('Solar Admin Portal V2 data bridge loaded');
