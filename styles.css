@@ -3782,3 +3782,79 @@ body {
         width: 100%;
     }
 }
+
+/* Funky Loading Animation Styles */
+@keyframes funkyPulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: hue-rotate(0deg);
+    }
+    50% {
+        transform: scale(1.05);
+        filter: hue-rotate(180deg);
+    }
+}
+
+@keyframes funkyGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(243, 156, 18, 0.8), 0 0 30px rgba(39, 174, 96, 0.6);
+    }
+}
+
+@keyframes funkyRotate {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    25% {
+        transform: rotate(90deg) scale(1.1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1);
+    }
+    75% {
+        transform: rotate(270deg) scale(1.1);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+@keyframes funkyShimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Apply funky animations to loading button */
+.btn:disabled {
+    animation: funkyPulse 2s ease-in-out infinite, funkyGlow 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:disabled .fa-spinner {
+    animation: funkyRotate 1s linear infinite;
+}
+
+.btn:disabled::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: funkyShimmer 2s infinite;
+    z-index: 1;
+}
+
+.btn:disabled * {
+    position: relative;
+    z-index: 2;
+}

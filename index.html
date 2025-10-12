@@ -1626,8 +1626,29 @@
             }
             
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
+            
+            // Funky loading messages
+            const loadingMessages = [
+                '⚡ Charging up the solar magic...',
+                '🌞 Calculating your energy savings...',
+                '🔋 Crunching numbers like a solar calculator...',
+                '⚡ Standby for your system quote...',
+                '🌱 Working out the eco-friendly math...',
+                '💡 Please wait while we work out magic...',
+                '🔌 Plugging into the solar matrix...',
+                '⚡ Generating your personalized quote...',
+                '🌟 Almost there, solar superstar!'
+            ];
+            
+            let messageIndex = 0;
+            const messageInterval = setInterval(() => {
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[messageIndex]}`;
+                messageIndex = (messageIndex + 1) % loadingMessages.length;
+            }, 1500);
+            
+            // Show the first message immediately
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[0]}`;
             
             try {
                 console.log('Sending quote to n8n:', quoteData);
@@ -1643,18 +1664,35 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    alert(`✅ Quote successfully sent to ${customerEmail}!\n\nYour solar system estimate has been generated and will be sent to your email shortly. We'll contact you within 24 hours to discuss your requirements.`);
-                    console.log('n8n response:', result);
+                    // Clear the interval and show success message
+                    clearInterval(messageInterval);
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> Quote Sent! 🎉';
+                    
+                    // Show success alert after a brief delay
+                    setTimeout(() => {
+                        alert(`✅ Quote successfully sent to ${customerEmail}!\n\nYour solar system estimate has been generated and will be sent to your email shortly. We'll contact you within 24 hours to discuss your requirements.`);
+                        console.log('n8n response:', result);
+                        
+                        // Restore button state
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 1000);
                 } else {
                     throw new Error('Failed to send quote request');
                 }
             } catch (error) {
                 console.error('Error sending quote request:', error);
-                alert('❌ Failed to send quote request. Please try again or contact us directly.');
-            } finally {
-                // Restore button state
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                clearInterval(messageInterval);
+                btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Oops! Try Again';
+                
+                // Show error alert after a brief delay
+                setTimeout(() => {
+                    alert('❌ Failed to send quote request. Please try again or contact us directly.');
+                    
+                    // Restore button state
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 1000);
             }
         }
 
