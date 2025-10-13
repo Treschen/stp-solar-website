@@ -1,186 +1,93 @@
 {
   "galleryItems": [
     {
-      "id": 1,
-      "title": "Sunsynk Hybrid System",
-      "description": "8kW Sunsynk inverter with dual BSL batteries providing reliable backup power",
+      "id": 1760301441118,
+      "title": "8kw Sunsynk Solar System",
+      "description": "8kw Sunsynk Hybrid Inverter with 10 x Panels and 2 x Greencich 5kw Batteries",
       "image": "images/gallery/residential/sunsynk/Sunsynk.jpg",
-      "categories": ["residential", "sunsynk"],
-      "tags": ["Residential", "Sunsynk", "Cape Town"],
-      "date": "2024-01-15",
-      "location": "Cape Town",
-      "systemSize": "8kW",
-      "components": ["Sunsynk 8kW Inverter", "2x 5.12kWh Batteries", "20x JA Solar Panels"],
-      "customerQuote": "Excellent installation and great backup power during load shedding"
+      "categories": [
+        "sunsynk"
+      ],
+      "tags": [
+        "Sunsynk"
+      ],
+      "date": "2025-10-12",
+      "location": "Benoni, Gauteng",
+      "systemSize": "8kw",
+      "components": [
+        "Sunsynk 8kw Inverter",
+        "2 x Greenrich Lithium Ion Batteries",
+        "10 x 565 Watt JA Solar Panels"
+      ],
+      "customerQuote": null
     },
     {
-      "id": 2,
-      "title": "Tesla Powerwall 3 Installation",
-      "description": "Premium Tesla Powerwall 3 with solar integration and EV charging",
-      "image": "images/gallery/residential/tesla/tesla-johannesburg-1.jpg",
-      "categories": ["residential", "tesla"],
-      "tags": ["Residential", "Tesla", "Johannesburg"],
-      "date": "2024-01-20",
-      "location": "Johannesburg",
-      "systemSize": "13.5kWh",
-      "components": ["Tesla Powerwall 3", "Solar Integration", "EV Charging"],
-      "customerQuote": "The Tesla app makes monitoring so easy, love the clean installation"
+      "id": 1760301642521,
+      "title": "Susynk 8kw Eco Solar System ",
+      "description": "Sunsynk 8kw Eco Hybrid Inverter system installed at Midstream Heights (Midstream Estate). We are an Authorized installer at Midstream Estate.",
+      "image": "images/gallery/residential/sunsynk/Midstream-Heights.jpg",
+      "categories": [
+        "residential",
+        "sunsynk"
+      ],
+      "tags": [
+        "Sunsynk",
+        "Residential"
+      ],
+      "date": "2025-06-26",
+      "location": "Kyalami, Gauteng",
+      "systemSize": "8kw",
+      "components": [
+        "Sunsynk 8kw Inverter",
+        "Sunsynk 5.32kWh Battery X 2",
+        "JA Solar 565 Watt Solar Panels x 12"
+      ],
+      "customerQuote": null
     },
     {
-      "id": 3,
-      "title": "JA Solar Panel Array",
-      "description": "20x 565W JA Solar panels on residential roof with optimal positioning",
-      "image": "images/gallery/residential/general/ja-solar-durban-1.jpg",
-      "categories": ["residential"],
-      "tags": ["Residential", "JA Solar", "Durban"],
-      "date": "2024-01-25",
-      "location": "Durban",
-      "systemSize": "11.3kW",
-      "components": ["20x JA Solar 565W Panels", "Grid-Tie Inverter", "Monitoring System"],
-      "customerQuote": "Massive reduction in electricity bills, panels look great on the roof"
+      "id": 1760302505759,
+      "title": "Sunsynk 5kw Battery Backup",
+      "description": "5kw Battery Backup System Installed in Polofields Kyalami",
+      "image": "images/gallery/residential/sunsynk/Sunsynk-5kw-Kyalami.jpg",
+      "categories": [
+        "residential",
+        "sunsynk"
+      ],
+      "tags": [
+        "Sunsynk",
+        "Residential"
+      ],
+      "date": "2023-07-12",
+      "location": "Kyalami, Gauteng",
+      "systemSize": "5kw",
+      "components": [
+        "Sunsynk 5kw Inverter",
+        "Sunsynk 5.32kWh Lithium Battery"
+      ],
+      "customerQuote": null
     },
     {
-      "id": 4,
-      "title": "Commercial Solar System",
-      "description": "50kW commercial installation with Sunsynk inverters for warehouse",
-      "image": "images/gallery/commercial/sunsynk/commercial-sunsynk-pretoria-1.jpg",
-      "categories": ["commercial", "sunsynk"],
-      "tags": ["Commercial", "Sunsynk", "Pretoria"],
-      "date": "2024-02-01",
-      "location": "Pretoria",
-      "systemSize": "50kW",
-      "components": ["2x Sunsynk 25kW Inverters", "100x JA Solar Panels", "Commercial Monitoring"],
-      "customerQuote": "Professional installation, excellent ROI on our energy costs"
-    },
-    {
-      "id": 5,
-      "title": "Complete Home System",
-      "description": "16kW system with backup batteries and comprehensive monitoring",
-      "image": "images/gallery/residential/sunsynk/complete-system-port-elizabeth-1.jpg",
-      "categories": ["residential", "sunsynk"],
-      "tags": ["Residential", "Complete System", "Port Elizabeth"],
-      "date": "2024-02-05",
-      "location": "Port Elizabeth",
-      "systemSize": "16kW",
-      "components": ["Sunsynk 16kW Inverter", "4x 5.12kWh Batteries", "32x JA Solar Panels"],
-      "customerQuote": "Complete energy independence, never worry about load shedding again"
-    },
-    {
-      "id": 6,
-      "title": "Tesla Energy Ecosystem",
-      "description": "Powerwall with solar panels and EV charging integration",
-      "image": "images/gallery/residential/tesla/tesla-ecosystem-cape-town-2.jpg",
-      "categories": ["residential", "tesla"],
-      "tags": ["Residential", "Tesla", "EV Charging", "Cape Town"],
-      "date": "2024-02-10",
-      "location": "Cape Town",
-      "systemSize": "13.5kWh + 8kW Solar",
-      "components": ["Tesla Powerwall 3", "Solar Panels", "Tesla Wall Connector"],
-      "customerQuote": "Perfect integration with our Tesla car, seamless energy management"
-    },
-    {
-      "id": 7,
-      "title": "Professional Installation",
-      "description": "Clean, organized electrical work and cable management",
-      "image": "images/gallery/residential/sunsynk/professional-install-bloemfontein-1.jpg",
-      "categories": ["residential", "sunsynk"],
-      "tags": ["Residential", "Professional", "Bloemfontein"],
-      "date": "2024-02-15",
-      "location": "Bloemfontein",
-      "systemSize": "5kW",
-      "components": ["Sunsynk 5kW Inverter", "1x 5.12kWh Battery", "10x JA Solar Panels"],
-      "customerQuote": "Incredibly neat installation, you can see the quality workmanship"
-    },
-    {
-      "id": 8,
-      "title": "Large Commercial Array",
-      "description": "100kW+ commercial solar installation for manufacturing facility",
-      "image": "images/gallery/commercial/general/large-commercial-east-london-1.jpg",
-      "categories": ["commercial"],
-      "tags": ["Commercial", "Large Scale", "East London"],
-      "date": "2024-02-20",
-      "location": "East London",
-      "systemSize": "120kW",
-      "components": ["4x 30kW Inverters", "240x JA Solar Panels", "Commercial Monitoring"],
-      "customerQuote": "Massive energy savings, excellent project management throughout"
-    },
-    {
-      "id": 9,
-      "title": "Sunsynk Residential Backup",
-      "description": "5kW Sunsynk system with battery backup for essential loads",
-      "image": "images/gallery/residential/sunsynk/sunsynk-backup-kimberley-1.jpg",
-      "categories": ["residential", "sunsynk"],
-      "tags": ["Residential", "Sunsynk", "Backup", "Kimberley"],
-      "date": "2024-02-25",
-      "location": "Kimberley",
-      "systemSize": "5kW",
-      "components": ["Sunsynk 5kW Inverter", "1x 5.12kWh Battery", "12x JA Solar Panels"],
-      "customerQuote": "Reliable backup power, never lost power during load shedding"
-    },
-    {
-      "id": 10,
-      "title": "Tesla Powerwall Duo",
-      "description": "Dual Tesla Powerwall installation for large home",
-      "image": "images/gallery/residential/tesla/tesla-duo-stellenbosch-1.jpg",
-      "categories": ["residential", "tesla"],
-      "tags": ["Residential", "Tesla", "Dual System", "Stellenbosch"],
-      "date": "2024-03-01",
-      "location": "Stellenbosch",
-      "systemSize": "27kWh",
-      "components": ["2x Tesla Powerwall 3", "Solar Integration", "Smart Home Integration"],
-      "customerQuote": "Amazing capacity, powers our entire home including pool pump"
-    },
-    {
-      "id": 11,
-      "title": "Sigenergy Residential System",
-      "description": "5kW Sigenergy inverter with battery storage for residential backup",
-      "image": "images/gallery/residential/sigenergy/sigenergy-residential-cape-town-1.jpg",
-      "categories": ["residential", "sigenergy"],
-      "tags": ["Residential", "Sigenergy", "Cape Town"],
-      "date": "2024-03-05",
-      "location": "Cape Town",
-      "systemSize": "5kW + 10kWh",
-      "components": ["Sigenergy 5kW Inverter", "Sigenergy 10kWh Battery", "12x JA Solar Panels"],
-      "customerQuote": "Excellent value for money, reliable backup power during outages"
-    },
-    {
-      "id": 12,
-      "title": "Sigenergy Commercial Installation",
-      "description": "30kW Sigenergy commercial system for office building",
-      "image": "images/gallery/commercial/sigenergy/sigenergy-commercial-johannesburg-1.jpg",
-      "categories": ["commercial", "sigenergy"],
-      "tags": ["Commercial", "Sigenergy", "Johannesburg"],
-      "date": "2024-03-10",
-      "location": "Johannesburg",
-      "systemSize": "30kW + 60kWh",
-      "components": ["2x Sigenergy 15kW Inverters", "4x Sigenergy 15kWh Batteries", "60x JA Solar Panels"],
-      "customerQuote": "Professional installation, significant reduction in electricity costs"
-    },
-    {
-      "id": 13,
-      "title": "General Residential System",
-      "description": "5kW general solar system with battery backup for residential use",
-      "image": "images/gallery/residential/general/general-residential-durban-1.jpg",
-      "categories": ["residential", "general"],
-      "tags": ["Residential", "General", "Durban"],
-      "date": "2024-03-15",
-      "location": "Durban",
-      "systemSize": "5kW + 5kWh",
-      "components": ["5kW Inverter", "5kWh Battery Bank", "15x Solar Panels"],
-      "customerQuote": "Great value system, reliable power during outages"
-    },
-    {
-      "id": 14,
-      "title": "General Commercial Installation",
-      "description": "20kW general commercial solar system for small business",
-      "image": "images/gallery/commercial/general/general-commercial-pretoria-1.jpg",
-      "categories": ["commercial", "general"],
-      "tags": ["Commercial", "General", "Pretoria"],
-      "date": "2024-03-20",
-      "location": "Pretoria",
-      "systemSize": "20kW + 40kWh",
-      "components": ["20kW Inverter", "40kWh Battery Bank", "50x Solar Panels"],
-      "customerQuote": "Excellent ROI, reduced electricity bills significantly"
+      "id": 1760302855518,
+      "title": "5kw Sunsynk Solar System",
+      "description": "5kw Sunsynk Solar System Installed in Randburg. ",
+      "image": "images/gallery/residential/sunsynk/Randburg.jpg",
+      "categories": [
+        "residential",
+        "sunsynk"
+      ],
+      "tags": [
+        "Sunsynk",
+        "Residential"
+      ],
+      "date": "2022-04-12",
+      "location": "Randburg",
+      "systemSize": "5kw",
+      "components": [
+        "Sunsynk 5kw Inverter",
+        "Sunsynk 5.32kWh Lithium Battery",
+        "Canadian 555 Watt Solar Panels X 10"
+      ],
+      "customerQuote": null
     }
   ]
 }

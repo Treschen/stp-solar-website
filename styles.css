@@ -4003,47 +4003,94 @@ body {
     
     .phase-option {
         background: var(--white);
-        border: 2px solid #ddd;
+        border: 3px solid #ddd;
         border-radius: var(--radius-md);
         padding: var(--spacing-lg);
         cursor: pointer;
         transition: all 0.3s ease;
         text-align: center;
         position: relative;
-        overflow: hidden;
+        overflow: visible;
+        color: #2c3e50;
     }
     
-    .phase-option::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(39, 174, 96, 0.1), transparent);
-        transition: left 0.5s ease;
-    }
-    
-    .phase-option:hover::before {
-        left: 100%;
-    }
-    
-    .phase-option:hover {
-        border-color: var(--accent-color);
-        background: #f8fff8;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.2);
-    }
-    
-    .phase-option input[type="radio"]:checked + label {
-        color: var(--accent-color);
+    .phase-option label,
+    .phase-option label *,
+    .phase-option .phase-option-content,
+    .phase-option .phase-option-content * {
+        color: #2c3e50 !important;
         font-weight: 700;
     }
     
-    .phase-option input[type="radio"]:checked ~ .phase-option-content {
-        background: linear-gradient(135deg, var(--accent-color), #2ecc71);
-        color: var(--white);
-        border-color: var(--accent-color);
+    .phase-option i,
+    .phase-option label i,
+    .phase-option .phase-option-content i {
+        color: var(--primary-color) !important;
+        font-size: 1.4rem;
+    }
+    
+    .phase-option span,
+    .phase-option label span,
+    .phase-option .phase-option-content span {
+        color: #2c3e50 !important;
+        font-weight: 700;
+    }
+    
+    .phase-option:hover {
+        border-color: var(--primary-color);
+        background: #fff8f0;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.2);
+    }
+    
+    .phase-option:hover label,
+    .phase-option:hover label *,
+    .phase-option:hover .phase-option-content,
+    .phase-option:hover .phase-option-content * {
+        color: #2c3e50 !important;
+    }
+    
+    .phase-option:hover i,
+    .phase-option:hover label i,
+    .phase-option:hover .phase-option-content i {
+        color: var(--primary-color) !important;
+    }
+    
+    .phase-option:hover span,
+    .phase-option:hover label span,
+    .phase-option:hover .phase-option-content span {
+        color: #2c3e50 !important;
+    }
+    
+    .phase-option.selected {
+        background: var(--primary-color) !important;
+        color: var(--white) !important;
+        border-color: var(--primary-color) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(243, 156, 18, 0.4);
+        border-width: 4px;
+    }
+    
+    .phase-option.selected label,
+    .phase-option.selected label *,
+    .phase-option.selected .phase-option-content,
+    .phase-option.selected .phase-option-content * {
+        color: var(--white) !important;
+        font-weight: 700 !important;
+    }
+    
+    .phase-option.selected i,
+    .phase-option.selected label i,
+    .phase-option.selected .phase-option-content i {
+        color: var(--white) !important;
+        font-size: 1.3rem !important;
+    }
+    
+    .phase-option.selected span,
+    .phase-option.selected label span,
+    .phase-option.selected .phase-option-content span {
+        color: var(--white) !important;
+        font-weight: 700 !important;
     }
     
     .phase-option-content {

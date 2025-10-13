@@ -29,7 +29,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Styles with cache busting -->
-    <link rel="stylesheet" href="styles.css?v=2.8">
+    <link rel="stylesheet" href="styles.css?v=3.4">
 </head>
 <body>
     <!-- Navigation -->
@@ -2153,15 +2153,28 @@
             stylesheets.forEach(link => {
                 const href = link.href;
                 if (href.includes('styles.css')) {
-                    link.href = href.split('?')[0] + '?v=' + Date.now();
+                    link.href = href.split('?')[0] + '?v=' + Date.now() + '&mobile=1';
+                    console.log('Updated stylesheet:', link.href);
                 }
             });
             
-            // Force reload if this is a cached version
-            if (performance.navigation.type === 2) { // Back/forward cache
-                console.log('Back/forward cache detected - reloading');
+            // Force reload if this is a cached version or if no changes detected
+            if (performance.navigation.type === 2 || localStorage.getItem('lastMobileVersion') !== '3.1') {
+                console.log('Cache detected or version mismatch - reloading');
+                localStorage.setItem('lastMobileVersion', '3.1');
                 window.location.reload(true);
             }
+            
+            // Additional mobile-specific cache busting
+            setTimeout(() => {
+                const allLinks = document.querySelectorAll('link[rel="stylesheet"], script[src]');
+                allLinks.forEach(link => {
+                    const url = link.href || link.src;
+                    if (url && !url.includes('?v=')) {
+                        link.href = url + '?v=' + Date.now();
+                    }
+                });
+            }, 100);
         }
     </script>
 </body>

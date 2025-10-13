@@ -2,18 +2,18 @@
   "inverters": [
     {
       "id": "1760086985630",
-      "name": "Sunsynk 5kw Inverter",
-      "price": 18501
+      "name": "Sunsynk 5kw Single Phase Inverter",
+      "price": 18500
     },
     {
       "id": "1760094530867",
-      "name": "Sunsynk 8kw Inverter",
+      "name": "Sunsynk 8kw Single Phase Inverter",
       "price": 29850
     },
     {
-      "id": "1760294661986",
-      "name": "Sunsynk 12kw Inverter",
-      "price": 48900
+      "id": "1760338222203",
+      "name": "Sunsynk 12kw 3 Phase Inverter",
+      "price": 45000
     }
   ],
   "batteries": [
@@ -25,19 +25,24 @@
     {
       "id": "1760088163979",
       "name": "Sunsynk 10kwh Battery",
-      "price": 49000
+      "price": 46000
     }
   ],
   "panels": [
     {
       "id": "JA-Solar-565W",
-      "name": "JA-Solar-565W",
-      "price": 668
+      "name": "JA Solar 565W",
+      "price": 1550
     },
     {
       "id": "Canadian-Solar-565W",
-      "name": "Canadian-Solar-565W",
-      "price": 898
+      "name": "Canadian Solar 565W",
+      "price": 1550
+    },
+    {
+      "id": "1760339681485",
+      "name": "Canadian Solar 600W",
+      "price": 1880
     }
   ],
   "rooftypes": [
@@ -54,26 +59,36 @@
   ],
   "phases": [
     {
-      "id": "1760087693534",
-      "name": "Single Phase"
-    },
-    {
       "id": "1760087039882",
       "name": "Three Phase"
+    },
+    {
+      "id": "1760087693534",
+      "name": "Single Phase"
     }
   ],
   "accessories": [
     {
       "id": "1760087048300",
-      "name": "Accessories",
+      "name": "Accessories - Single Phase System",
       "price": 12500
+    },
+    {
+      "id": "1760338504357",
+      "name": "Accessories - Three Phase System",
+      "price": 18500
     }
   ],
   "installation": [
     {
       "id": "1760087063540",
-      "name": "Installation",
-      "price": 12500
+      "name": "Installation with COC - Single Phase",
+      "price": 8500
+    },
+    {
+      "id": "1760337808850",
+      "name": "Installation with COC - Three Phase",
+      "price": 15000
     }
   ],
   "systems": [
@@ -89,7 +104,8 @@
       "batteryMax": 10,
       "panels": [
         "JA-Solar-565W",
-        "Canadian-Solar-565W"
+        "Canadian-Solar-565W",
+        "1760339681485"
       ],
       "panelMin": 6,
       "panelMax": 50,
@@ -114,7 +130,8 @@
       "batteryMax": 10,
       "panels": [
         "JA-Solar-565W",
-        "Canadian-Solar-565W"
+        "Canadian-Solar-565W",
+        "1760339681485"
       ],
       "panelMin": 6,
       "panelMax": 50,
@@ -128,29 +145,29 @@
       "installation": "1760087063540"
     },
     {
-      "id": "1760294721266",
+      "id": "1760338470391",
       "name": "Sunsynk 12kw 3 Phase System",
-      "inverter": "1760294661986",
+      "inverter": "1760338222203",
       "batteries": [
-        "1760086997776",
         "1760088163979"
       ],
       "batteryMin": 1,
       "batteryMax": 10,
       "panels": [
         "JA-Solar-565W",
-        "Canadian-Solar-565W"
+        "Canadian-Solar-565W",
+        "1760339681485"
       ],
-      "panelMin": 6,
-      "panelMax": 50,
+      "panelMin": 8,
+      "panelMax": 26,
       "rooftypes": [
         "1760087030225",
         "1760087725944"
       ],
       "defaultRoofType": "1760087030225",
       "phase": "1760087039882",
-      "accessories": "1760087048300",
-      "installation": "1760087063540"
+      "accessories": "1760338504357",
+      "installation": "1760337808850"
     }
   ]
 }
