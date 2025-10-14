@@ -29,7 +29,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Styles with cache busting -->
-    <link rel="stylesheet" href="styles.css?v=3.4">
+    <link rel="stylesheet" href="styles.css?v=3.5">
 </head>
 <body>
     <!-- Navigation -->
@@ -618,7 +618,7 @@
     <section id="contact" class="contact">
         <div class="container">
             <div class="section-header">
-                <h2>Get Your Free Solar Quote</h2>
+                <h2>Contact Us Today</h2>
                 <p>Ready to start saving on your electricity bills?</p>
             </div>
             
@@ -657,12 +657,9 @@
                             <textarea id="message" name="message" rows="4" placeholder="Tell us about your energy needs, roof type, or any specific requirements..."></textarea>
                         </div>
                         
-                        <!-- Hidden field for system configuration -->
-                        <input type="hidden" id="system-config" name="system-config" value="">
-                        
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i>
-                            Request Free Quote
+                            Send Message
                         </button>
                     </form>
                 </div>
@@ -874,9 +871,9 @@
             await SolarConfigV2.initializeDataBridge();
             
             // Initialize system builder
-            initializeSystemBuilder();
-            initializeNavigation();
-            initializeQuoteForm();
+                initializeSystemBuilder();
+                initializeNavigation();
+                initializeQuoteForm();
         });
 
         // Initialize System Builder
@@ -922,7 +919,7 @@
                 </div>
             `).join('');
         }
-        
+
         // Populate System Type Dropdown
         function populateSystemTypeDropdown() {
             const select = document.getElementById('system-type-select');
@@ -1447,21 +1444,91 @@
             }
         }
 
-        // Handle Quote Submission
+        // Handle Contact Form Submission
         function handleQuoteSubmission(event) {
             event.preventDefault();
             
-            // Prepare system configuration data
-            const systemConfig = prepareSystemConfig();
+            // Get form data
+            const formData = new FormData(event.target);
+            const contactData = {
+                customer_name: formData.get('name'),
+                customer_email: formData.get('email'),
+                customer_phone: formData.get('phone'),
+                customer_location: formData.get('location'),
+                monthly_bill: formData.get('monthly-bill'),
+                message: formData.get('message'),
+                form_type: 'contact_inquiry'
+            };
             
-            // Set hidden field
-            document.getElementById('system-config').value = JSON.stringify(systemConfig);
+            // Validate required fields
+            if (!contactData.customer_name || !contactData.customer_email || !contactData.customer_phone) {
+                alert('Please fill in all required fields (Name, Email, and Phone).');
+                return;
+            }
             
-            // Submit form (this will trigger the webhook)
-            console.log('Submitting quote with system config:', systemConfig);
+            // Show loading state
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
             
-            // For testing, show the data that would be sent
-            alert('Quote request prepared! System config: ' + JSON.stringify(systemConfig, null, 2));
+            // Send to contact webhook
+            sendContactRequest(contactData, submitBtn, originalText);
+        }
+
+        // Send Contact Request to Slack Webhook
+        async function sendContactRequest(contactData, submitBtn, originalText) {
+            try {
+                console.log('Sending contact request to webhook:', contactData);
+                
+                // Send to contact webhook
+                const response = await fetch('https://n8n01.stpsolar.co.za/webhook/contact-us', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(contactData)
+                });
+                
+                if (response.ok) {
+                    // Success
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+                    submitBtn.style.background = 'var(--success-color, #28a745)';
+                    
+                    // Clear form
+                    document.getElementById('quote-form').reset();
+                    
+                    // Show success message
+                    alert('Thank you for contacting us! We\'ll get back to you soon.');
+                    
+                    // Reset button after 3 seconds
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.style.background = '';
+                        submitBtn.disabled = false;
+                    }, 3000);
+                    
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Error sending contact request:', error);
+                
+                // Show error state
+                submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+                submitBtn.style.background = 'var(--error-color, #dc3545)';
+                
+                // Show error message
+                alert('Sorry, there was an error sending your message. Please try again or contact us directly.');
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+            }
         }
 
         // Prepare System Configuration
@@ -1736,7 +1803,7 @@
                     console.log('line2_amount (Battery):', quoteData.line2_amount, 'line2_quantity:', quoteData.line2_quantity);
                     console.log('line3_amount (Panel):', quoteData.line3_amount, 'line3_quantity:', quoteData.line3_quantity);
                     console.log('line4_amount (Roof):', quoteData.line4_amount, 'line4_quantity:', quoteData.line4_quantity);
-                    console.log('Sending quote to n8n:', quoteData);
+                console.log('Sending quote to n8n:', quoteData);
                 
                 // Send to n8n webhook
                 const response = await fetch('https://n8n01.stpsolar.co.za/webhook/solar-quote', {
@@ -1756,7 +1823,7 @@
                     // Show success alert after a brief delay
                     setTimeout(() => {
                         alert(`✅ Quote successfully sent to ${customerEmail}!\n\nYour solar system estimate has been generated and will be sent to your email shortly. We'll contact you within 24 hours to discuss your requirements.`);
-                        console.log('n8n response:', result);
+                    console.log('n8n response:', result);
                         
                         // Restore button state
                         btn.innerHTML = originalText;
@@ -1772,11 +1839,11 @@
                 
                 // Show error alert after a brief delay
                 setTimeout(() => {
-                    alert('❌ Failed to send quote request. Please try again or contact us directly.');
+                alert('❌ Failed to send quote request. Please try again or contact us directly.');
                     
-                    // Restore button state
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
+                // Restore button state
+                btn.innerHTML = originalText;
+                btn.disabled = false;
                 }, 1000);
             }
         }

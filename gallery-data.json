@@ -88,6 +88,52 @@
         "Canadian 555 Watt Solar Panels X 10"
       ],
       "customerQuote": null
+    },
+    {
+      "id": 1760371430782,
+      "title": "8kw Sunsynk Solar System",
+      "description": "Typical 8kw Home Install, Done professionally by www.stpsolar.co.za",
+      "image": "images/gallery/residential/sunsynk/Sunsynk-8kw-10kw-Storage-6kw-Solar.jpg",
+      "categories": [
+        "residential",
+        "sunsynk"
+      ],
+      "tags": [
+        "Sunsynk",
+        "Residential"
+      ],
+      "date": "2024-03-09",
+      "location": "Kempton Park, Gauteng",
+      "systemSize": "8kw ",
+      "components": [
+        "Sunsynk 8kw Inverter",
+        "Sunsynk 5.12kWh Battery X 2",
+        "JA Solar 565 Watt Panels x 12"
+      ],
+      "customerQuote": null
+    },
+    {
+      "id": 1760371744220,
+      "title": "8kw Sunsynk Solar System",
+      "description": "Sunsynk 8kw System 2 x 10kWh Batteries and 16 x 565 Watt Canadian Solar Panels. 10 Year Warranty on Battery and Inverter. 12 Year Warranty on Solar Panels",
+      "image": "images/gallery/residential/sunsynk/Potchestroom-8kw-Powerinstall.jpg",
+      "categories": [
+        "residential",
+        "sunsynk"
+      ],
+      "tags": [
+        "Sunsynk",
+        "Residential"
+      ],
+      "date": "2022-12-19",
+      "location": "Potchefstroom, Northwest",
+      "systemSize": "8kw",
+      "components": [
+        "Sunsynk 8kw Hybrid Inverter",
+        "Sunsynk 10kWh Lithium Battery X 2",
+        "Candadian 565 Watt Solar Panels x 16"
+      ],
+      "customerQuote": null
     }
   ]
 }
