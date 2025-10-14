@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://stpsolar.co.za/sitemap.xml
+
+# Allow all search engines to crawl
+Crawl-delay: 1
+
+# Block admin areas (if you want to keep them private)
+Disallow: /admin-pricing-v2.html
+Disallow: /gallery-admin.html
+Disallow: /admin-pricing.html
+
+# Allow important pages
+Allow: /index.html
+Allow: /privacy-policy.html
+Allow: /images/
+Allow: /styles.css
+Allow: /script.js
+Allow: /solar-config-v2.js
