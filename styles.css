@@ -2643,6 +2643,514 @@ section > * {
     color: var(--text-light);
 }
 
+/* Referrals Page Styles */
+.referrals-hero {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+    padding: var(--spacing-3xl) 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.referrals-hero .hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    margin: var(--spacing-3xl) 0;
+    flex-wrap: wrap;
+}
+
+.referrals-hero .hero-buttons .btn {
+    min-width: 200px;
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+}
+
+/* Funky Referral Graphic */
+.referral-graphic {
+    margin-top: var(--spacing-3xl);
+    position: relative;
+    padding: var(--spacing-2xl) 0;
+}
+
+.money-flow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.coin {
+    position: absolute;
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.coin-1 {
+    top: 10px;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.coin-2 {
+    top: 20px;
+    left: 30%;
+    animation-delay: 0.5s;
+}
+
+.coin-3 {
+    top: 15px;
+    left: 50%;
+    animation-delay: 1s;
+}
+
+.coin-4 {
+    top: 25px;
+    left: 70%;
+    animation-delay: 1.5s;
+}
+
+.coin-5 {
+    top: 5px;
+    left: 90%;
+    animation-delay: 2s;
+}
+
+.referral-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-xl);
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+}
+
+.person, .solar-system, .reward {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-normal);
+    min-width: 120px;
+}
+
+.person:hover, .solar-system:hover, .reward:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.person i, .solar-system i, .reward i {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.person-1 i {
+    color: var(--primary-color);
+}
+
+.person-2 i {
+    color: var(--accent-color);
+}
+
+.solar-system i {
+    color: #ffc107;
+    animation: rotate 2s linear infinite;
+}
+
+.reward i {
+    color: #e74c3c;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+.connection-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.connection-line i {
+    font-size: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.referral-text {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary-color);
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+/* Responsive Design for Referral Graphic */
+@media (max-width: 768px) {
+    .referrals-hero .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .referrals-hero .hero-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .referral-illustration {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+    
+    .connection-line {
+        transform: rotate(90deg);
+    }
+    
+    .person, .solar-system, .reward {
+        min-width: 100px;
+        padding: var(--spacing-md);
+    }
+    
+    .coin {
+        font-size: 1.5rem;
+    }
+}
+
+.referral-structure {
+    padding: var(--spacing-3xl) 0;
+    background: var(--white);
+}
+
+.referral-tiers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xl);
+    margin: var(--spacing-3xl) 0;
+}
+
+.tier-card {
+    background: var(--white);
+    border: 2px solid #e9ecef;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.tier-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    transform: scaleX(0);
+    transition: transform var(--transition-normal);
+}
+
+.tier-card:hover::before {
+    transform: scaleX(1);
+}
+
+.tier-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.tier-card.featured {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+    transform: scale(1.05);
+}
+
+.tier-card.featured::before {
+    transform: scaleX(1);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+}
+
+.tier-header h3 {
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-xl);
+}
+
+.tier-range {
+    color: var(--text-light);
+    font-weight: 500;
+    margin-bottom: var(--spacing-lg);
+}
+
+.tier-fee {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.fee-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.fee-label {
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.referral-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-3xl);
+}
+
+.info-card {
+    background: var(--background-light);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.info-card i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-card h4 {
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.info-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.referral-form-section {
+    background: linear-gradient(135deg, var(--background-light) 0%, #f1f3f4 50%, var(--background-light) 100%);
+    padding: var(--spacing-3xl) 0;
+}
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: var(--spacing-3xl);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.referral-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.referral-form .form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.referral-form .form-group label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.referral-form .form-group input,
+.referral-form .form-group select,
+.referral-form .form-group textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid #e9ecef;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    transition: border-color var(--transition-fast);
+}
+
+.referral-form .form-group input:focus,
+.referral-form .form-group select:focus,
+.referral-form .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.checkbox-group {
+    margin: var(--spacing-xl) 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.checkbox-label a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: var(--spacing-2xl);
+}
+
+.btn-large {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--font-size-lg);
+    min-width: 250px;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    max-width: 400px;
+    animation: slideIn 0.3s ease;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.notification-success {
+    background: var(--accent-color);
+    color: var(--white);
+}
+
+.notification-error {
+    background: #e74c3c;
+    color: var(--white);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Terms & Conditions Referral Section */
+.referral-notice {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+}
+
+.referral-notice p {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    color: #856404;
+    font-weight: 600;
+}
+
+.referral-notice strong {
+    color: #d39e00;
+}
+
+/* Responsive Design for Referrals */
+@media (max-width: 768px) {
+    .referral-tiers {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .tier-card.featured {
+        transform: none;
+    }
+    
+    .referral-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .referral-form .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-container {
+        padding: var(--spacing-xl);
+        margin: 0 var(--spacing-md);
+    }
+    
+    .notification {
+        right: var(--spacing-md);
+        left: var(--spacing-md);
+        max-width: none;
+    }
+}
+
 /* Footer */
 .footer {
     background: linear-gradient(135deg, var(--secondary-color) 0%, #34495e 50%, var(--secondary-color) 100%);

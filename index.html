@@ -841,7 +841,7 @@
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="#calculator">Solar Calculator</a></li>
-                        <li><a href="#">Solar Guide</a></li>
+                        <li><a href="referrals.html">Referral Program</a></li>
                         <li><a href="#">FAQ</a></li>
                         <li><a href="#">Blog</a></li>
                     </ul>
@@ -1047,7 +1047,7 @@
             });
         }
 
-        // System Type Selection
+        // System Type Selection - Directly load system configuration
         function selectSystemType() {
             const select = document.getElementById('system-type-select');
             currentSystemType = select.value;
@@ -1056,8 +1056,10 @@
             console.log('System type selected:', currentSystemType);
             
             if (currentSystemType) {
-                // Show system selection
-                showSystemSelection();
+                // Directly load the system configuration
+                selectSystem(currentSystemId);
+                // Hide the system selection cards since we're going directly to customization
+                document.getElementById('system-selection').style.display = 'none';
             } else {
                 // Hide system selection and customization
                 document.getElementById('system-selection').style.display = 'none';
@@ -1132,9 +1134,6 @@
                         <span class="price-label">Starting from</span>
                         <span class="price-amount" id="system-starting-price">R0</span>
                     </div>
-                    <button class="btn btn-primary" onclick="selectSystem('${system.id}')">
-                        Select This System
-                    </button>
                 </div>
             `;
             
